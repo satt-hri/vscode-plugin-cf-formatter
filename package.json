@@ -1,7 +1,9 @@
 {
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
+  "publisher": "satt-hri",
   "description": "CFML 自动格式化插件，只保留缩进格式化功能",
+  "icon": "images/icon.png",
   "version": "0.0.1",
   "author": "SATT李",
   "engines": {
@@ -13,18 +15,16 @@
   "activationEvents": [
     "onLanguage:cfml"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/satt-hri/vscode-plugin-cf-formatter.git"
+  },
   "scripts": {
     "watch": "tsc -w"
   },
   "main": "./out/extension.js",
   "contributes": {
-    "languages": [
-      {
-        "id": "coldfusion",
-        "extensions": [".cfm", ".cfc"],
-        "aliases": ["CFML", "ColdFusion"]
-      }
-    ],
+
     "commands": [
       {
         "command": "satt.cfml.formatDocumentHri",
@@ -35,14 +35,14 @@
       "editor/context": [
         {
           "command": "satt.cfml.formatDocumentHri",
-          "when": "editorLangId == coldfusion",
+          "when": "editorLangId == cfml",
           "group": "navigation"
         }
       ],
       "commandPalette": [
         {
           "command": "satt.cfml.formatDocumentHri",
-          "when": "editorLangId == coldfusion"
+          "when": "editorLangId == cfml"
         }
       ]
     }
