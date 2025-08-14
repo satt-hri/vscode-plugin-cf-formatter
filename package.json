@@ -1,0 +1,58 @@
+{
+  "name": "cfml-auto-formatter",
+  "displayName": "CFML Auto Formatter",
+  "description": "CFML 自动格式化插件，只保留缩进格式化功能",
+  "version": "0.0.1",
+  "author": "SATT李",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:cfml"
+  ],
+  "scripts": {
+    "watch": "tsc -w"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "coldfusion",
+        "extensions": [".cfm", ".cfc"],
+        "aliases": ["CFML", "ColdFusion"]
+      }
+    ],
+    "commands": [
+      {
+        "command": "satt.cfml.formatDocumentHri",
+        "title": "Format CFML (Custom)"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "satt.cfml.formatDocumentHri",
+          "when": "editorLangId == coldfusion",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "satt.cfml.formatDocumentHri",
+          "when": "editorLangId == coldfusion"
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.2.1",
+    "@types/vscode": "^1.76.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.9.2",
+    "vsce": "^2.10.0"
+  }
+}
