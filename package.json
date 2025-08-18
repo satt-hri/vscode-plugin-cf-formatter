@@ -1,15 +1,15 @@
 {
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
-  "publisher": "satt-hri",
+  "publisher": "hri",
   "description": "CFML 自动格式化插件，只保留缩进格式化功能",
   "icon": "images/icon.png",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "SATT李",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"
   },
-   "license": "MIT",  
   "categories": [
     "Programming Languages"
   ],
@@ -25,7 +25,6 @@
   },
   "main": "./out/extension.js",
   "contributes": {
-
     "commands": [
       {
         "command": "satt.cfml.formatDocumentHri",
