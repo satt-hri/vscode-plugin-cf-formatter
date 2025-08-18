@@ -23,6 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 			let inCfquery = false;
 			let inString = false;
 			let stringChar = '';
+			let inMultiLineComment = false; // 新增：跟踪多行注释状态
 			
 			// 使用格式化选项中的缩进设置
 			const indentSize = options.tabSize || 2;
@@ -61,6 +62,81 @@ export function activate(context: vscode.ExtensionContext) {
 				'INSERT', 'UPDATE', 'DELETE', 'VALUES', 'SET', 'INTO',
 				'UNION', 'UNION ALL', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END'
 			];
+
+			// 检查是否是文件开头的注释（在任何实际代码之前）
+			function isFileHeaderComment(lineIndex: number): boolean {
+				// 检查从第一行到当前行之间是否只有注释或空行
+				for (let j = 0; j < lineIndex; j++) {
+					const previousLine = document.lineAt(j).text.trim();
+					if (previousLine === '') continue; // 跳过空行
+					
+					// 如果遇到非注释内容，说明不是文件头注释
+					if (!previousLine.startsWith('<!---') && 
+						!previousLine.endsWith('--->') && 
+						!inMultiLineComment) {
+						return false;
+					}
+				}
+				return true;
+			}
+
+			// 检查多行注释状态（仅对文件头注释）
+			function updateCommentState(text: string, lineIndex: number): void {
+				// 只处理文件开头的注释
+				if (!isFileHeaderComment(lineIndex)) {
+					return;
+				}
+
+				// 检查注释开始
+				if (!inMultiLineComment && text.includes('<!---')) {
+					inMultiLineComment = true;
+				}
+				
+				// 检查注释结束
+				if (inMultiLineComment && text.includes('--->')) {
+					inMultiLineComment = false;
+				}
+			}
+
+			// 处理注释行的缩进（仅文件头注释）
+			function getCommentIndent(text: string, lineIndex: number): number {
+				// 只格式化文件开头的注释
+				if (!isFileHeaderComment(lineIndex)) {
+					return 0; // 方法内注释保持原样
+				}
+
+				const trimmed = text.trim();
+				
+				// 注释开始行：保持0缩进
+				if (trimmed.startsWith('<!---')) {
+					return 0;
+				}
+				
+				// 注释结束行：保持0缩进
+				if (trimmed.endsWith('--->')) {
+					return 0;
+				}
+				
+				// 注释内容行：使用1级缩进，但对于包含内容的行可以有更好的格式化
+				if (inMultiLineComment) {
+					// 如果是空行或只有空白字符，不缩进
+					if (trimmed === '') {
+						return 0;
+					}
+					
+					// 对于包含实际内容的注释行，使用1级缩进
+					// 但是对于History部分的条目，可以使用更深的缩进
+					if (trimmed.match(/^\d{4}\/\d{2}\/\d{2}/) || trimmed.match(/^\s+\d{4}\/\d{2}\/\d{2}/)) {
+						// 这是历史记录条目，使用更深的缩进来对齐
+						return 3; // 适当的缩进让日期对齐
+					}
+					
+					// 普通注释内容行
+					return 1;
+				}
+				
+				return 0;
+			}
 
 			// 解析标签名
 			function parseTagName(line: string): { tagName: string; isClosing: boolean; isSelfClosing: boolean } {
@@ -177,10 +253,25 @@ export function activate(context: vscode.ExtensionContext) {
 				const line = document.lineAt(i);
 				let text = line.text.trim();
 
+				// 更新注释状态（仅文件头注释）
+				updateCommentState(line.text, i);
+
 				// 跳过空行
 				if (text.length === 0) {
 					edits.push(vscode.TextEdit.replace(line.range, ""));
 					continue;
+				}
+
+				// 处理多行注释（仅文件头注释）
+				if ((inMultiLineComment || text.startsWith('<!---') || text.endsWith('--->')) 
+					&& isFileHeaderComment(i)) {
+					const commentIndent = getCommentIndent(text, i);
+					const indentChar = useSpaces ? ' ' : '\t';
+					const indentUnit = useSpaces ? indentSize : 1;
+					const indent = indentChar.repeat(commentIndent * indentUnit);
+					
+					edits.push(vscode.TextEdit.replace(line.range, indent + text));
+					continue; // 跳过其他处理，直接处理下一行
 				}
 
 				const { tagName, isClosing, isSelfClosing } = parseTagName(text);
