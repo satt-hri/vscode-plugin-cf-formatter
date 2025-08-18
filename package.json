@@ -29,7 +29,7 @@
     "commands": [
       {
         "command": "satt.cfml.formatDocumentHri",
-        "title": "Format CFML (Custom)"
+        "title": "Format CFML (satt)"
       }
     ],
     "menus": {
