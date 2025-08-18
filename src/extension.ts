@@ -1,12 +1,10 @@
 import * as vscode from "vscode";
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log("CFML Auto Formatter 插件已激活");
+	//console.log("CFML Auto Formatter 插件已激活");
 	
 	// 检查注册的语言
-	console.log("支持的语言:", vscode.languages.getLanguages());
-
-	const indentSize = 2;
+	//console.log("支持的语言:", vscode.languages.getLanguages());
 
 	const provider: vscode.DocumentFormattingEditProvider = {
 		provideDocumentFormattingEdits(
@@ -14,11 +12,11 @@ export function activate(context: vscode.ExtensionContext) {
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
 		): vscode.TextEdit[] {
-			console.log("🚀 格式化器被调用！");
-			console.log("文档语言ID:", document.languageId);
-			console.log("文档行数:", document.lineCount);
-			console.log("文档文件名:", document.fileName);
-			console.log("格式化选项:", options);
+			// console.log("🚀 格式化器被调用！");
+			// console.log("文档语言ID:", document.languageId);
+			// console.log("文档行数:", document.lineCount);
+			// console.log("文档文件名:", document.fileName);
+			// console.log("格式化选项:", options);
 			const edits: vscode.TextEdit[] = [];
 			let indentLevel = 0;
 			let inCfscript = false;
@@ -301,9 +299,9 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log("文档语言ID:", editor.document.languageId);
 			
 			try {
-				// 直接调用我们的格式化器，提供所需的参数
+				// 直接调用我们的格式化器，提供所需的参数y
 				const options: vscode.FormattingOptions = {
-					tabSize: 2,
+					tabSize: 4,
 					insertSpaces: true
 				};
 				const token = new vscode.CancellationTokenSource().token;
