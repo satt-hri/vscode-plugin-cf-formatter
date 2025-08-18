@@ -98,44 +98,65 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 
-			// 处理注释行的缩进（仅文件头注释）
-			function getCommentIndent(text: string, lineIndex: number): number {
+			// 格式化注释内容以实现对齐（仅文件头注释）
+			function formatCommentLine(text: string, lineIndex: number): string {
 				// 只格式化文件开头的注释
 				if (!isFileHeaderComment(lineIndex)) {
-					return 0; // 方法内注释保持原样
+					return text; // 方法内注释保持原样
 				}
 
 				const trimmed = text.trim();
+				const indentChar = useSpaces ? ' ' : '\t';
+				const indentUnit = useSpaces ? indentSize : 1;
 				
 				// 注释开始行：保持0缩进
 				if (trimmed.startsWith('<!---')) {
-					return 0;
+					return trimmed;
 				}
 				
 				// 注释结束行：保持0缩进
 				if (trimmed.endsWith('--->')) {
-					return 0;
+					return trimmed;
 				}
 				
-				// 注释内容行：使用1级缩进，但对于包含内容的行可以有更好的格式化
-				if (inMultiLineComment) {
-					// 如果是空行或只有空白字符，不缩进
-					if (trimmed === '') {
-						return 0;
+				// 注释内容行的格式化
+				if (inMultiLineComment && trimmed !== '') {
+					// 检查是否是标准的字段行（Name, Author, Created等）
+					const fieldMatch = trimmed.match(/^(Name|Author|Created|Last Updated|History|Purpose)\s*:\s*(.*)$/);
+					if (fieldMatch) {
+						const fieldName = fieldMatch[1];
+						const fieldValue = fieldMatch[2];
+						// 使用tab对齐，字段名后跟固定格式
+						return indentChar.repeat(1 * indentUnit) + fieldName.padEnd(12) + ' : ' + fieldValue;
 					}
 					
-					// 对于包含实际内容的注释行，使用1级缩进
-					// 但是对于History部分的条目，可以使用更深的缩进
-					if (trimmed.match(/^\d{4}\/\d{2}\/\d{2}/) || trimmed.match(/^\s+\d{4}\/\d{2}\/\d{2}/)) {
-						// 这是历史记录条目，使用更深的缩进来对齐
-						return 3; // 适当的缩进让日期对齐
+					// 检查是否是History的续行（以日期开头）
+					const historyMatch = trimmed.match(/^(\d{4}\/\d{2}\/\d{2})\s+(.*)$/);
+					if (historyMatch) {
+						const date = historyMatch[1];
+						const content = historyMatch[2];
+						// History续行：对齐到History字段的值位置
+						return indentChar.repeat(1 * indentUnit) + ''.padEnd(12) + '   ' + date + ' ' + content;
+					}
+					
+					// 检查是否是Author的续行（不以日期开头但可能是作者名）
+					if (trimmed && !trimmed.includes(':') && !trimmed.match(/^\d{4}\/\d{2}\/\d{2}/)) {
+						// 可能是Author的续行或其他字段的续行
+						// 检查前一行是否是Author
+						if (lineIndex > 0) {
+							const prevLine = document.lineAt(lineIndex - 1).text.trim();
+							if (prevLine.includes('Author') || prevLine.match(/^\s+\w+/)) {
+								// 这可能是Author的续行，对齐到Author值的位置
+								return indentChar.repeat(1 * indentUnit) + ''.padEnd(12) + '   ' + trimmed;
+							}
+						}
 					}
 					
 					// 普通注释内容行
-					return 1;
+					return indentChar.repeat(1 * indentUnit) + trimmed;
 				}
 				
-				return 0;
+				return text;
 			}
 
 			// 解析标签名
@@ -265,12 +286,8 @@ export function activate(context: vscode.ExtensionContext) {
 				// 处理多行注释（仅文件头注释）
 				if ((inMultiLineComment || text.startsWith('<!---') || text.endsWith('--->')) 
 					&& isFileHeaderComment(i)) {
-					const commentIndent = getCommentIndent(text, i);
-					const indentChar = useSpaces ? ' ' : '\t';
-					const indentUnit = useSpaces ? indentSize : 1;
-					const indent = indentChar.repeat(commentIndent * indentUnit);
-					
-					edits.push(vscode.TextEdit.replace(line.range, indent + text));
+					const formattedLine = formatCommentLine(text, i);
+					edits.push(vscode.TextEdit.replace(line.range, formattedLine));
 					continue; // 跳过其他处理，直接处理下一行
 				}
 
