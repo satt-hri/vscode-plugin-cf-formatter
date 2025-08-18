@@ -123,6 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
 				if (inMultiLineComment && trimmed !== '') {
 					// 检查是否是标准的字段行（Name, Author, Created等）
 					const fieldMatch = trimmed.match(/^(Name|Author|Created|Last Updated|History|Purpose)\s*:\s*(.*)$/);
+					//　其他的内容的話 用這個正規表現。const fieldMatch = trimmed.match(/^([A-Z][A-Za-z\s]*?)\s*:\s*(.*)$/);
 					if (fieldMatch) {
 						const fieldName = fieldMatch[1];
 						const fieldValue = fieldMatch[2];
