@@ -29,6 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// SQL CASE WHEN 结构跟踪
 			let sqlCaseStack: number[] = []; // 跟踪CASE语句的嵌套层级
+			let sqlSubqueryStack: number[] = []; // 跟踪子查询的嵌套层级
 
 			// 使用格式化选项中的缩进设置
 			const indentSize = options.tabSize || 2;
@@ -330,20 +331,27 @@ export function activate(context: vscode.ExtensionContext) {
 
 				const originalText = text;
 				const upperText = text.toUpperCase().trim();
-				let baseIndent = 1; // SQL基础缩进
+				//let baseIndent =  0; // SQL基础缩进
+				let baseIndent =  sqlSubqueryStack.length; // SQL基础缩进
 
 				// 检查是否是SQL注释行
 				if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
-					return baseIndent + 2; // 注释缩进与字段对齐
+					return baseIndent; // 注释缩进与字段对齐
 				}
 
 				// 子查询的左括号 - 与FROM对齐
-				if (upperText === "(") {
+				if (upperText.includes("(") && !upperText.includes(")")) {
+					sqlSubqueryStack.push(baseIndent);
 					return baseIndent + 1;
+				}
+				if (upperText.includes(")") && !upperText.includes("(")) {
+					sqlSubqueryStack.pop();
+					return baseIndent ;
 				}
 
 				// 子查询的右括号和别名 - 与FROM对齐
 				if (upperText === ") AS D" || upperText.startsWith(") AS ") || upperText === ")") {
+					sqlSubqueryStack.pop();
 					return baseIndent + 1;
 				}
 
@@ -393,7 +401,8 @@ export function activate(context: vscode.ExtensionContext) {
 				// 主要SQL关键字与cfquery标签对齐
 				const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
 				if (mainKeywords.some((keyword) => upperText.startsWith(keyword))) {
-					return baseIndent + 1; // SELECT缩进
+					// baseIndent + 1; // SELECT缩进  20250819 這個地方有點奇怪。
+					return baseIndent;
 				}
 
 				// FROM子句
@@ -437,7 +446,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 				// 字段列表 - 所有字段（包括第一个）都缩进到相同层级
 				if (upperText.startsWith(",")) {
-					return baseIndent + 2;
+					return baseIndent + 1;
 				}
 
 				// 检查是否是第一个字段（紧接在SELECT后面）
@@ -447,7 +456,8 @@ export function activate(context: vscode.ExtensionContext) {
 						.text.toUpperCase()
 						.trim();
 					if (prevLine === "SELECT") {
-						return baseIndent + 2; // 第一个字段也缩进
+						// baseIndent + 2; // 第一个字段也缩进
+						return baseIndent + 1; // 20250819 這個地方有點奇怪。
 					}
 				}
 
@@ -652,6 +662,7 @@ export function activate(context: vscode.ExtensionContext) {
 						inCfquery = false;
 						// 清空SQL CASE栈
 						sqlCaseStack.length = 0;
+						sqlSubqueryStack.length = 0;
 					}
 
 					// 弹出标签栈并调整缩进
