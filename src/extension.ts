@@ -25,6 +25,9 @@ export function activate(context: vscode.ExtensionContext) {
 			let stringChar = '';
 			let inMultiLineComment = false; // 新增：跟踪多行注释状态
 			
+			// SQL CASE WHEN 结构跟踪
+			let sqlCaseStack: number[] = []; // 跟踪CASE语句的嵌套层级
+			
 			// 使用格式化选项中的缩进设置
 			const indentSize = options.tabSize || 2;
 			const useSpaces = options.insertSpaces !== false;
@@ -239,36 +242,127 @@ export function activate(context: vscode.ExtensionContext) {
 				return bracketChange;
 			}
 
-			// 处理SQL缩进
-			function getSqlIndent(text: string): number {
+			// 改进的SQL缩进处理
+			function getSqlIndent(text: string, lineIndex: number): number {
 				if (!inCfquery) return 0;
 				
+				const originalText = text;
 				const upperText = text.toUpperCase().trim();
+				let baseIndent = 1; // SQL基础缩进
 				
-				// 主要SQL关键字应该与cfquery标签对齐
+				// 检查是否是SQL注释行
+				if (originalText.trim().startsWith('<!---') || originalText.trim().endsWith('--->')) {
+					return baseIndent + 2; // 注释缩进与字段对齐
+				}
+				
+				// 子查询的左括号 - 与FROM对齐
+				if (upperText === '(') {
+					return baseIndent + 1;
+				}
+				
+				// 子查询的右括号和别名 - 与FROM对齐  
+				if (upperText === ') AS D' || upperText.startsWith(') AS ') || upperText === ')') {
+					return baseIndent + 1;
+				}
+				
+				// 处理CASE WHEN ELSE END结构
+				const caseDepth = sqlCaseStack.length;
+				
+				// CASE语句开始 - 与字段列表对齐
+				if (upperText === 'CASE' || upperText.startsWith(',CASE')) {
+					const currentLevel = baseIndent + 2; // 与字段对齐
+					sqlCaseStack.push(currentLevel);
+					return currentLevel;
+				}
+				
+				// WHEN 和 ELSE 与 CASE 对齐
+				if (upperText.startsWith('WHEN ') || upperText === 'ELSE') {
+					if (caseDepth > 0) {
+						return sqlCaseStack[sqlCaseStack.length - 1] + 1; // 比CASE多缩进1层
+					}
+					return baseIndent + 3;
+				}
+				
+				// THEN 后面的值在同一行，但如果单独成行则缩进
+				if (upperText.startsWith('THEN ') || (upperText.startsWith('ELSE ') && upperText !== 'ELSE')) {
+					// 这些通常不会单独成行，但如果有则与WHEN对齐
+					if (caseDepth > 0) {
+						return sqlCaseStack[sqlCaseStack.length - 1] + 1;
+					}
+					return baseIndent + 3;
+				}
+				
+				// END语句 - 与CASE对齐
+				if (upperText === 'END' || upperText.startsWith('END ')) {
+					if (sqlCaseStack.length > 0) {
+						return sqlCaseStack.pop() || baseIndent;
+					}
+					return baseIndent + 2;
+				}
+				
+				// 在CASE结构内的数值
+				if (caseDepth > 0) {
+					// 检查是否是纯数值或简单值
+					if (/^\d+$/.test(upperText) || upperText === "''" || upperText.match(/^'.*'$/)) {
+						return sqlCaseStack[sqlCaseStack.length - 1] + 1;
+					}
+				}
+				
+				// 主要SQL关键字与cfquery标签对齐
 				const mainKeywords = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'WITH'];
 				if (mainKeywords.some(keyword => upperText.startsWith(keyword))) {
-					return 1;
+					return baseIndent + 1; // SELECT缩进
 				}
 				
-				// 子句关键字稍微缩进
-				const subKeywords = ['FROM', 'WHERE', 'ORDER BY', 'GROUP BY', 'HAVING', 'UNION'];
+				// FROM子句
+				if (upperText.startsWith('FROM')) {
+					return baseIndent;
+				}
+				
+				// WHERE子句  
+				if (upperText.startsWith('WHERE')) {
+					return baseIndent;
+				}
+				
+				// ORDER BY等子句
+				const subKeywords = ['ORDER BY', 'GROUP BY', 'HAVING', 'UNION'];
 				if (subKeywords.some(keyword => upperText.startsWith(keyword))) {
-					return 1;
+					return baseIndent;
 				}
 				
-				// AND/OR 条件
+				// JOIN语句
+				if (upperText.includes('JOIN') && 
+					(upperText.startsWith('INNER ') || upperText.startsWith('LEFT ') || 
+					 upperText.startsWith('RIGHT ') || upperText.startsWith('FULL ') || 
+					 upperText.startsWith('CROSS ') || upperText.startsWith('JOIN'))) {
+					return baseIndent;
+				}
+				
+				// ON子句（JOIN条件）
+				if (upperText.startsWith('ON(') || upperText.startsWith('ON ')) {
+					return baseIndent + 1;
+				}
+				
+				// AND/OR条件
 				if (upperText.startsWith('AND ') || upperText.startsWith('OR ')) {
-					return 2;
+					return baseIndent + 1;
 				}
 				
-				// JOIN 语句
-				if (upperText.includes('JOIN')) {
-					return 1;
+				// 字段列表 - 所有字段（包括第一个）都缩进到相同层级
+				if (upperText.startsWith(',')) {
+					return baseIndent + 2;
 				}
 				
-				// 其他SQL内容
-				return 2;
+				// 检查是否是第一个字段（紧接在SELECT后面）
+				if (lineIndex > 0) {
+					const prevLine = document.lineAt(lineIndex - 1).text.toUpperCase().trim();
+					if (prevLine === 'SELECT') {
+						return baseIndent + 2; // 第一个字段也缩进
+					}
+				}
+				
+				// 表名等其他内容
+				return baseIndent + 1;
 			}
 
 			for (let i = 0; i < document.lineCount; i++) {
@@ -303,6 +397,8 @@ export function activate(context: vscode.ExtensionContext) {
 						bracketStack.length = 0;
 					} else if (tagName === 'cfquery') {
 						inCfquery = false;
+						// 清空SQL CASE栈
+						sqlCaseStack.length = 0;
 					}
 					
 					// 弹出标签栈并调整缩进
@@ -331,7 +427,7 @@ export function activate(context: vscode.ExtensionContext) {
 				// 处理SQL缩进
 				let sqlIndent = 0;
 				if (inCfquery && tagName !== 'cfquery') {
-					sqlIndent = getSqlIndent(text);
+					sqlIndent = getSqlIndent(text, i);
 				}
 
 				// 计算最终缩进
@@ -355,6 +451,8 @@ export function activate(context: vscode.ExtensionContext) {
 						inCfscript = true;
 					} else if (tagName === 'cfquery') {
 						inCfquery = true;
+						// 重置SQL CASE栈
+						sqlCaseStack.length = 0;
 					}
 					
 					tagStack.push(tagName);
@@ -405,7 +503,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			console.log("手动格式化命令被调用");
-			console.log("文档语言ID:", editor.document.languageId);
+			console.log("文档语言ID1:", editor.document.languageId);
 			
 			try {
 				// 直接调用我们的格式化器，提供所需的参数y
