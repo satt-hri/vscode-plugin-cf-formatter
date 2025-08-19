@@ -4,7 +4,7 @@
   "publisher": "hri",
   "description": "CFML 自动格式化插件，只保留缩进格式化功能",
   "icon": "images/icon.png",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
