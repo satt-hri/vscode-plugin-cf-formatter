@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			// 使用格式化选项中的缩进设置
 			const indentSize = options.tabSize || 2;
-			const useSpaces = false //options.insertSpaces !== false; // 使用空格或制表符进行缩进，默认为制表符 satt李
+			const useSpaces = false; // 強制使用 tab 縮進
 			
 			// 使用栈来跟踪嵌套结构
 			const tagStack: string[] = [];
@@ -387,6 +387,113 @@ export function activate(context: vscode.ExtensionContext) {
 				return 0;
 			}
 
+			// 新增：檢查是否是多參數函數調用的 cfset
+			function isCfsetWithMultipleParams(text: string): boolean {
+				console.log("檢查 cfset:", text);
+				
+				// 檢查是否是 cfset 且包含函數調用
+				if (!text.toLowerCase().includes('<cfset ')) {
+					console.log("不包含 <cfset");
+					return false;
+				}
+				
+				// 提取 cfset 內容部分
+				const cfsetMatch = text.match(/<cfset\s+(.+?)(?:\s*\/?>|$)/i);
+				if (!cfsetMatch) {
+					console.log("cfset 正則匹配失敗");
+					return false;
+				}
+				
+				const content = cfsetMatch[1];
+				console.log("cfset 內容:", content);
+				
+				// 檢查是否包含函數調用（有括號）
+				if (!content.includes('(')) {
+					console.log("不包含函數調用");
+					return false;
+				}
+				
+				// 計算參數數量（簡單計算逗號數量）
+				const commaCount = (content.match(/,/g) || []).length;
+				console.log("逗號數量:", commaCount);
+				
+				// 如果有2個或以上的逗號，表示有2個以上的參數
+				const result = commaCount >= 2;
+				console.log("是否需要多行格式化:", result);
+				return result;
+			}
+
+			// 新增：格式化多參數的 cfset
+			function formatCfsetMultiParams(text: string, baseIndent: number): string[] {
+				console.log("開始格式化多參數 cfset:", text);
+				console.log("基礎縮進:", baseIndent);
+				
+				const cfsetMatch = text.match(/^(\s*<cfset\s+)(.+?)(\s*\/?>?\s*)$/i);
+				if (!cfsetMatch) {
+					console.log("cfset 格式化正則匹配失敗");
+					return [text];
+				}
+				
+				const prefix = cfsetMatch[1].trim();
+				const content = cfsetMatch[2];
+				const suffix = cfsetMatch[3].trim();
+				
+				console.log("prefix:", prefix);
+				console.log("content:", content);
+				console.log("suffix:", suffix);
+				
+				// 找到函數調用部分
+				const funcMatch = content.match(/^(.+?)\.([^(]+)\s*\(\s*(.+?)\s*\)\s*(.*)$/);
+				if (!funcMatch) {
+					console.log("函數調用正則匹配失敗");
+					return [text];
+				}
+				
+				const objName = funcMatch[1];
+				const funcName = funcMatch[2];
+				const params = funcMatch[3];
+				const afterFunc = funcMatch[4];
+				
+				console.log("objName:", objName);
+				console.log("funcName:", funcName);
+				console.log("params:", params);
+				console.log("afterFunc:", afterFunc);
+				
+				// 分割參數
+				const paramList = params.split(',').map(p => p.trim());
+				console.log("參數列表:", paramList);
+				
+				// 如果參數少於2個，保持原格式
+				if (paramList.length < 2) {
+					console.log("參數少於2個，保持原格式");
+					return [text];
+				}
+				
+				const indentChar = useSpaces ? ' ' : '\t';
+				const indentUnit = useSpaces ? indentSize : 1;
+				const currentIndent = indentChar.repeat(baseIndent * indentUnit);
+				const paramIndent = indentChar.repeat((baseIndent + 1) * indentUnit);
+				
+				const lines: string[] = [];
+				
+				// 第一行：cfset + 對象.函數名(
+				lines.push(currentIndent + `${prefix}${objName}.${funcName}(`);
+				
+				// 參數行
+				paramList.forEach((param, index) => {
+					const isLast = index === paramList.length - 1;
+					const paramLine = isLast ? param : param + ',';
+					lines.push(paramIndent + paramLine);
+				});
+				
+				// 最後一行：) + suffix
+				const lastLine = currentIndent + `)${afterFunc ? ' ' + afterFunc : ''}${suffix ? ' ' + suffix : ' />'}`;
+				lines.push(lastLine);
+				
+				console.log("格式化結果:", lines);
+				return lines;
+			}
+
 			for (let i = 0; i < document.lineCount; i++) {
 				const line = document.lineAt(i);
 				let text = line.text.trim();
@@ -410,6 +517,43 @@ export function activate(context: vscode.ExtensionContext) {
 
 				const { tagName, isClosing, isSelfClosing } = parseTagName(text);
 				let currentIndentLevel = indentLevel;
+
+				// 檢查是否是多參數的 cfset，需要特殊處理
+				if (tagName === 'cfset' && isCfsetWithMultipleParams(text)) {
+					// 計算基礎縮進
+					let bracketIndent = 0;
+					if (inCfscript) {
+						if (text.includes('}') && !text.includes('{')) {
+							bracketIndent = Math.max(bracketStack.length - 1, 0);
+						} else {
+							bracketIndent = bracketStack.length;
+						}
+					}
+					
+					// cfset 不會在 cfquery 內，所以 sqlIndent 為 0
+					let sqlIndent = 0;
+					
+					let specialIndent = getSpecialTagIndent(tagName);
+					let baseIndentLevel = currentIndentLevel + bracketIndent + sqlIndent + specialIndent;
+					
+					// 格式化多行 cfset
+					const formattedLines = formatCfsetMultiParams(text, baseIndentLevel);
+					
+					// 為每一行創建編輯
+					if (formattedLines.length > 1) {
+						// 替換原行為第一行
+						edits.push(vscode.TextEdit.replace(line.range, formattedLines[0]));
+						
+						// 在後面插入其他行
+						for (let j = 1; j < formattedLines.length; j++) {
+							const insertPosition = new vscode.Position(i + j, 0);
+							edits.push(vscode.TextEdit.insert(insertPosition, formattedLines[j] + '\n'));
+						}
+						
+						// 跳過後續的常規處理
+						continue;
+					}
+				}
 
 				// 处理结束标签
 				if (isClosing) {
