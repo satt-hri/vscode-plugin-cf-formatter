@@ -1,10 +1,12 @@
 import * as vscode from "vscode";
+import { messages, Lang } from "./config";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
 
 	// 检查注册的语言
 	//console.log("支持的语言:", vscode.languages.getLanguages());
+	const lang = vscode.env.language.toLowerCase() as Lang;
 
 	const provider: vscode.DocumentFormattingEditProvider = {
 		provideDocumentFormattingEdits(
@@ -33,8 +35,8 @@ export function activate(context: vscode.ExtensionContext) {
 			const useSpaces = false; // 強制使用 tab 縮進
 
 			// 使用栈来跟踪嵌套结构
-			const tagStack: string[] = [];
-			const bracketStack: string[] = [];
+			const tagStack: string[] = []; // 跟踪未闭合的标签
+			const bracketStack: string[] = []; // 在 CFScript 中跟踪 {} 嵌套
 
 			// 扩展的标签定义
 			const blockTags = {
@@ -733,8 +735,9 @@ export function activate(context: vscode.ExtensionContext) {
 		if (editor) {
 			console.log("当前文件语言ID:", editor.document.languageId);
 			console.log("当前文件路径:", editor.document.fileName);
+			const val = messages.langInfo[lang];
 			vscode.window.showInformationMessage(
-				`语言ID: ${editor.document.languageId}, 文件: ${editor.document.fileName}`
+				typeof val === "function" ? val(editor.document.languageId, editor.document.fileName) : val
 			);
 		}
 	});
@@ -753,7 +756,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const formatCommand = vscode.commands.registerCommand("satt.cfml.formatDocumentHri", async () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
-			vscode.window.showErrorMessage("没有活动的编辑器");
+			vscode.window.showErrorMessage(messages.noEditor[lang] as string);
 			return;
 		}
 
@@ -779,13 +782,14 @@ export function activate(context: vscode.ExtensionContext) {
 						editBuilder.replace(edit.range, edit.newText);
 					});
 				});
-				vscode.window.showInformationMessage("格式化完成！");
+				vscode.window.showInformationMessage(messages.formatDone[lang] as string);
 			} else {
-				vscode.window.showInformationMessage("没有需要格式化的内容");
+				vscode.window.showInformationMessage(messages.noContent[lang] as string);
 			}
 		} catch (error) {
+			const val = messages.formatError[lang];
 			console.error("格式化错误:", error);
-			vscode.window.showErrorMessage(`格式化失败: ${error}`);
+			vscode.window.showErrorMessage(typeof val === "function" ? val(error) : val);
 		}
 	});
 
