@@ -52,11 +52,14 @@ export function activate(context: vscode.ExtensionContext) {
 				],
 				elselike: ['cfelse', 'cfelseif', 'cfdefaultcase'],
 				selfClosing: [
-					'cfset', 'cfreturn', 'cfbreak', 'cfcontinue', 'cfthrow',
+					'cfreturn', 'cfbreak', 'cfcontinue', 'cfthrow',
 					'cfinclude', 'cfmodule', 'cfinvoke', 'cfparam', 'cfheader',
 					'cfcookie', 'cflocation', 'cfmail', 'cffile', 'cfdirectory',
 					'cfhttp', 'cfzip', 'cfimage', 'cfdocument', 'cfpdf'
-				]
+				],
+				// 新增：需要特殊處理的標籤
+				functionParam: ['cfargument'], // 函数参数标签
+				functionContent: ['cfset'] // 函数内容标签
 			};
 
 			const sqlKeywords = [
@@ -183,6 +186,8 @@ export function activate(context: vscode.ExtensionContext) {
 					const tagName = match ? match[1].toLowerCase() : '';
 					const isSelfClosing = trimmed.endsWith('/>') || 
 						blockTags.selfClosing.includes(tagName) ||
+						blockTags.functionParam.includes(tagName) ||
+						blockTags.functionContent.includes(tagName) ||
 						(tagName.startsWith('cf') && (
 							trimmed.includes(' />') ||
 							(!trimmed.includes('>') && !blockTags.opening.includes(tagName))
@@ -365,6 +370,23 @@ export function activate(context: vscode.ExtensionContext) {
 				return baseIndent + 1;
 			}
 
+			// 新增：判斷是否在 cffunction 內部
+			function isInCffunction(): boolean {
+				return tagStack.includes('cffunction');
+			}
+
+			// 新增：獲取特殊標籤的額外縮進
+			function getSpecialTagIndent(tagName: string): number {
+				if (blockTags.functionParam.includes(tagName)) {
+					// cfargument 應該與 cffunction 同級縮進 (實際上是 cffunction 的參數)
+					return 0;
+				} else if (blockTags.functionContent.includes(tagName)) {
+					// cfset 應該作為 cffunction 的內容，額外縮進一層
+					return isInCffunction() ? 1 : 0;
+				}
+				return 0;
+			}
+
 			for (let i = 0; i < document.lineCount; i++) {
 				const line = document.lineAt(i);
 				let text = line.text.trim();
@@ -430,8 +452,14 @@ export function activate(context: vscode.ExtensionContext) {
 					sqlIndent = getSqlIndent(text, i);
 				}
 
+				// 新增：处理特殊标签的缩进
+				let specialIndent = 0;
+				if (isSelfClosing) {
+					specialIndent = getSpecialTagIndent(tagName);
+				}
+
 				// 计算最终缩进
-				const totalIndent = currentIndentLevel + bracketIndent + sqlIndent;
+				const totalIndent = currentIndentLevel + bracketIndent + sqlIndent + specialIndent;
 				const indentChar = useSpaces ? ' ' : '\t';
 				const indentUnit = useSpaces ? indentSize : 1;
 				const indent = indentChar.repeat(totalIndent * indentUnit);
