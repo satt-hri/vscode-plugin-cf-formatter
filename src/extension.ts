@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
 			
 			// 使用格式化选项中的缩进设置
 			const indentSize = options.tabSize || 2;
-			const useSpaces = options.insertSpaces !== false;
+			const useSpaces = false //options.insertSpaces !== false; // 使用空格或制表符进行缩进，默认为制表符 satt李
 			
 			// 使用栈来跟踪嵌套结构
 			const tagStack: string[] = [];
