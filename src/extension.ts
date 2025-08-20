@@ -14,7 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
 		): vscode.TextEdit[] {
-			// console.log("🚀 格式化器被调用！");
+			// console.log("格式化器被调用！");
 			// console.log("文档语言ID:", document.languageId);
 			// console.log("文档行数:", document.lineCount);
 			// console.log("文档文件名:", document.fileName);
@@ -764,7 +764,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(debugCommand);
 
-	const formatCommand = vscode.commands.registerCommand("satt.cfml.formatDocumentHri", async () => {
+	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatDocument", async () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
 			vscode.window.showErrorMessage(messages.noEditor[lang] as string);

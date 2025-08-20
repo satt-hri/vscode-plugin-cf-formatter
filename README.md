@@ -13,7 +13,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### 使い方
 1. 拡張機能をインストール
 2. CFML ファイルを開く（推奨: `.cfc`）
-3. ショートカット `Shift+Alt+F` または右クリック → `Format CFML (satt)` **ドキュメントのフォーマット** を使用
+3. ショートカット `Shift+Alt+M` または右クリック → `Format CFML (satt)` **ドキュメントのフォーマット** を使用
 
 ### 注意点
 - `.cfc` ファイルのインデント整形は安定して動作
@@ -36,7 +36,7 @@ This extension focuses on indentation formatting and does not change your coding
 ### Usage
 1. Install the extension
 2. Open a CFML file (recommended: `.cfc`)
-3. Use the shortcut `Shift+Alt+F` or right-click → `Format CFML (satt)` **Format Document**
+3. Use the shortcut `Shift+Alt+M` or right-click → `Format CFML (satt)` **Format Document**
 
 ### Notes
 - Indentation formatting is fully supported for `.cfc` files
@@ -58,7 +58,7 @@ This extension focuses on indentation formatting and does not change your coding
 ### 使用方法
 1. 安装插件
 2. 打开 CFML 文件（推荐 `.cfc`）
-3. 使用快捷键 `Shift+Alt+F` 或右键选择`Format CFML (satt)` **格式化文档**
+3. 使用快捷键 `Shift+Alt+M` 或右键选择`Format CFML (satt)` **格式化文档**
 
 ### 注意事项
 - 对 `.cfc` 文件的缩进格式化支持较完整

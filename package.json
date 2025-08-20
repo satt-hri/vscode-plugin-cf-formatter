@@ -11,10 +11,11 @@
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Programming Languages"
+    "Formatters"
   ],
   "activationEvents": [
-    "onLanguage:cfml"
+    "onLanguage:cfml",
+    "onLanguage:cfc"   
   ],
   "repository": {
     "type": "git",
@@ -27,25 +28,33 @@
   "contributes": {
     "commands": [
       {
-        "command": "satt.cfml.formatDocumentHri",
-        "title": "Format CFML (satt)"
+        "command": "hri.cfml.formatDocument",
+        "title": "Format CFML (satt)",
+        "category": "CFML"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "satt.cfml.formatDocumentHri",
+          "command": "hri.cfml.formatDocument",
           "when": "editorLangId == cfml",
-          "group": "navigation"
+          "group": "1_modification"
         }
       ],
       "commandPalette": [
         {
-          "command": "satt.cfml.formatDocumentHri",
+          "command": "hri.cfml.formatDocument",
           "when": "editorLangId == cfml"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "hri.cfml.formatDocument",
+        "key": "shift+alt+m",
+        "when": "editorLangId == cfml && editorTextFocus"
+      }
+    ]
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
