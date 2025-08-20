@@ -477,7 +477,7 @@ export function activate(context: vscode.ExtensionContext) {
 					return 0;
 				} else if (blockTags.functionContent.includes(tagName)) {
 					// cfset 應該作為 cffunction 的內容，額外縮進一層
-					return isInCffunction() ? 1 : 0;
+					return isInCffunction() && false ? 1 : 0; // 緊急修正：暫時不處理多參數的 cfset
 				}
 				return 0;
 			}
@@ -513,7 +513,7 @@ export function activate(context: vscode.ExtensionContext) {
 				console.log("逗號數量:", commaCount);
 
 				// 如果有2個或以上的逗號，表示有2個以上的參數
-				const result = commaCount >= 2;
+				const result = commaCount >= 2 && false; // 緊急修正：暫時不處理多參數的 cfset
 				console.log("是否需要多行格式化:", result);
 				return result;
 			}
