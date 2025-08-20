@@ -332,7 +332,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const originalText = text;
 				const upperText = text.toUpperCase().trim();
 				//let baseIndent =  0; // SQL基础缩进
-				let baseIndent =  sqlSubqueryStack.length; // SQL基础缩进
+				let baseIndent = sqlSubqueryStack.length; // SQL基础缩进
 
 				// 检查是否是SQL注释行
 				if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
@@ -346,7 +346,7 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				if (upperText.includes(")") && !upperText.includes("(")) {
 					sqlSubqueryStack.pop();
-					return baseIndent ;
+					return baseIndent;
 				}
 
 				// 子查询的右括号和别名 - 与FROM对齐
@@ -400,10 +400,21 @@ export function activate(context: vscode.ExtensionContext) {
 
 				// 主要SQL关键字与cfquery标签对齐
 				const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
-				if (mainKeywords.some((keyword) => upperText.startsWith(keyword))) {
+				if (
+					mainKeywords.some((keyword) => {
+						const reg = new RegExp(`^${keyword}(?=\\s|$)`, "i");
+						const temp = reg.test(upperText);
+						return temp;
+					})
+				) {
 					// baseIndent + 1; // SELECT缩进  20250819 這個地方有點奇怪。
 					return baseIndent;
 				}
+				// 更好的執行代碼 ，但是可能擴展。
+				// const mainnKeywordsRegex = /^(SELECT|INSERT|UPDATE|DELETE|WITH)(?=\s|$)/i; 
+				// if (mainnKeywordsRegex.test(upperText)) {
+				// 	return baseIndent;
+				// }
 
 				// FROM子句
 				if (upperText.startsWith("FROM")) {
