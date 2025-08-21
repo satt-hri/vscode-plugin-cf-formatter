@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { messages, Lang } from "./config";
+import path from "path";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -14,11 +15,18 @@ export function activate(context: vscode.ExtensionContext) {
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
 		): vscode.TextEdit[] {
-			// console.log("格式化器被调用！");
-			// console.log("文档语言ID:", document.languageId);
-			// console.log("文档行数:", document.lineCount);
-			// console.log("文档文件名:", document.fileName);
-			// console.log("格式化选项:", options);
+			console.log("格式化器被调用！");
+			console.log("文档语言ID:", document.languageId);
+			console.log("文档行数:", document.lineCount);
+			console.log("文档文件名:", document.fileName);
+			console.log("格式化选项:", options);
+
+			const ext = path.extname(document.fileName).toLowerCase();
+			if (ext === ".cfm") {
+				vscode.window.showWarningMessage(messages.warnMsg[lang] as string, { modal: true });
+				return []; // 只处理 .cfc 文件
+			}
+
 			const edits: vscode.TextEdit[] = [];
 			let indentLevel = 0;
 			let inCfscript = false;
@@ -772,17 +780,16 @@ export function activate(context: vscode.ExtensionContext) {
 			);
 		}
 	});
+	context.subscriptions.push(debugCommand);
 
 	// 注册多个可能的语言ID
-	const languageIds = ["coldfusion", "cfml", "cfm", "cfc", "plaintext"];
+	const languageIds = ["cfml", "cfm", "cfc"];
 
 	languageIds.forEach((langId) => {
 		const registration = vscode.languages.registerDocumentFormattingEditProvider(langId, provider);
 		context.subscriptions.push(registration);
 		console.log(`已为语言ID "${langId}" 注册格式化器`);
 	});
-
-	context.subscriptions.push(debugCommand);
 
 	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatDocument", async () => {
 		const editor = vscode.window.activeTextEditor;

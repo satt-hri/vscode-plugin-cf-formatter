@@ -1,3 +1,5 @@
+import { warn } from "console";
+
 export type Lang = "en" | "zh-cn" | "ja";
 
 type MessageValue = string | ((...args: any[]) => string);
@@ -30,5 +32,10 @@ export const messages: MessageMap = {
 		en: (error: any) => `Format failed: ${error}`,
 		"zh-cn": (error: any) => `格式化失败: ${error}`,
 		ja: (error: any) => `フォーマットに失敗しました: ${error}`,
+	},
+	warnMsg: {
+		en: "CFM file formatting is under development and cannot be used temporarily.",
+		"zh-cn": "CFM文件的格式化功能正在开发中，暂时无法使用。",
+		ja: "CFMファイルのフォーマット機能は現在開発中1で、使用できません。",
 	},
 };

@@ -12,13 +12,15 @@
 				// if (mainnKeywordsRegex.test(upperText)) {
 				// 	return baseIndent;
 				// }
-let upperText ="authentication_key"
-const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
-if (
-    mainKeywords.some((keyword) => {
-        const reg = new RegExp(`^${keyword}(?=\\s|$)`, "i");
-        return reg.test(upperText);
-    })
-) {
-    return baseIndent; // SQL 主要关键词保持基础缩进
-}
+// let upperText ="authentication_key"
+// const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
+// if (
+//     mainKeywords.some((keyword) => {
+//         const reg = new RegExp(`^${keyword}(?=\\s|$)`, "i");
+//         return reg.test(upperText);
+//     })
+// ) {
+//     return baseIndent; // SQL 主要关键词保持基础缩进
+// }
+
+console.log('WHERE (1=1)'.includes(')')) // true
