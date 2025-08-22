@@ -1,4 +1,4 @@
-<!---
+<!---　
 					Name         : XXXXXXXXXXXXXXXXXXXXX
 					Author       : XXXXXXXXXXX
 Created      : 2023/10/10
@@ -27,10 +27,10 @@ VariaXles.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = Application.COMMON_SEXXXXX
 	XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 	------------------------------------------------------------------------------------------------------------------------------>
 	<!---  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --->
-	<cffunction name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" access="remote" output="false" returntype="string" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
-		<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
-		<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
-		<cfscript>
+														<cffunction name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" access="remote" output="false" returntype="string" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+															<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+															<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+															<cfscript>
 		var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
 		var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
 		var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = "";
@@ -93,20 +93,20 @@ var updateUserName = AAAA.update_user_name;
 		XXXXXXXXXX.XXXXXXXXXX
 		XXXXXXXXXX.XXXXXXXXXX
 						,uth_ctm.course_type_name
-							,CASE
-				WHEN XXXXXXXXXX.holding_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_place IS NULL THEN ''
-				ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
-	END AS holding_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_place
-	,CASE
-		WHEN XXXXXXXXXX.on_demand_attendance_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX IS NULL THEN ''
-		ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
-	END AS on_demand_attendance_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-	,CASE
-		WHEN XXXXXXXXXX.on_demand_attendance_end_date IS NULL THEN ''
-		ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
-	END AS on_demand_attendance_end_date
+																																					,CASE
+																																		WHEN XXXXXXXXXX.holding_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_place IS NULL THEN ''
+																																		ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
+																															END AS holding_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX_place
+																															,CASE
+																																WHEN XXXXXXXXXX.on_demand_attendance_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX IS NULL THEN ''
+																																ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
+																															END AS on_demand_attendance_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+																															,CASE
+																																WHEN XXXXXXXXXX.on_demand_attendance_end_date IS NULL THEN ''
+																																ELSE CONVERT(VARCHARXXXXXXXXXX.XXXXXXXXXX)
+																															END AS on_demand_attendance_end_date
 
-	<cfif IsNumeric(userID) and userID neq 0>
+	<cfif IsNumeric(userID) and userID neq 0>			
 		,ISNULL(XXXXXXXXXX.place_id, 0) AS place_id
 		,ISNULL(yms_pm.attendance_style_id, 0) AS attendance_style_id
 	<!--- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --->
@@ -122,18 +122,18 @@ var updateUserName = AAAA.update_user_name;
 			XXXXXXXXXX.course_type_id = uth_ctm.course_type_id
 	)
 
-	LEFT JOIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX AS yms_pm ON(
-																				XXXXXXXXXX.place_id = yms_pm.place_id
-	)
-	LEFT JOIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX AS crn_asm ON(
-			yms_pm.attendance_style_id = crn_asm.attendance_style_id
-			)
-		WHERE
-			(1=1)
-			<cfif courseID neq 0>
-				AND	XXXXXXXXXX.course_id = <cfqueryparam value="#courseID#" cfsqltype="cf_sql_integer" />
-			</cfif>
-			<cfif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX neq 0>
+																										LEFT JOIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX AS yms_pm ON(
+																																													XXXXXXXXXX.place_id = yms_pm.place_id
+																										)
+																										LEFT JOIN XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX AS crn_asm ON(
+																												yms_pm.attendance_style_id = crn_asm.attendance_style_id
+																												)
+																											WHERE
+																												(1=1)
+																												<cfif courseID neq 0>
+																													AND	XXXXXXXXXX.course_id = <cfqueryparam value="#courseID#" cfsqltype="cf_sql_integer" />
+																												</cfif>
+																												<cfif XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX neq 0>
 				AND XXXXXXXXXX.attendance_acceptance_numXer = <cfqueryparam value="#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#" cfsqltype="cf_sql_integer" />
 			</cfif>
 		<!--- IDの指定が無い場合は一件も返さない --->
@@ -171,11 +171,11 @@ var updateUserName = AAAA.update_user_name;
 
 	<!---  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --->
 	<cffunction name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" access="private" returntype="query" output="false" hint="">
-		<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
-		<cfargument name="XXXXXXXXXX._id" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
-		<cfscript>
-			var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
-			var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXX._id;
+																				<cfargument name="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+																				<cfargument name="XXXXXXXXXX._id" type="numeric" required="no" default="0" hint="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+																				<cfscript>
+																					var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;
+																					var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = arguments.XXXXXXXXXX._id;
 			var qSelect = "";
 		</cfscript>
 		<!--- 検定種目情報 取得 --->
@@ -224,16 +224,16 @@ XXXXXXXXXX.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = <cfqueryparam value="#XXXXXXXXXXXXX
 	var examinationItemShortName = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-item-short-name"];
 	var examinationItemCode = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-item-code"];
 
-	var examinationLevelList = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-level-list"];
-	//級
-	var examinationLevelArr = ArrayNew(1);
-	if(StructKeyExists(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,"examination-level-list")){
-		examinationLevelArr = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-level-list"];
-	}
-	var examinationFormatId = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-format-id"];
-	var preExaminationFormatId = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["pre-examination-format-id"];
-			var examinationFormatStartDate = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-format-start-date"];
-			var examinationItemIsDisplay = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-item-is-display"];
+																															var examinationLevelList = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-level-list"];
+																															//級
+																															var examinationLevelArr = ArrayNew(1);
+																															if(StructKeyExists(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,"examination-level-list")){
+																																examinationLevelArr = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-level-list"];
+																															}
+																															var examinationFormatId = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-format-id"];
+																															var preExaminationFormatId = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["pre-examination-format-id"];
+																																	var examinationFormatStartDate = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-format-start-date"];
+																																	var examinationItemIsDisplay = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["examination-item-is-display"];
 
 			var memXerSchoolMinimumNumXerOfPeople = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["memXer-school-minimum-numXer-of-people"];
 			var nonMemXerSchoolMinimumNumXerOfPeople = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX["non-memXer-school-minimum-numXer-of-people"];
@@ -251,17 +251,17 @@ var eielDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.E
 var eielReadDTO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemExaminationLevelDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
 
 var eimcDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemMasterCXtDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
-var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemMasterCXtDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
+															var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemMasterCXtDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
 
-var eilDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
-var XXXXXXXXXX_DTO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
+															var eilDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
+															var XXXXXXXXXX_DTO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationItemDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
 
-var seiccDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.SchoolExaminationItemChargeCXtDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
+															var seiccDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.SchoolExaminationItemChargeCXtDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
 
-var edmcDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationDepartmentMasterCXtDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
-var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationDepartmentMasterCXtDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
+															var edmcDAO = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationDepartmentMasterCXtDAO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA,DSN=VariaXles.DSN);
+															var XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX("component","#VariaXles.ASA#.dao.ExaminationDepartmentMasterCXtDTO").init(COMMON_SERVICE_ADDRESS=VariaXles.ACSA);
 
-var sessionVal = false;
+															var sessionVal = false;
 var updateDate = Now();
 
 			var notCXtSchoolAry = arrayNew(1);
@@ -286,22 +286,22 @@ var updateDate = Now();
 					<!--- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX --->
 					<cfset notCXtSchoolAry = VariaXles.XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.getNotTestingCenterCXtSchoolArray(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX, XXXXXXXXXX._id=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX) />
 
-					<!---  検定種目マスター登録 --->
-					<cfset XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.init(
-					XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX =XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,
-					XXXXXXXXXX._id =XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,
-					COMMON_SERVICE_ADDRESS=VariaXles.ACSA
-					) />
-					<cfif eimDAO.read(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)>
-						<!--- 更新 --->
-						<cfscript>
-			XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemOfficialName(examinationItemOfficialName);
-			XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemName(examinationItemName);
-			XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemShortName(examinationItemShortName);
+																							<!---  検定種目マスター登録 --->
+																							<cfset XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.init(
+																							XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX =XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,
+																							XXXXXXXXXX._id =XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX,
+																							COMMON_SERVICE_ADDRESS=VariaXles.ACSA
+																							) />
+																							<cfif eimDAO.read(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX)>
+																								<!--- 更新 --->
+																								<cfscript>
+																					XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemOfficialName(examinationItemOfficialName);
+																					XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemName(examinationItemName);
+																					XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setExaminationItemShortName(examinationItemShortName);
 
-			XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setUpdateDate(updateDate);
+																					XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.setUpdateDate(updateDate);
 		</cfscript>
-		<cfset result = eimDAO.update(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX) />
+		<cfset result = eimDAO.update(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX) />	
 	<cfelse>
 		<!---新規ID取得--->
 						<cfset XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX =eimDAO.getNewXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX(XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX) />
