@@ -1,0 +1,161 @@
+import { FormatState } from "../core/FormatState";
+
+// 改进的SQL缩进处理
+export function getSqlIndent(text: string, lineIndex: number, state: FormatState): number {
+	if (!state.inCfquery) return 0;
+
+	const originalText = text;
+	const upperText = text.toUpperCase().trim();
+	//let baseIndent =  0; // SQL基础缩进
+	let baseIndent = state.sqlSubqueryStack.length * 2; // SQL基础缩进，假设每个子查询增加2个缩进单位
+
+	// 检查是否是SQL注释行
+	if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
+		return baseIndent; // 注释缩进与字段对齐
+	}
+
+	// 子查询的左括号 - 与FROM对齐
+	if (upperText.includes("(") && !upperText.includes(")")) {
+		state.sqlSubqueryStack.push(baseIndent);
+		return baseIndent + 1;
+	}
+	if (upperText.includes(")") && !upperText.includes("(")) {
+		state.sqlSubqueryStack.pop();
+		return baseIndent - 1;
+	}
+
+	// 子查询的右括号和别名 - 与FROM对齐
+	if (upperText === ") AS D" || upperText.startsWith(") AS ") || upperText === ")") {
+		state.sqlSubqueryStack.pop();
+		return baseIndent + 1;
+	}
+
+	// 处理CASE WHEN ELSE END结构
+	const caseDepth = state.sqlCaseStack.length;
+
+	// CASE语句开始 - 与字段列表对齐
+	if (upperText === "CASE" || upperText.startsWith(",CASE")) {
+		const currentLevel = baseIndent + 2; // 与字段对齐
+		state.sqlCaseStack.push(currentLevel);
+		return currentLevel;
+	}
+
+	// WHEN 和 ELSE 与 CASE 对齐
+	if (upperText.startsWith("WHEN ") || upperText === "ELSE") {
+		if (caseDepth > 0) {
+			return state.sqlCaseStack[state.sqlCaseStack.length - 1] + 1; // 比CASE多缩进1层
+		}
+		return baseIndent + 3;
+	}
+
+	// THEN 后面的值在同一行，但如果单独成行则缩进
+	if (upperText.startsWith("THEN ") || (upperText.startsWith("ELSE ") && upperText !== "ELSE")) {
+		// 这些通常不会单独成行，但如果有则与WHEN对齐
+		if (caseDepth > 0) {
+			return state.sqlCaseStack[state.sqlCaseStack.length - 1] + 1;
+		}
+		return baseIndent + 3;
+	}
+
+	// END语句 - 与CASE对齐
+	if (upperText === "END" || upperText.startsWith("END ")) {
+		if (state.sqlCaseStack.length > 0) {
+			return state.sqlCaseStack.pop() || baseIndent;
+		}
+		return baseIndent + 2;
+	}
+
+	// 在CASE结构内的数值
+	if (caseDepth > 0) {
+		// 检查是否是纯数值或简单值
+		if (/^\d+$/.test(upperText) || upperText === "''" || upperText.match(/^'.*'$/)) {
+			return state.sqlCaseStack[state.sqlCaseStack.length - 1] + 1;
+		}
+	}
+
+	// 主要SQL关键字与cfquery标签对齐
+	const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
+	// if (
+	// 	mainKeywords.some((keyword) => {
+	// 		const reg = new RegExp(`^${keyword}(?=\\s|$)`, "i");
+	// 		const temp = reg.test(upperText);
+	// 		return temp;
+	// 	})
+	// ) {
+	// 	// baseIndent + 1; // SELECT缩进  20250819 這個地方有點奇怪。
+	// 	// if (sqlSubqueryStack.length > 0) {
+	// 	// 	return baseIndent + 1;
+	// 	// }
+	// 	return baseIndent;
+	// }
+	// 更好的執行代碼 ，但是可能擴展。
+	const mainnKeywordsRegex = /^(SELECT|INSERT|UPDATE|DELETE|WITH)(?=\s|$)/i;
+	if (mainnKeywordsRegex.test(upperText)) {
+		return baseIndent;
+	}
+
+	// FROM子句
+	if (upperText.startsWith("FROM")) {
+		// if (sqlSubqueryStack.length > 0) {
+		// 	return baseIndent + 1;
+		// }
+		return baseIndent;
+	}
+
+	// WHERE子句
+	if (upperText.startsWith("WHERE")) {
+		// if (sqlSubqueryStack.length > 0) {
+		// 	return baseIndent + 1;
+		// }
+		return baseIndent;
+	}
+
+	// ORDER BY等子句
+	const subKeywords = ["ORDER BY", "GROUP BY", "HAVING", "UNION"];
+	if (subKeywords.some((keyword) => upperText.startsWith(keyword))) {
+		return baseIndent;
+	}
+
+	// JOIN语句 mysqlを参照
+	if (
+		upperText.includes("JOIN") &&
+		(upperText.startsWith("INNER ") ||
+			upperText.startsWith("LEFT ") ||
+			upperText.startsWith("RIGHT ") ||
+			upperText.startsWith("FULL ") ||
+			upperText.startsWith("CROSS ") ||
+			upperText.startsWith("JOIN"))
+	) {
+		return baseIndent + 1;
+	}
+
+	// ON子句（JOIN条件）
+	if (upperText.startsWith("ON(") || upperText.startsWith("ON ")) {
+		return baseIndent + 1;
+	}
+
+	// AND/OR条件
+	if (upperText.startsWith("AND ") || upperText.startsWith("OR ")) {
+		return baseIndent + 1;
+	}
+
+	// 字段列表 - 所有字段（包括第一个）都缩进到相同层级
+	if (upperText.startsWith(",")) {
+		return baseIndent + 1;
+	}
+
+	// 检查是否是第一个字段（紧接在SELECT后面）
+	// if (lineIndex > 0) {
+	// 	const prevLine = document
+	// 		.lineAt(lineIndex - 1)
+	// 		.text.toUpperCase()
+	// 		.trim();
+	// 	if (prevLine === "SELECT") {
+	// 		// baseIndent + 2; // 第一个字段也缩进
+	// 		return baseIndent + 1; // 20250819 這個地方有點奇怪。
+	// 	}
+	// }
+
+	// 表名等其他内容
+	return baseIndent + 1;
+}
