@@ -21,7 +21,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ### フォーマット前後の例
 <div align="center">
-  <img src="./images/2025-08-22_17h45_38.gif" alt="插件演示">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">
 </div>
 
 ## English
