@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { createInitiaLState, FormatState } from "./FormatState";
 import { getSqlIndent } from "../formatter/cf_query";
-import { formatCommentLine, isFileHeaderComment, updateCommentState } from "../formatter/cf_comment";
+import { formatComment, formatCommentLine, isFileHeaderComment, updateCommentState } from "../formatter/cf_comment";
 import { formatCfsetMultiParams, getSpecialTagIndent, isCfsetWithMultipleParams } from "../formatter/cf_set";
 import { processCfscriptBrackets } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
@@ -26,23 +26,16 @@ export default class FormatterManager {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
 
-			// 更新注释状态（仅文件头注释）
-			updateCommentState(line.text, i, this.state, document);
-
 			// 跳过空行
 			if (text.length === 0) {
 				edits.push(vscode.TextEdit.replace(line.range, ""));
 				continue;
 			}
 
-			// 处理多行注释（仅文件头注释）
-			if (
-				(this.state.inMultiLineComment || text.startsWith("<!---") || text.endsWith("--->")) &&
-				isFileHeaderComment(i, this.state, document)
-			) {
-				const formattedLine = formatCommentLine(text, i, this.state, document);
-				edits.push(vscode.TextEdit.replace(line.range, formattedLine));
-				continue; // 跳过其他处理，直接处理下一行
+			// 處理注释行
+			const rest = formatComment(line, i, edits, this.state, document);
+			if (rest) {
+				continue; // 已經處理過注释行，跳过后续处理
 			}
 
 			const { tagName, isClosing, isSelfClosing } = parseTagName(text);

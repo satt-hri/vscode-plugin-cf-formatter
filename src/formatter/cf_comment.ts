@@ -1,6 +1,31 @@
 import { FormatState } from "../core/FormatState";
 import * as vscode from "vscode";
 
+export function formatComment(
+	line: vscode.TextLine,
+	lineIndex: number,
+	edits: vscode.TextEdit[],
+	state: FormatState,
+	document: vscode.TextDocument
+): boolean {
+	let text = line.text.trim();
+
+	// 更新注释状态（仅文件头注释）
+	updateCommentState(text, lineIndex, state, document);
+
+	// 处理多行注释（仅文件头注释）
+	if (
+		(state.inMultiLineComment || text.startsWith("<!---") || text.endsWith("--->")) &&
+		isFileHeaderComment(lineIndex, state, document)
+	) {
+		const formattedLine = formatCommentLine(text, lineIndex, state, document);
+		edits.push(vscode.TextEdit.replace(line.range, formattedLine));
+		return true; // 跳过其他处理，直接处理下一行
+	}
+
+	return false;
+}
+
 // 检查是否是文件开头的注释（在任何实际代码之前）
 export function isFileHeaderComment(lineIndex: number, state: FormatState, document: vscode.TextDocument): boolean {
 	// 检查从第一行到当前行之间是否只有注释或空行
@@ -21,12 +46,7 @@ export function isFileHeaderComment(lineIndex: number, state: FormatState, docum
 }
 
 // 检查多行注释状态（仅对文件头注释）
-export function updateCommentState(
-	text: string,
-	lineIndex: number,
-	state: FormatState,
-	document: vscode.TextDocument
-): void {
+function updateCommentState(text: string, lineIndex: number, state: FormatState, document: vscode.TextDocument): void {
 	// 只处理文件开头的注释
 	if (!isFileHeaderComment(lineIndex, state, document)) {
 		return;
@@ -44,12 +64,7 @@ export function updateCommentState(
 }
 
 // 格式化注释内容以实现对齐（仅文件头注释）
-export function formatCommentLine(
-	text: string,
-	lineIndex: number,
-	state: FormatState,
-	document: vscode.TextDocument
-): string {
+function formatCommentLine(text: string, lineIndex: number, state: FormatState, document: vscode.TextDocument): string {
 	// 只格式化文件开头的注释
 	if (!isFileHeaderComment(lineIndex, state, document)) {
 		return text; // 方法内注释保持原样

@@ -1,5 +1,3 @@
-import { warn } from "console";
-
 export type Lang = "en" | "zh-cn" | "ja";
 
 type MessageValue = string | ((...args: any[]) => string);
