@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 import { createInitiaLState, FormatState } from "./FormatState";
 import { getSqlIndent } from "../formatter/cf_query";
-import { formatComment, formatCommentLine, isFileHeaderComment, updateCommentState } from "../formatter/cf_comment";
-import { formatCfsetMultiParams, getSpecialTagIndent, isCfsetWithMultipleParams } from "../formatter/cf_set";
+import { formatComment } from "../formatter/cf_comment";
+import { formatCfset, getSpecialTagIndent } from "../formatter/cf_set";
 import { processCfscriptBrackets } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
 
@@ -26,14 +26,15 @@ export default class FormatterManager {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
 
-			// 跳过空行
+			// 1. 跳过空行
 			if (text.length === 0) {
 				edits.push(vscode.TextEdit.replace(line.range, ""));
 				continue;
 			}
 
-			// 處理注释行
-			const rest = formatComment(line, i, edits, this.state, document);
+			let rest = false;
+			// 2. 處理注释行
+			rest = formatComment(line, i, edits, this.state, document);
 			if (rest) {
 				continue; // 已經處理過注释行，跳过后续处理
 			}
@@ -41,44 +42,16 @@ export default class FormatterManager {
 			const { tagName, isClosing, isSelfClosing } = parseTagName(text);
 			let currentIndentLevel = this.state.indentLevel;
 
-			// 檢查是否是多參數的 cfset，需要特殊處理
-			if (tagName === "cfset" && isCfsetWithMultipleParams(text)) {
-				// 計算基礎縮進
-				let bracketIndent = 0;
-				if (this.state.inCfscript) {
-					if (text.includes("}") && !text.includes("{")) {
-						bracketIndent = Math.max(this.state.bracketStack.length - 1, 0);
-					} else {
-						bracketIndent = this.state.bracketStack.length;
-					}
-				}
-
-				// cfset 不會在 cfquery 內，所以 sqlIndent 為 0
-				let sqlIndent = 0;
-
-				let specialIndent = getSpecialTagIndent(tagName, this.state);
-				let baseIndentLevel = currentIndentLevel + bracketIndent + sqlIndent + specialIndent;
-
-				// 格式化多行 cfset
-				const formattedLines = formatCfsetMultiParams(text, baseIndentLevel, this.state);
-
-				// 為每一行創建編輯
-				if (formattedLines.length > 1) {
-					// 替換原行為第一行
-					edits.push(vscode.TextEdit.replace(line.range, formattedLines[0]));
-
-					// 在後面插入其他行
-					for (let j = 1; j < formattedLines.length; j++) {
-						const insertPosition = new vscode.Position(i + j, 0);
-						edits.push(vscode.TextEdit.insert(insertPosition, formattedLines[j] + "\n"));
-					}
-
-					// 跳過後續的常規處理
-					continue;
+			// 3. 处理标签名
+			// 3.1 檢查是否是多參數的 cfset，需要特殊處理
+			if (tagName === "cfset") {
+				rest = formatCfset(line, i, edits, this.state, document);
+				if (rest) {
+					continue; // 已經處理過注释行，跳过后续处理
 				}
 			}
 
-			// 处理结束标签
+			// 3.2 如果是结束标签，调整缩进
 			if (isClosing) {
 				// 特殊处理cfscript和cfquery
 				if (tagName === "cfscript") {
@@ -93,17 +66,15 @@ export default class FormatterManager {
 
 				// 弹出标签栈并调整缩进
 				if (this.state.tagStack.length > 0) {
-					const lastTag = this.state.tagStack.pop();
+					//const lastTag = this.state.tagStack.pop();
 					this.state.indentLevel = Math.max(this.state.indentLevel - 1, 0);
 					currentIndentLevel = this.state.indentLevel;
 				}
-			}
-			// 处理else类标签
-			else if (blockTags.elselike.includes(tagName)) {
+			} else if (blockTags.elselike.includes(tagName)) {
 				currentIndentLevel = Math.max(this.state.indentLevel - 1, 0);
 			}
 
-			// 处理cfscript内的大括号缩进
+			// 3.3处理cfscript内的大括号缩进
 			let bracketIndent = 0;
 			if (this.state.inCfscript) {
 				// 如果这行有闭合大括号，先减少缩进
@@ -114,19 +85,19 @@ export default class FormatterManager {
 				}
 			}
 
-			// 处理SQL缩进
+			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
 			if (this.state.inCfquery && tagName !== "cfquery") {
 				sqlIndent = getSqlIndent(text, i, this.state);
 			}
 
-			// 新增：处理特殊标签的缩进
+			// 3.5 新增：处理特殊标签的缩进
 			let specialIndent = 0;
 			if (isSelfClosing) {
 				specialIndent = getSpecialTagIndent(tagName, this.state);
 			}
 
-			// 计算最终缩进
+			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + bracketIndent + sqlIndent + specialIndent;
 			const indentChar = this.state.useSpaces ? " " : "\t";
 			const indentUnit = this.state.useSpaces ? this.state.indentSize : 1;
@@ -140,7 +111,7 @@ export default class FormatterManager {
 				processCfscriptBrackets(text, this.state);
 			}
 
-			// 处理开始标签
+			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
 				// 特殊处理cfscript和cfquery
 				if (tagName === "cfscript") {

@@ -14,20 +14,33 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 		return baseIndent; // 注释缩进与字段对齐
 	}
 
-	// 子查询的左括号 - 与FROM对齐
-	if (upperText.includes("(") && !upperText.includes(")")) {
+	const temp = compareBracket(text);
+	if (temp === 1) {
 		state.sqlSubqueryStack.push(baseIndent);
-		return baseIndent + 1;
-	}
-	if (upperText.includes(")") && !upperText.includes("(")) {
+		// if (!/ON\s*\($/.test(text)) {
+		// 	state.sqlSubqueryStack.push(baseIndent);
+		// }
+	} else if (temp === -1) {
 		state.sqlSubqueryStack.pop();
-		return baseIndent - 1;
+	} else {
+		if (/(.?)*\($/.test(text)) {
+			state.sqlSubqueryStack.push(baseIndent);
+		}
+	}
+	if (/^\)$/.test(text)  ) {
+		// 雖然是-1 但是默認是+1 的 所以效果上是 -2
+		baseIndent = Math.max(baseIndent - 1, 0);
+		return baseIndent;
 	}
 
-	// 子查询的右括号和别名 - 与FROM对齐
-	if (upperText === ") AS D" || upperText.startsWith(") AS ") || upperText === ")") {
-		state.sqlSubqueryStack.pop();
-		return baseIndent + 1;
+	const mainnKeywordsRegex = /^(SELECT|INSERT|UPDATE|DELETE|WITH)(?=\s|$)/i;
+	if (
+		mainnKeywordsRegex.test(upperText) ||
+		upperText.startsWith("FROM") ||
+		upperText.startsWith("WHERE") ||
+		["ORDER BY", "GROUP BY", "HAVING", "UNION"].some((keyword) => upperText.startsWith(keyword))
+	) {
+		return baseIndent;
 	}
 
 	// 处理CASE WHEN ELSE END结构
@@ -72,90 +85,63 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 			return state.sqlCaseStack[state.sqlCaseStack.length - 1] + 1;
 		}
 	}
-
-	// 主要SQL关键字与cfquery标签对齐
-	const mainKeywords = ["SELECT", "INSERT", "UPDATE", "DELETE", "WITH"];
-	// if (
-	// 	mainKeywords.some((keyword) => {
-	// 		const reg = new RegExp(`^${keyword}(?=\\s|$)`, "i");
-	// 		const temp = reg.test(upperText);
-	// 		return temp;
-	// 	})
-	// ) {
-	// 	// baseIndent + 1; // SELECT缩进  20250819 這個地方有點奇怪。
-	// 	// if (sqlSubqueryStack.length > 0) {
-	// 	// 	return baseIndent + 1;
-	// 	// }
-	// 	return baseIndent;
+	// // 子查询的左括号 - 与FROM对齐
+	// if (upperText.includes("(") && !upperText.includes(")")) {
+	// 	state.sqlSubqueryStack.push(baseIndent);
+	// 	return baseIndent + 1;
 	// }
-	// 更好的執行代碼 ，但是可能擴展。
-	const mainnKeywordsRegex = /^(SELECT|INSERT|UPDATE|DELETE|WITH)(?=\s|$)/i;
-	if (mainnKeywordsRegex.test(upperText)) {
-		return baseIndent;
-	}
+	// if (upperText.includes(")") && !upperText.includes("(")) {
+	// 	state.sqlSubqueryStack.pop();
+	// 	return baseIndent - 1;
+	// }
 
-	// FROM子句
-	if (upperText.startsWith("FROM")) {
-		// if (sqlSubqueryStack.length > 0) {
-		// 	return baseIndent + 1;
-		// }
-		return baseIndent;
-	}
-
-	// WHERE子句
-	if (upperText.startsWith("WHERE")) {
-		// if (sqlSubqueryStack.length > 0) {
-		// 	return baseIndent + 1;
-		// }
-		return baseIndent;
-	}
-
-	// ORDER BY等子句
-	const subKeywords = ["ORDER BY", "GROUP BY", "HAVING", "UNION"];
-	if (subKeywords.some((keyword) => upperText.startsWith(keyword))) {
-		return baseIndent;
-	}
+	// // 子查询的右括号和别名 - 与FROM对齐
+	// if (upperText === ") AS D" || upperText.startsWith(") AS ") || upperText === ")") {
+	// 	state.sqlSubqueryStack.pop();
+	// 	return baseIndent + 1;
+	// }
 
 	// JOIN语句 mysqlを参照
-	if (
-		upperText.includes("JOIN") &&
-		(upperText.startsWith("INNER ") ||
-			upperText.startsWith("LEFT ") ||
-			upperText.startsWith("RIGHT ") ||
-			upperText.startsWith("FULL ") ||
-			upperText.startsWith("CROSS ") ||
-			upperText.startsWith("JOIN"))
-	) {
-		return baseIndent + 1;
-	}
+	// if (
+	// 	upperText.includes("JOIN") &&
+	// 	(upperText.startsWith("INNER ") ||
+	// 		upperText.startsWith("LEFT ") ||
+	// 		upperText.startsWith("RIGHT ") ||
+	// 		upperText.startsWith("FULL ") ||
+	// 		upperText.startsWith("CROSS ") ||
+	// 		upperText.startsWith("JOIN"))
+	// ) {
+	// 	return baseIndent + 1;
+	// }
 
-	// ON子句（JOIN条件）
-	if (upperText.startsWith("ON(") || upperText.startsWith("ON ")) {
-		return baseIndent + 1;
-	}
+	// // ON子句（JOIN条件）
+	// if (upperText.startsWith("ON(") || upperText.startsWith("ON ")) {
+	// 	return baseIndent + 1;
+	// }
 
-	// AND/OR条件
-	if (upperText.startsWith("AND ") || upperText.startsWith("OR ")) {
-		return baseIndent + 1;
-	}
+	// // AND/OR条件
+	// if (upperText.startsWith("AND ") || upperText.startsWith("OR ")) {
+	// 	return baseIndent + 1;
+	// }
 
-	// 字段列表 - 所有字段（包括第一个）都缩进到相同层级
-	if (upperText.startsWith(",")) {
-		return baseIndent + 1;
-	}
-
-	// 检查是否是第一个字段（紧接在SELECT后面）
-	// if (lineIndex > 0) {
-	// 	const prevLine = document
-	// 		.lineAt(lineIndex - 1)
-	// 		.text.toUpperCase()
-	// 		.trim();
-	// 	if (prevLine === "SELECT") {
-	// 		// baseIndent + 2; // 第一个字段也缩进
-	// 		return baseIndent + 1; // 20250819 這個地方有點奇怪。
-	// 	}
+	// // 字段列表 - 所有字段（包括第一个）都缩进到相同层级
+	// if (upperText.startsWith(",")) {
+	// 	return baseIndent + 1;
 	// }
 
 	// 表名等其他内容
 	return baseIndent + 1;
+}
+
+function compareBracket(text: string): number {
+	const leftCount = (text.match(/\(/g) || []).length;
+	const rightCount = (text.match(/\)/g) || []).length;
+
+	if (leftCount > rightCount) {
+		return 1; // 有更多左括号
+	} else if (leftCount < rightCount) {
+		return -1; // 有更多右括号
+	} else {
+		return 0; // 左右括号数量相等
+	}
 }

@@ -1,8 +1,57 @@
 import { FormatState } from "../core/FormatState";
 import { blockTags } from "../utils/common";
+import * as vscode from "vscode";
+
+export function formatCfset(
+	line: vscode.TextLine,
+	lineIndex: number,
+	edits: vscode.TextEdit[],
+	state: FormatState,
+	document: vscode.TextDocument
+): boolean {
+	// 計算基礎縮進
+	let bracketIndent = 0;
+	let text = line.text.trim();
+	if (!isCfsetWithMultipleParams(text)) {
+		return false; // 如果不是多參數的 cfset，直接返回
+	}
+	if (state.inCfscript) {
+		if (text.includes("}") && !text.includes("{")) {
+			bracketIndent = Math.max(state.bracketStack.length - 1, 0);
+		} else {
+			bracketIndent = state.bracketStack.length;
+		}
+	}
+
+	// cfset 不會在 cfquery 內，所以 sqlIndent 為 0
+	let sqlIndent = 0;
+
+	let specialIndent = getSpecialTagIndent("tagName", state);
+	// currentIndentLevel = state.indentLevel;
+	let baseIndentLevel = state.indentLevel + bracketIndent + sqlIndent + specialIndent;
+
+	// 格式化多行 cfset
+	const formattedLines = formatCfsetMultiParams(text, baseIndentLevel, state);
+
+	// 為每一行創建編輯
+	if (formattedLines.length > 1) {
+		// 替換原行為第一行
+		edits.push(vscode.TextEdit.replace(line.range, formattedLines[0]));
+
+		// 在後面插入其他行
+		for (let j = 1; j < formattedLines.length; j++) {
+			const insertPosition = new vscode.Position(lineIndex + j, 0);
+			edits.push(vscode.TextEdit.insert(insertPosition, formattedLines[j] + "\n"));
+		}
+
+		// 跳過後續的常規處理
+		return true;
+	}
+	return false;
+}
 
 // 新增：檢查是否是多參數函數調用的 cfset
-export function isCfsetWithMultipleParams(text: string): boolean {
+function isCfsetWithMultipleParams(text: string): boolean {
 	console.log("檢查 cfset:", text);
 
 	// 檢查是否是 cfset 且包含函數調用
@@ -38,12 +87,12 @@ export function isCfsetWithMultipleParams(text: string): boolean {
 }
 
 // 新增：判斷是否在 cffunction 內部
-function isInCffunction(state:FormatState): boolean {
+function isInCffunction(state: FormatState): boolean {
 	return state.tagStack.includes("cffunction");
 }
 
 // 新增：獲取特殊標籤的額外縮進
-export function getSpecialTagIndent(tagName: string,state:FormatState): number {
+export function getSpecialTagIndent(tagName: string, state: FormatState): number {
 	if (blockTags.functionParam.includes(tagName)) {
 		// cfargument 應該與 cffunction 同級縮進 (實際上是 cffunction 的參數)
 		return 0;
@@ -55,7 +104,7 @@ export function getSpecialTagIndent(tagName: string,state:FormatState): number {
 }
 
 // 新增：格式化多參數的 cfset
-export function formatCfsetMultiParams(text: string, baseIndent: number,state:FormatState): string[] {
+function formatCfsetMultiParams(text: string, baseIndent: number, state: FormatState): string[] {
 	console.log("開始格式化多參數 cfset:", text);
 	console.log("基礎縮進:", baseIndent);
 
