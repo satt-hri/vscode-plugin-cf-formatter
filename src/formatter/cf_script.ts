@@ -30,6 +30,11 @@ export function formatCfscript(
 	state: FormatState,
 	document: vscode.TextDocument
 ): boolean {
+	    // 跳过已处理的行
+    if (lineIndex <= state.lastProcessLine) {
+        return false;
+    }
+
 	if (!state.inCfscript) {
 		return false; // 如果不在 cfscript 内，直接返回
 	}
@@ -42,7 +47,7 @@ export function formatCfscript(
 
 		if (isClosing && tagName === "cfscript") {
 			endLineIndex = i;
-			state.inCfscript = false;
+			//state.inCfscript = false;
 			//state.bracketStack.length = 0;
 			break; // 退出循环
 		} else {
@@ -83,7 +88,7 @@ export function formatCfscript(
 		// 添加编辑操作
 		edits.push(vscode.TextEdit.replace(replaceRange, indentedLines));
 
-		state.globalIndent = Math.max(endLineIndex - 1, lineIndex); // 更新全局缩进位置，跳过已处理的行
+		state.lastProcessLine = Math.max(endLineIndex - 1, lineIndex); // 更新全局缩进位置，跳过已处理的行
 		return true;
 	} catch (error) {}
 
