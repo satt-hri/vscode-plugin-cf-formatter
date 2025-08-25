@@ -3,7 +3,7 @@ import { createInitiaLState, FormatState } from "./FormatState";
 import { getSqlIndent } from "../formatter/cf_query";
 import { formatComment } from "../formatter/cf_comment";
 import { formatCfset, getSpecialTagIndent } from "../formatter/cf_set";
-import { processCfscriptBrackets } from "../formatter/cf_script";
+import { formatCfscript } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
 
 export default class FormatterManager {
@@ -21,10 +21,17 @@ export default class FormatterManager {
 	): vscode.TextEdit[] {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
+		let i = this.state.globalIndent || 0;
 
-		for (let i = 0; i < document.lineCount; i++) {
+		for (; i < document.lineCount; i++) {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
+
+			//
+			if (this.state.globalIndent > i) {
+				i = this.state.globalIndent;
+				continue;
+			}
 
 			// 1. 跳过空行
 			if (text.length === 0) {
@@ -78,11 +85,15 @@ export default class FormatterManager {
 			let bracketIndent = 0;
 			if (this.state.inCfscript) {
 				// 如果这行有闭合大括号，先减少缩进
-				if (text.includes("}") && !text.includes("{")) {
-					bracketIndent = Math.max(this.state.bracketStack.length - 1, 0);
-				} else {
-					bracketIndent = this.state.bracketStack.length;
+				rest = formatCfscript(line, i, edits, this.state, document);
+				if (rest) {
+					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
+				// if (text.includes("}") && !text.includes("{")) {
+				// 	bracketIndent = Math.max(this.state.bracketStack.length - 1, 0);
+				// } else {
+				// 	bracketIndent = this.state.bracketStack.length;
+				// }
 			}
 
 			// 3.4 处理SQL缩进
@@ -106,10 +117,10 @@ export default class FormatterManager {
 			// 应用格式化
 			edits.push(vscode.TextEdit.replace(line.range, indent + text));
 
-			// 处理cfscript大括号变化
-			if (this.state.inCfscript) {
-				processCfscriptBrackets(text, this.state);
-			}
+			// // 处理cfscript大括号变化
+			// if (this.state.inCfscript) {
+			// 	processCfscriptBrackets(text, this.state);
+			// }
 
 			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
@@ -127,10 +138,10 @@ export default class FormatterManager {
 			}
 
 			// 处理else类标签后的缩进恢复
-			if (blockTags.elselike.includes(tagName)) {
-				// else类标签本身不增加缩进，但后续内容需要缩进
-				// 这里不需要特殊处理，因为缩进在下一轮循环中会正确计算
-			}
+			// if (blockTags.elselike.includes(tagName)) {
+			// 	// else类标签本身不增加缩进，但后续内容需要缩进
+			// 	// 这里不需要特殊处理，因为缩进在下一轮循环中会正确计算
+			// }
 		}
 
 		return edits;
