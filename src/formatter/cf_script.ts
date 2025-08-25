@@ -90,7 +90,13 @@ export function formatCfscript(
 
 		state.lastProcessLine = Math.max(endLineIndex - 1, lineIndex); // 更新全局缩进位置，跳过已处理的行
 		return true;
-	} catch (error) {}
+	} catch (error) {
+
+		console.error("格式化 cfscript 时出错:", error);
+		return false;
+		//vscode.window.showErrorMessage("格式化 cfscript 时出错: " + error.message);
+	}
+
 
 	return false;
 }
