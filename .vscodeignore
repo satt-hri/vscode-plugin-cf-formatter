@@ -1,7 +1,7 @@
 .vscode/**
 .vscode-test/**
-node_modules/**
 src/**
+node_modules/**
 .gitignore
 .yarnrc
 webpack.config.js
@@ -11,3 +11,11 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/.vscode-test.*
+
+# 包含 dist 目录
+!dist/
+!dist/**
+
+# 包含 js-beautify
+!node_modules/js-beautify/
+!node_modules/js-beautify/**/*
