@@ -7,7 +7,7 @@ export interface FormatState {
 	useSpaces: boolean;
 
 	indentLevel: number;
-	globalIndent: number;
+	lastProcessLine: number;
 
 	inCfscript: boolean;
 	inCfquery: boolean;
@@ -27,7 +27,7 @@ export function createInitiaLState(): FormatState {
 		indentSize: 4,
 		useSpaces: false,
 		indentLevel: 0,
-		globalIndent: 0,
+		lastProcessLine: 0,
 		inCfscript: false,
 		inCfquery: false,
 		inString: false,

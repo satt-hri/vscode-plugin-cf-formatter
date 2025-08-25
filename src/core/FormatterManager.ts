@@ -21,15 +21,13 @@ export default class FormatterManager {
 	): vscode.TextEdit[] {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
-		let i = this.state.globalIndent || 0;
 
-		for (; i < document.lineCount; i++) {
+		for (let i=0; i < document.lineCount; i++) {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
 
 			//
-			if (this.state.globalIndent > i) {
-				i = this.state.globalIndent;
+			if (i < this.state.lastProcessLine ) {
 				continue;
 			}
 
