@@ -12,6 +12,7 @@ export function formatCfset(
 	// 計算基礎縮進
 	let bracketIndent = 0;
 	let text = line.text.trim();
+	return false; // 緊急修正：暫時不處理多參數的 cfset
 	if (!isCfsetWithMultipleParams(text)) {
 		return false; // 如果不是多參數的 cfset，直接返回
 	}

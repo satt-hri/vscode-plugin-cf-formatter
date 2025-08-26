@@ -1,14 +1,19 @@
 {
   "version": "2.0.0",
-  "configurations": [
+  "tasks": [
     {
-      "name": "Run Extension",
-      "type": "extensionHost",
-      "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
-      "outFiles": ["${workspaceFolder}/out/**/*.js"],
-      "preLaunchTask": "tsc: watch - tsconfig.json"
+      "type": "npm",
+      "script": "watch", // 对应 package.json 中的 watch 脚本
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "label": "webpack: watch"
     }
   ]
 }

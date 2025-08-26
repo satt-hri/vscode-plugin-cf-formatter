@@ -1,10 +1,7 @@
 <cfcomponent>
 	<cfprocessingdirective pageencoding="utf-8" suppresswhitespace="yes">
 
-<!--------------------------------------------------------------->
-	<!--- SCO一覧画面を表示（受講者画面）                         --->
-	<!--- コース構成を返す関数 履修条件を付けたので、CUSTOMとした --->
-	<!--------------------------------------------------------------->
+
 	<cffunction name="getCourseTreeCustom" access="remote" returntype="any" hint="コース構成を取得します。">
 		<cfargument name="course_id" type="numeric" required="yes" default="-1" hint="コースID" />
 		<cfargument name="item_list" type="string" required="yes" default="" hint="取得項目" />
@@ -13,7 +10,7 @@
 
 
 		<cftry>
-			<!--- course_masterの履歴表示情報を取得 --->
+<!--- course_masterの履歴表示情報を取得 --->
 			<cfquery name="get_hide" datasource="#Application.DSN#">
 				SELECT hide_score,
 					hide_result
@@ -44,6 +41,7 @@
 				<cfif get_sco_detail.sco_type eq 2>
 					<!--- フォルダ --->
 					<cfscript>
+						<!--- フォルダ --->
 						childTreeArray = getCourseTreeCustom(course_id, item_list, get_sco_detail
 						    .sco_id);
 					</cfscript>
@@ -87,71 +85,7 @@
 					</cfif>
 				</cfif>
 				<!--- 履歴を返すかどうかをチェック--->
-				<cfif user_id neq -1 and item_list neq "">
-					<cfquery name="get_sco_progress" datasource="#Application.DSN#">
-						SELECT #ArrayToList( itemList )#,
-							<cfif get_hide.hide_score eq "0">
-								raw_score,
-							<cfelse>
-								'' as raw_score,
-							</cfif>
-							<cfif get_hide.hide_result eq "0">
-								<cfif item_list eq "*">
-									DATE_FORMAT(last_lecture_date,'%Y/%m/%d %k:%i:%s') as latestDate,
-								</cfif>
-							<!--- 合否を隠さない --->
-									CASE
-										WHEN sco_progress.success_status = 'passed' THEN 'passed'
-										WHEN sco_progress.success_status = 'failed' THEN 'failed'
-										WHEN sco_progress.completion_status = 'passed' THEN 'passed'
-										WHEN sco_progress.completion_status = 'failed' THEN 'failed'
-										WHEN sco_progress.completion_status = 'completed' THEN 'completed'
-										WHEN sco_progress.completion_status = 'incomplete' THEN 'incomplete'
-										WHEN sco_progress.completion_status = 'not attempted' THEN 'not attempted'
-										WHEN sco_progress.completion_status = 'unknown' THEN 'unknown'
-										WHEN sco_progress.completion_status = 'browsed' THEN 'browsed'
-										WHEN sco_progress.success_status = 'unknown' THEN 'unknown'
-									END AS total_status
-							<cfelse>
-								<cfif item_list eq "*">
-									DATE_FORMAT(last_lecture_date,'%Y/%m/%d %k:%i:%s') as latestDate,
-								</cfif>
-							<!--- 合否を隠す --->
-									CASE
-										WHEN sco_progress.success_status = 'passed' THEN 'completed'
-										WHEN sco_progress.success_status = 'failed' THEN 'completed'
-										WHEN sco_progress.completion_status = 'passed' THEN 'completed'
-										WHEN sco_progress.completion_status = 'failed' THEN 'completed'
-										WHEN sco_progress.completion_status = 'completed' THEN 'completed'
-										WHEN sco_progress.completion_status = 'incomplete' THEN 'incomplete'
-										WHEN sco_progress.completion_status = 'not attempted' THEN 'not attempted'
-										WHEN sco_progress.completion_status = 'unknown' THEN 'unknown'
-										WHEN sco_progress.completion_status = 'browsed' THEN 'browsed'
-										WHEN sco_progress.success_status = 'unknown' THEN 'unknown'
-									END AS total_status
-							</cfif>
-						FROM   sco_progress
-						WHERE  user_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#user_id#" />
-							AND	   course_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#course_id#" />
-							AND	   sco_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#get_sco_detail.sco_id#" />
-					</cfquery>
-					<cfif get_sco_progress.recordcount eq 1>
-						<cfloop index="i" from="1" to="#ArrayLen( itemList )#" step="1">
-							<cfset StructInsert( workStruct, itemList[i], Evaluate( "get_sco_progress.#itemList[i]#" ) ) />
-						</cfloop>
-						<!--- CASEのtotal_statusを追加--->
-						<cfset StructInsert( workStruct, "raw_score", get_sco_progress.raw_score ) />
-						<cfset StructInsert( workStruct, "total_status", get_sco_progress.total_status ) />
-						<cfset StructInsert( workStruct, "latestDate", get_sco_progress.latestDate ) />
-					<cfelse>
-						<cfloop index="i" from="1" to="#ArrayLen( itemList )#" step="1">
-							<cfset StructInsert( workStruct, itemList[i], "" ) />
-						</cfloop>
-						<!--- CASEのtotal_statusを追加--->
-						<cfset StructInsert( workStruct, "raw_score", "" ) />
-						<cfset StructInsert( workStruct, "total_status", "" ) />
-					</cfif>
-				</cfif>
+
 				<!--- 履修条件 教材名（pre_sco_idName）, 起動可能かどうか（pre_sco_exec："1"起動OK)を返す --->
 				<cfquery name="get_precondition_sco" datasource="#Application.DSN#">
 					SELECT precondition_sco.pre_sco_id,

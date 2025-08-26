@@ -88,7 +88,7 @@ export function formatCfscript(
 		// 添加编辑操作
 		edits.push(vscode.TextEdit.replace(replaceRange, indentedLines));
 
-		state.lastProcessLine = Math.max(endLineIndex - 1, lineIndex); // 更新全局缩进位置，跳过已处理的行
+		state.lastProcessLine = Math.max(endLineIndex, lineIndex); // 更新全局缩进位置，跳过已处理的行
 		return true;
 	} catch (error) {
 

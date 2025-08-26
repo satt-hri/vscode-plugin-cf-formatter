@@ -16,11 +16,11 @@ export function activate(context: vscode.ExtensionContext) {
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
 		): vscode.TextEdit[] {
-			console.log("格式化器被调用！");
-			console.log("文档语言ID:", document.languageId);
-			console.log("文档行数:", document.lineCount);
-			console.log("文档文件名:", document.fileName);
-			console.log("格式化选项:", options);
+			// console.log("格式化器被调用！");
+			// console.log("文档语言ID:", document.languageId);
+			// console.log("文档行数:", document.lineCount);
+			// console.log("文档文件名:", document.fileName);
+			// console.log("格式化选项:", options);
 			const manager = new FormatterManager();
 
 			const ext = path.extname(document.fileName).toLowerCase();
@@ -56,8 +56,8 @@ export function activate(context: vscode.ExtensionContext) {
 	const debugCommand = vscode.commands.registerCommand("satt.cfml.debug", () => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
-			console.log("当前文件语言ID:", editor.document.languageId);
-			console.log("当前文件路径:", editor.document.fileName);
+		//	console.log("当前文件语言ID:", editor.document.languageId);
+			//console.log("当前文件路径:", editor.document.fileName);
 			const val = messages.langInfo[lang];
 			vscode.window.showInformationMessage(
 				typeof val === "function" ? val(editor.document.languageId, editor.document.fileName) : val
@@ -82,8 +82,8 @@ export function activate(context: vscode.ExtensionContext) {
 			return;
 		}
 
-		console.log("手动格式化命令被调用");
-		console.log("文档语言ID1:", editor.document.languageId);
+		//console.log("手动格式化命令被调用");
+		//console.log("文档语言ID1:", editor.document.languageId);
 
 		try {
 			// 直接调用我们的格式化器，提供所需的参数y
@@ -97,6 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			// 处理可能的Promise返回值
 			const edits = await Promise.resolve(editsResult);
+			//console.log("计算得到的编辑操作:", edits);
 
 			if (edits && edits.length > 0) {
 				await editor.edit((editBuilder: vscode.TextEditorEdit) => {
