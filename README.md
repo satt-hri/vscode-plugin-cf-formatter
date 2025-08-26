@@ -19,6 +19,25 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 - `.cfc` ファイルのインデント整形は安定して動作
 - `.cfm` ファイルは整形が不正確な場合あり、今後改善予定
 
+### CFML フォーマッタ デフォルト設定
+
+| 設定項目 | デフォルト値 | 型 | 説明 |
+| ------ | ------ | ---- | ---- |
+| `hri.cfml.formatter.indentWithTabs` | `true` | boolean | インデントにスペースではなくタブを使用する。 |
+| `hri.cfml.formatter.indentSize` | `4` | number | スペースでインデントする場合のスペース数。範囲：1–10。 |
+| `hri.cfml.formatter.indentChar` | `" "` | string | インデントに使用する文字：スペース `" "` または `\t`。※この設定は `indentWithTabs` によって上書きされる。 |
+| `hri.cfml.formatter.wrapLineLength` | `0` | number | この文字数を超えると改行。`0` は制限なし。 |
+| `hri.cfml.formatter.maxPreserveNewlines` | `2` | number | 連続して保持する改行の最大数。範囲：0–10。 |
+| `hri.cfml.formatter.preserveNewlines` | `true` | boolean | 既存の改行を保持するかどうか。 |
+| `hri.cfml.formatter.keepArrayIndentation` | `false` | boolean | 配列の元のインデントを保持するかどうか（再インデントしない）。 |
+| `hri.cfml.formatter.braceStyle` | `"collapse"` | string | 波括弧のスタイル：`collapse`（同じ行）、`expand`（改行）、`end-expand`（関数/ブロックのみ改行）、`none`（元のまま）。 |
+| `hri.cfml.formatter.breakChainedMethods` | `false` | boolean | メソッドチェーンを複数行に分割するかどうか。 |
+| `hri.cfml.formatter.spaceBeforeConditional` | `true` | boolean | 条件文（if, while, for）の前にスペースを入れるかどうか。 |
+| `hri.cfml.formatter.endWithNewline` | `false` | boolean | ファイルの末尾に改行を追加するかどうか。 |
+
+⚙️ **設定方法**  
+VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると、上記のデフォルト設定を変更できます。  
+
 ### フォーマット前後の例
 <div align="center">
   <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">

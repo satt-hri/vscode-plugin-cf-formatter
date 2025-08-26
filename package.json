@@ -13,7 +13,6 @@
   "categories": [
     "Formatters"
   ],
-  
   "activationEvents": [
     "onLanguage:cfml",
     "onLanguage:cfc"
@@ -58,7 +57,82 @@
         "key": "shift+alt+m",
         "when": "editorLangId == cfml && editorTextFocus"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Format CFML (satt)",
+      "properties": {
+        "hri.cfml.formatter.indentWithTabs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Use tabs for indentation instead of spaces."
+        },
+        "hri.cfml.formatter.indentSize": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Number of spaces to use for indentation when using spaces."
+        },
+        "hri.cfml.formatter.indentChar": {
+          "type": "string",
+          "default": " ",
+          "enum": [
+            " ",
+            "\t"
+          ],
+          "description": "Character to use for indentation. ' ' (space) or '\\t' (tab). Note: This setting is overridden by indentWithTabs."
+        },
+        "hri.cfml.formatter.wrapLineLength": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Maximum line length before wrapping. Set to 0 for no limit."
+        },
+        "hri.cfml.formatter.maxPreserveNewlines": {
+          "type": "number",
+          "default": 2,
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Maximum number of consecutive newlines to preserve in the output."
+        },
+        "hri.cfml.formatter.preserveNewlines": {
+          "type": "boolean",
+          "default": true,
+          "description": "Preserve existing line breaks in the output."
+        },
+        "hri.cfml.formatter.keepArrayIndentation": {
+          "type": "boolean",
+          "default": false,
+          "description": "Preserve the original indentation of arrays instead of re-indenting them."
+        },
+        "hri.cfml.formatter.braceStyle": {
+          "type": "string",
+          "default": "collapse",
+          "enum": [
+            "collapse",
+            "expand",
+            "end-expand",
+            "none"
+          ],
+          "description": "Brace style to use. 'collapse': opening brace on same line, 'expand': opening brace on new line, 'end-expand': new line for functions/blocks only, 'none': keep original position."
+        },
+        "hri.cfml.formatter.breakChainedMethods": {
+          "type": "boolean",
+          "default": false,
+          "description": "Break chained method calls across multiple lines."
+        },
+        "hri.cfml.formatter.spaceBeforeConditional": {
+          "type": "boolean",
+          "default": true,
+          "description": "Add space before conditional statements (if, while, for)."
+        },
+        "hri.cfml.formatter.endWithNewline": {
+          "type": "boolean",
+          "default": false,
+          "description": "End files with a newline character."
+        }
+      }
+    }
   },
   "devDependencies": {
     "@types/js-beautify": "^1.14.3",

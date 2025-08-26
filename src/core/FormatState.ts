@@ -16,16 +16,19 @@ export interface FormatState {
 
 	sqlCaseStack: number[];
 	sqlSubqueryStack: number[];
-    tagStack: string[];
+	tagStack: string[];
 	bracketStack: string[];
-
 }
 
 export function createInitiaLState(): FormatState {
+	// 读取用户配置
+	const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
+	const useTab = config.get<boolean>("indentWithTabs", true);
+
 	return {
 		lang: vscode.env.language as Lang,
-		indentSize: 4,
-		useSpaces: false,
+		indentSize: useTab ? 1 : config.get<number>("indentSize", 4),
+		useSpaces: useTab ? false : true,
 		indentLevel: 0,
 		lastProcessLine: 0,
 		inCfscript: false,
@@ -34,7 +37,7 @@ export function createInitiaLState(): FormatState {
 		inMultiLineComment: false,
 		sqlCaseStack: [],
 		sqlSubqueryStack: [],
-        tagStack: [],
-        bracketStack: [],
+		tagStack: [],
+		bracketStack: [],
 	};
 }

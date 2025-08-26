@@ -3,21 +3,25 @@ import beautify from "js-beautify";
 import * as vscode from "vscode";
 import { parseTagName } from "../utils/common";
 
+const  config  = vscode.workspace.getConfiguration("hri.cfml.formatter")
+//console.log("config", config);
+
+//tab缩进 が優先
+const  useTab  = config.get<boolean>("indentWithTabs", true)
+
 const jsOptions: js_beautify.JSBeautifyOptions = {
-	indent_size: 4,
-	indent_char: " ",
-	max_preserve_newlines: 2,
-	preserve_newlines: true,
-	keep_array_indentation: false,
-	break_chained_methods: false,
-	//indent_scripts: "normal",
-	brace_style: "collapse",
-	space_before_conditional: true,
+	indent_size: useTab ? 1 : config.get<number>("indentSize", 4),
+	indent_char: useTab ? "\t" : " ",
+	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 2),
+	preserve_newlines: config.get<boolean>("preserveNewlines", true),
+	keep_array_indentation: config.get<boolean>("keepArrayIndentation", false),
+	break_chained_methods: config.get<boolean>("breakChainedMethods", false),
+	brace_style: config.get<string>("braceStyle", "collapse") as any,
+	space_before_conditional: config.get<boolean>("spaceBeforeConditional", true),
 	unescape_strings: false,
 	jslint_happy: false,
-	end_with_newline: false,
-	wrap_line_length: 80,
-	//indent_inner_html: false,
+	end_with_newline: config.get<boolean>("endWithNewline", false),
+	wrap_line_length: config.get<number>("wrapLineLength", 0), // 0 means no limit
 	comma_first: false,
 	e4x: false,
 	indent_empty_lines: false,
@@ -96,7 +100,4 @@ export function formatCfscript(
 		return false;
 		//vscode.window.showErrorMessage("格式化 cfscript 时出错: " + error.message);
 	}
-
-
-	return false;
 }
