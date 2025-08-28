@@ -86,7 +86,7 @@ export function formatCfscript(
 		const replaceRange = new vscode.Range(startPos, endPos);
 
 		// 添加编辑操作
-		console.log("格式化 cfscript:", lineIndex, i);
+		//console.log("格式化 cfscript:", lineIndex, i);
 		edits.push(vscode.TextEdit.replace(replaceRange, indentedLines));
 
 		return true;

@@ -76,7 +76,7 @@ export default class FormatterManager {
 
 				// 弹出标签栈并调整缩进
 				if (this.state.tagStack.length > 0) {
-					//const lastTag = this.state.tagStack.pop();
+					this.state.tagStack.pop();
 					this.state.indentLevel = Math.max(this.state.indentLevel - 1, 0);
 					currentIndentLevel = this.state.indentLevel;
 				}
@@ -84,18 +84,14 @@ export default class FormatterManager {
 				currentIndentLevel = Math.max(this.state.indentLevel - 1, 0);
 			}
 
-			// 3.3处理cfscript内的大括号缩进
-			let bracketIndent = 0;
-
 			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
 			if (this.state.inCfquery && tagName !== "cfquery") {
 				sqlIndent = getSqlIndent(text, i, this.state);
 			}
 
-
 			// 3.6 计算最终缩进
-			const totalIndent = currentIndentLevel + bracketIndent + sqlIndent;
+			const totalIndent = currentIndentLevel + sqlIndent;
 			const indent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
 
 			// 应用格式化
@@ -108,6 +104,7 @@ export default class FormatterManager {
 					this.state.inCfquery = true;
 					// 重置SQL CASE栈
 					this.state.sqlCaseStack.length = 0;
+					this.state.sqlSubqueryStack.length = 0;
 				}
 
 				this.state.tagStack.push(tagName);

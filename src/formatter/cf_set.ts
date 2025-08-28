@@ -23,14 +23,14 @@ export function formatCfset(
 
 	//原來内容是一行
 	if (/^<cfset\b.*\/?\s*>$/i.test(text)) {
-		console.log("cfset 單行:", lineIndex,text);
+		//console.log("cfset 單行:", lineIndex,text);
 		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
 		return true; // 如果是单行 cfset，直接返回
 	}
 	// 只處理多參數的 cfset
 	///^<cfset\b(?!.*>\s*$)/i
 	if (/^<cfset\b(?!.*\/?\s*>\s*$)/i.test(text)) {
-		console.log("cfset d多行開始:", lineIndex, text);
+		//console.log("cfset d多行開始:", lineIndex, text);
 		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
 		let index = lineIndex + 1;
 		for (; index < document.lineCount; index++) {
@@ -39,11 +39,11 @@ export function formatCfset(
 
 			if (/(?<!-)>$/.test(temText)) {
 				edits.push(vscode.TextEdit.replace(templine.range, baseIndent + temText));
-				console.log("cfset 多行結束:", index, temText);
+				//console.log("cfset 多行結束:", index, temText);
 				break;
 			}
 
-			console.log("cfset", index, temText);
+			//console.log("cfset", index, temText);
 			edits.push(
 				vscode.TextEdit.replace(
 					templine.range,
