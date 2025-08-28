@@ -37,25 +37,20 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ### ⚙️ CFML フォーマッタ デフォルト設定
 
-<style>
-table {
-  font-size: 10px; /* 字体更小 */
-}
-</style>
-
 | 設定項目 | デフォルト値 | 型 | 説明 |
 | -------- | ------------ | ---- | ---- |
-| `hri.cfml.formatter.indentWithTabs` | `true` | boolean | インデントにスペースではなくタブを使用する。 |
-| `hri.cfml.formatter.indentSize` | `4` | number | スペースでインデントする場合のスペース数（1–10）。 |
-| `hri.cfml.formatter.indentChar` | `" "` | string | インデント文字：スペース `" "` または `\t`。`indentWithTabs` で上書きされる。 |
-| `hri.cfml.formatter.wrapLineLength` | `0` | number | この文字数を超えると改行。`0` は制限なし。 |
-| `hri.cfml.formatter.maxPreserveNewlines` | `2` | number | 連続して保持する改行の最大数（0–10）。 |
-| `hri.cfml.formatter.preserveNewlines` | `true` | boolean | 既存の改行を保持するかどうか。 |
-| `hri.cfml.formatter.keepArrayIndentation` | `false` | boolean | 配列の元のインデントを保持するかどうか。 |
-| `hri.cfml.formatter.braceStyle` | `"collapse"` | string | 波括弧スタイル：`collapse` / `expand` / `end-expand` / `none`。 |
-| `hri.cfml.formatter.breakChainedMethods` | `false` | boolean | メソッドチェーンを複数行に分割するかどうか。 |
-| `hri.cfml.formatter.spaceBeforeConditional` | `true` | boolean | 条件文（if, while, for）の前にスペースを入れるか。 |
-| `hri.cfml.formatter.endWithNewline` | `false` | boolean | ファイル末尾に改行を追加するかどうか。 |
+| <small>`hri.cfml.formatter.indentWithTabs`</small> | <small>`true`</small> | <small>boolean</small> | <small>インデントにスペースではなくタブを使用する。</small> |
+| <small>`hri.cfml.formatter.indentSize`</small> | <small>`4`</small> | <small>number</small> | <small>スペースでインデントする場合のスペース数（1–10）。</small> |
+| <small>`hri.cfml.formatter.indentChar`</small> | <small>`" "`</small> | <small>string</small> | <small>インデント文字：スペース `" "` または `\t`。`indentWithTabs` で上書きされる。</small> |
+| <small>`hri.cfml.formatter.wrapLineLength`</small> | <small>`0`</small> | <small>number</small> | <small>この文字数を超えると改行。`0` は制限なし。</small> |
+| <small>`hri.cfml.formatter.maxPreserveNewlines`</small> | <small>`2`</small> | <small>number</small> | <small>連続して保持する改行の最大数（0–10）。</small> |
+| <small>`hri.cfml.formatter.preserveNewlines`</small> | <small>`true`</small> | <small>boolean</small> | <small>既存の改行を保持するかどうか。</small> |
+| <small>`hri.cfml.formatter.keepArrayIndentation`</small> | <small>`false`</small> | <small>boolean</small> | <small>配列の元のインデントを保持するかどうか。</small> |
+| <small>`hri.cfml.formatter.braceStyle`</small> | <small>`"collapse"`</small> | <small>string</small> | <small>波括弧スタイル：`collapse` / `expand` / `end-expand` / `none`。</small> |
+| <small>`hri.cfml.formatter.breakChainedMethods`</small> | <small>`false`</small> | <small>boolean</small> | <small>メソッドチェーンを複数行に分割するかどうか。</small> |
+| <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small> | <small>boolean</small> | <small>条件文（if, while, for）の前にスペースを入れるか。</small> |
+| <small>`hri.cfml.formatter.endWithNewline`</small> | <small>`false`</small> | <small>boolean</small> | <small>ファイル末尾に改行を追加するかどうか。</small> |
+
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね
