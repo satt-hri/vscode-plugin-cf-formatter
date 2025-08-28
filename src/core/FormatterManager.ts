@@ -22,12 +22,12 @@ export default class FormatterManager {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
 
-		for (let i=0; i < document.lineCount; i++) {
+		for (let i = 0; i < document.lineCount; i++) {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
 
 			//
-			if (i < this.state.lastProcessLine ) {
+			if (i < this.state.lastProcessLine) {
 				continue;
 			}
 
@@ -87,11 +87,6 @@ export default class FormatterManager {
 				if (rest) {
 					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
-				// if (text.includes("}") && !text.includes("{")) {
-				// 	bracketIndent = Math.max(this.state.bracketStack.length - 1, 0);
-				// } else {
-				// 	bracketIndent = this.state.bracketStack.length;
-				// }
 			}
 
 			// 3.4 处理SQL缩进
@@ -115,11 +110,6 @@ export default class FormatterManager {
 			// 应用格式化
 			edits.push(vscode.TextEdit.replace(line.range, indent + text));
 
-			// // 处理cfscript大括号变化
-			// if (this.state.inCfscript) {
-			// 	processCfscriptBrackets(text, this.state);
-			// }
-
 			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
 				// 特殊处理cfscript和cfquery
@@ -134,12 +124,6 @@ export default class FormatterManager {
 				this.state.tagStack.push(tagName);
 				this.state.indentLevel++;
 			}
-
-			// 处理else类标签后的缩进恢复
-			// if (blockTags.elselike.includes(tagName)) {
-			// 	// else类标签本身不增加缩进，但后续内容需要缩进
-			// 	// 这里不需要特殊处理，因为缩进在下一轮循环中会正确计算
-			// }
 		}
 
 		return edits;

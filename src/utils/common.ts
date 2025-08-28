@@ -41,6 +41,7 @@ export const blockTags = {
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
+		"cfargument",
 		"cfreturn",
 		"cfbreak",
 		"cfcontinue",
@@ -62,7 +63,7 @@ export const blockTags = {
 		"cfpdf",
 	],
 	// 新增：需要特殊處理的標籤
-	functionParam: ["cfargument"], // 函数参数标签
+	//functionParam: ["cfargument"], // 函数参数标签
 	functionContent: ["cfset"], // 函数内容标签
 };
 
@@ -115,7 +116,7 @@ export function parseTagName(line: string): { tagName: string; isClosing: boolea
 		const isSelfClosing =
 			trimmed.endsWith("/>") ||
 			blockTags.selfClosing.includes(tagName) ||
-			blockTags.functionParam.includes(tagName) ||
+			//blockTags.functionParam.includes(tagName) ||
 			blockTags.functionContent.includes(tagName) ||
 			(tagName.startsWith("cf") &&
 				(trimmed.includes(" />") || (!trimmed.includes(">") && !blockTags.opening.includes(tagName))));

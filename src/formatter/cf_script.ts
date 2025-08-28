@@ -51,8 +51,6 @@ export function formatCfscript(
 
 		if (isClosing && tagName === "cfscript") {
 			endLineIndex = i;
-			//state.inCfscript = false;
-			//state.bracketStack.length = 0;
 			break; // 退出循环
 		} else {
 			lines.push(text);
@@ -98,6 +96,5 @@ export function formatCfscript(
 
 		console.error("格式化 cfscript 时出错:", error);
 		return false;
-		//vscode.window.showErrorMessage("格式化 cfscript 时出错: " + error.message);
 	}
 }

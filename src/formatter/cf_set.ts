@@ -94,14 +94,15 @@ function isInCffunction(state: FormatState): boolean {
 
 // 新增：獲取特殊標籤的額外縮進
 export function getSpecialTagIndent(tagName: string, state: FormatState): number {
-	if (blockTags.functionParam.includes(tagName)) {
-		// cfargument 應該與 cffunction 同級縮進 (實際上是 cffunction 的參數)
-		return 0;
-	} else if (blockTags.functionContent.includes(tagName)) {
-		// cfset 應該作為 cffunction 的內容，額外縮進一層
-		return isInCffunction(state) && false ? 1 : 0; // 緊急修正：暫時不處理多參數的 cfset
-	}
-	return 0;
+	return 0; // 緊急修正：暫時不處理多參數的 cfset
+	// if (blockTags.functionParam.includes(tagName)) {
+	// 	// cfargument 應該與 cffunction 同級縮進 (實際上是 cffunction 的參數)
+	// 	return 0;
+	// } else if (blockTags.functionContent.includes(tagName)) {
+	// 	// cfset 應該作為 cffunction 的內容，額外縮進一層
+	// 	return isInCffunction(state) && false ? 1 : 0; // 緊急修正：暫時不處理多參數的 cfset
+	// }
+	// return 0;
 }
 
 // 新增：格式化多參數的 cfset

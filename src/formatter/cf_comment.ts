@@ -84,7 +84,7 @@ function formatCommentLine(text: string, lineIndex: number, state: FormatState, 
 		return trimmed;
 	}
 
-	// 注释内容行的格式化
+	// 注释内容行的格式化　全商カスタマイズ
 	if (state.inMultiLineComment && trimmed !== "") {
 		// 检查是否是标准的字段行（Name, Author, Created等）
 		const fieldMatch = trimmed.match(/^(Name|Author|Created|Last Updated|History|Purpose)\s*:\s*(.*)$/);
