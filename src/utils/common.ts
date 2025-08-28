@@ -19,6 +19,7 @@ export const blockTags = {
 		"cfform",
 		"cftable",
 		"cfselect",
+		"cfinvoke"
 	],
 	closing: [
 		"cffunction",
@@ -38,6 +39,7 @@ export const blockTags = {
 		"cfform",
 		"cftable",
 		"cfselect",
+		"cfinvoke"
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
@@ -48,7 +50,6 @@ export const blockTags = {
 		"cfthrow",
 		"cfinclude",
 		"cfmodule",
-		"cfinvoke",
 		"cfparam",
 		"cfheader",
 		"cfcookie",
@@ -61,6 +62,7 @@ export const blockTags = {
 		"cfimage",
 		"cfdocument",
 		"cfpdf",
+		"cfinvokearguments",
 	],
 	// 新增：需要特殊處理的標籤
 	//functionParam: ["cfargument"], // 函数参数标签
