@@ -2,9 +2,9 @@
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
   "publisher": "hri",
-  "description": "CFML 自动格式化插件，只保留缩进格式化功能",
+  "description": "CFML Indent Formatter / CFML 自动缩进",
   "icon": "images/icon.png",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": "SATT李",
   "license": "MIT",
   "engines": {

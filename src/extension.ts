@@ -29,26 +29,6 @@ export function activate(context: vscode.ExtensionContext) {
 				return []; // 只处理 .cfc 文件
 			}
 			return manager.formatDocument(document, options, token);
-
-			// const edits: vscode.TextEdit[] = [];
-			// let indentLevel = 0;
-			// let inCfscript = false;
-			// let inCfquery = false;
-			// let inString = false;
-			// let stringChar = "";
-			// let inMultiLineComment = false; // 新增：跟踪多行注释状态
-
-			// // SQL CASE WHEN 结构跟踪
-			// let sqlCaseStack: number[] = []; // 跟踪CASE语句的嵌套层级
-			// let sqlSubqueryStack: number[] = []; // 跟踪子查询的嵌套层级
-
-			// // 使用格式化选项中的缩进设置
-			// const indentSize = options.tabSize || 2;
-			// const useSpaces = false; // 強制使用 tab 縮進
-
-			// // 使用栈来跟踪嵌套结构
-			// const tagStack: string[] = []; // 跟踪未闭合的标签
-			// const bracketStack: string[] = []; // 在 CFScript 中跟踪 {} 嵌套
 		},
 	};
 

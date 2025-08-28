@@ -3,13 +3,13 @@ import beautify from "js-beautify";
 import * as vscode from "vscode";
 import { parseTagName } from "../utils/common";
 
-const  config  = vscode.workspace.getConfiguration("hri.cfml.formatter")
+const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
 //console.log("config", config);
 
 //tab缩进 が優先
-const  useTab  = config.get<boolean>("indentWithTabs", true)
+const useTab = config.get<boolean>("indentWithTabs", true);
 
-const jsOptions: js_beautify.JSBeautifyOptions = {
+export const jsOptions: js_beautify.JSBeautifyOptions = {
 	indent_size: useTab ? 1 : config.get<number>("indentSize", 4),
 	indent_char: useTab ? "\t" : " ",
 	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 2),
@@ -34,66 +34,63 @@ export function formatCfscript(
 	state: FormatState,
 	document: vscode.TextDocument
 ): boolean {
-	    // 跳过已处理的行
-    if (lineIndex <= state.lastProcessLine) {
-        return false;
-    }
-
-	if (!state.inCfscript) {
-		return false; // 如果不在 cfscript 内，直接返回
+	// 跳过已处理的行
+	let text = line.text.trim();
+	const { tagName, isClosing } = parseTagName(text);
+	if (tagName !== "cfscript" || text.length == 0) {
+		return false; // 只處理 cfset 標籤
 	}
+
+	const totalIndent = state.indentLevel;
+	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+
+	// 開始 <cfscript> 標籤
+	if (!isClosing && /^<cfscript\b.*>$/i.test(text)) {
+		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
+	}
+	// 中間内容
 	const lines: string[] = [];
-	let endLineIndex = -1;
-	for (let i = lineIndex; i < document.lineCount; i++) {
-		const line = document.lineAt(i);
-		let text = line.text.trim();
-		const { tagName, isClosing, isSelfClosing } = parseTagName(text);
+	let i = lineIndex + 1;
+	for (; i < document.lineCount; i++) {
+		const templine = document.lineAt(i);
+		const temText = templine.text.trim();
+		const { tagName, isClosing } = parseTagName(temText);
 
 		if (isClosing && tagName === "cfscript") {
-			endLineIndex = i;
+			edits.push(vscode.TextEdit.replace(templine.range, baseIndent + temText));
 			break; // 退出循环
 		} else {
-			lines.push(text);
+			lines.push(temText);
 		}
 	}
 
-	// 如果没有找到结束标签，返回 false
-	if (endLineIndex === -1) {
-		return false;
-	}
-
+	state.lastProcessLine = i; // 更新全局缩进位置，跳过已处理的行
 	const scriptContent = lines.join("\n");
 	if (scriptContent.trim() === "") {
-		return false; // 如果 cfscript 内容为空，直接返回
+		return true; // 如果 cfscript 内容为空，直接返回
 	}
 
 	try {
 		const formattedCode = beautify.js(scriptContent, jsOptions);
 
-		const totalIndent = state.indentLevel;
-		const indentChar = state.useSpaces ? " " : "\t";
-		const indentUnit = state.useSpaces ? state.indentSize : 1;
-		const baseIndent = indentChar.repeat(totalIndent * indentUnit);
-
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
 			.split("\n")
-			.map((line) => (line.trim() ? baseIndent + line : ""))
+			.map((line) => (line.trim() ? baseIndent +  jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : ""))
 			.join("\n");
 
 		// 创建替换范围：从当前行到结束标签的前一行
-		const startPos = new vscode.Position(lineIndex, 0);
-		const lastContentLine = document.lineAt(endLineIndex - 1);
-		const endPos = new vscode.Position(endLineIndex - 1, lastContentLine.text.length);
+		const startPos = new vscode.Position(lineIndex + 1, 0);
+		const lastContentLine = document.lineAt(i - 1);
+		const endPos = new vscode.Position(i - 1, lastContentLine.text.length);
 		const replaceRange = new vscode.Range(startPos, endPos);
 
 		// 添加编辑操作
+		console.log("格式化 cfscript:", lineIndex, i);
 		edits.push(vscode.TextEdit.replace(replaceRange, indentedLines));
 
-		state.lastProcessLine = Math.max(endLineIndex, lineIndex); // 更新全局缩进位置，跳过已处理的行
 		return true;
 	} catch (error) {
-
 		console.error("格式化 cfscript 时出错:", error);
 		return false;
 	}

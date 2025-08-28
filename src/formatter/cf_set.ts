@@ -1,6 +1,8 @@
 import { FormatState } from "../core/FormatState";
-import { blockTags } from "../utils/common";
+import { blockTags, parseTagName } from "../utils/common";
 import * as vscode from "vscode";
+import { jsOptions } from "./cf_script";
+import { js } from "js-beautify";
 
 export function formatCfset(
 	line: vscode.TextLine,
@@ -10,45 +12,52 @@ export function formatCfset(
 	document: vscode.TextDocument
 ): boolean {
 	// 計算基礎縮進
-	let bracketIndent = 0;
 	let text = line.text.trim();
+	const { tagName } = parseTagName(text);
+	if (tagName !== "cfset" || text.length == 0) {
+		return false; // 只處理 cfset 標籤
+	}
+
+	const totalIndent = state.indentLevel;
+	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+
+	//原來内容是一行
+	if (/^<cfset\b.*\/?\s*>$/i.test(text)) {
+		console.log("cfset 單行:", lineIndex,text);
+		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
+		return true; // 如果是单行 cfset，直接返回
+	}
+	// 只處理多參數的 cfset
+	///^<cfset\b(?!.*>\s*$)/i
+	if (/^<cfset\b(?!.*\/?\s*>\s*$)/i.test(text)) {
+		console.log("cfset d多行開始:", lineIndex, text);
+		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
+		let index = lineIndex + 1;
+		for (; index < document.lineCount; index++) {
+			const templine = document.lineAt(index);
+			const temText = templine.text.trim();
+
+			if (/(?<!-)>$/.test(temText)) {
+				edits.push(vscode.TextEdit.replace(templine.range, baseIndent + temText));
+				console.log("cfset 多行結束:", index, temText);
+				break;
+			}
+
+			console.log("cfset", index, temText);
+			edits.push(
+				vscode.TextEdit.replace(
+					templine.range,
+					baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + temText
+				)
+			);
+			
+		}
+		state.lastProcessLine =index, lineIndex;
+		return true; // 如果是多行 cfset，直接返回
+	}
 	return false; // 緊急修正：暫時不處理多參數的 cfset
-	if (!isCfsetWithMultipleParams(text)) {
-		return false; // 如果不是多參數的 cfset，直接返回
-	}
-	if (state.inCfscript) {
-		if (text.includes("}") && !text.includes("{")) {
-			bracketIndent = Math.max(state.bracketStack.length - 1, 0);
-		} else {
-			bracketIndent = state.bracketStack.length;
-		}
-	}
 
-	// cfset 不會在 cfquery 內，所以 sqlIndent 為 0
-	let sqlIndent = 0;
 
-	let specialIndent = getSpecialTagIndent("tagName", state);
-	// currentIndentLevel = state.indentLevel;
-	let baseIndentLevel = state.indentLevel + bracketIndent + sqlIndent + specialIndent;
-
-	// 格式化多行 cfset
-	const formattedLines = formatCfsetMultiParams(text, baseIndentLevel, state);
-
-	// 為每一行創建編輯
-	if (formattedLines.length > 1) {
-		// 替換原行為第一行
-		edits.push(vscode.TextEdit.replace(line.range, formattedLines[0]));
-
-		// 在後面插入其他行
-		for (let j = 1; j < formattedLines.length; j++) {
-			const insertPosition = new vscode.Position(lineIndex + j, 0);
-			edits.push(vscode.TextEdit.insert(insertPosition, formattedLines[j] + "\n"));
-		}
-
-		// 跳過後續的常規處理
-		return true;
-	}
-	return false;
 }
 
 // 新增：檢查是否是多參數函數調用的 cfset

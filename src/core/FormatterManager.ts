@@ -2,8 +2,8 @@ import * as vscode from "vscode";
 import { createInitiaLState, FormatState } from "./FormatState";
 import { getSqlIndent } from "../formatter/cf_query";
 import { formatComment } from "../formatter/cf_comment";
-import { formatCfset, getSpecialTagIndent } from "../formatter/cf_set";
-import { formatCfscript } from "../formatter/cf_script";
+import { formatCfset } from "../formatter/cf_set";
+import { formatCfscript, jsOptions } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
 
 export default class FormatterManager {
@@ -27,7 +27,7 @@ export default class FormatterManager {
 			let text = line.text.trim();
 
 			//
-			if (i < this.state.lastProcessLine) {
+			if (this.state.lastProcessLine > 0 && i <= this.state.lastProcessLine) {
 				continue;
 			}
 
@@ -56,13 +56,18 @@ export default class FormatterManager {
 				}
 			}
 
+			if (tagName === "cfscript") {
+				// 如果这行有闭合大括号，先减少缩进
+				rest = formatCfscript(line, i, edits, this.state, document);
+				if (rest) {
+					continue; // 已經處理過 cfscript 行，跳过后续处理
+				}
+			}
+
 			// 3.2 如果是结束标签，调整缩进
 			if (isClosing) {
 				// 特殊处理cfscript和cfquery
-				if (tagName === "cfscript") {
-					this.state.inCfscript = false;
-					this.state.bracketStack.length = 0;
-				} else if (tagName === "cfquery") {
+				if (tagName === "cfquery") {
 					this.state.inCfquery = false;
 					// 清空SQL CASE栈
 					this.state.sqlCaseStack.length = 0;
@@ -81,13 +86,6 @@ export default class FormatterManager {
 
 			// 3.3处理cfscript内的大括号缩进
 			let bracketIndent = 0;
-			if (this.state.inCfscript) {
-				// 如果这行有闭合大括号，先减少缩进
-				rest = formatCfscript(line, i, edits, this.state, document);
-				if (rest) {
-					continue; // 已經處理過 cfscript 行，跳过后续处理
-				}
-			}
 
 			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
@@ -95,17 +93,10 @@ export default class FormatterManager {
 				sqlIndent = getSqlIndent(text, i, this.state);
 			}
 
-			// 3.5 新增：处理特殊标签的缩进
-			let specialIndent = 0;
-			if (isSelfClosing) {
-				specialIndent = getSpecialTagIndent(tagName, this.state);
-			}
 
 			// 3.6 计算最终缩进
-			const totalIndent = currentIndentLevel + bracketIndent + sqlIndent + specialIndent;
-			const indentChar = this.state.useSpaces ? " " : "\t";
-			const indentUnit = this.state.useSpaces ? this.state.indentSize : 1;
-			const indent = indentChar.repeat(totalIndent * indentUnit);
+			const totalIndent = currentIndentLevel + bracketIndent + sqlIndent;
+			const indent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
 
 			// 应用格式化
 			edits.push(vscode.TextEdit.replace(line.range, indent + text));
@@ -113,9 +104,7 @@ export default class FormatterManager {
 			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
 				// 特殊处理cfscript和cfquery
-				if (tagName === "cfscript") {
-					this.state.inCfscript = true;
-				} else if (tagName === "cfquery") {
+				if (tagName === "cfquery") {
 					this.state.inCfquery = true;
 					// 重置SQL CASE栈
 					this.state.sqlCaseStack.length = 0;

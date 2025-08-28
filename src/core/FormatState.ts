@@ -9,7 +9,6 @@ export interface FormatState {
 	indentLevel: number;
 	lastProcessLine: number;
 
-	inCfscript: boolean;
 	inCfquery: boolean;
 	inString: boolean;
 	inMultiLineComment: boolean;
@@ -17,7 +16,6 @@ export interface FormatState {
 	sqlCaseStack: number[];
 	sqlSubqueryStack: number[];
 	tagStack: string[];
-	bracketStack: string[];
 }
 
 export function createInitiaLState(): FormatState {
@@ -31,13 +29,11 @@ export function createInitiaLState(): FormatState {
 		useSpaces: useTab ? false : true,
 		indentLevel: 0,
 		lastProcessLine: 0,
-		inCfscript: false,
 		inCfquery: false,
 		inString: false,
 		inMultiLineComment: false,
 		sqlCaseStack: [],
 		sqlSubqueryStack: [],
 		tagStack: [],
-		bracketStack: [],
 	};
 }
