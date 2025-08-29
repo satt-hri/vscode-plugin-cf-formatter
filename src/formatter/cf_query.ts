@@ -7,30 +7,23 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 	const originalText = text;
 	const upperText = text.toUpperCase().trim();
 	//let baseIndent =  0; // SQL基础缩进
-	let baseIndent = state.sqlSubqueryStack.length * 2; // SQL基础缩进，假设每个子查询增加2个缩进单位
+	let baseIndent = 0; // SQL基础缩进，假设每个子查询增加2个缩进单位
 
 	// 检查是否是SQL注释行
 	if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
-		return baseIndent; // 注释缩进与字段对齐
+		return baseIndent + state.sqlSubqueryStack.length;
 	}
 
 	const temp = compareBracket(text);
 	if (temp === 1) {
 		state.sqlSubqueryStack.push(baseIndent);
-		// if (!/ON\s*\($/.test(text)) {
-		// 	state.sqlSubqueryStack.push(baseIndent);
-		// }
+		return baseIndent + state.sqlSubqueryStack.length;
 	} else if (temp === -1) {
 		state.sqlSubqueryStack.pop();
 	} else {
 		if (/(.?)*\($/.test(text)) {
-			state.sqlSubqueryStack.push(baseIndent);
+			return baseIndent + state.sqlSubqueryStack.length;
 		}
-	}
-	if (/^\)$/.test(text)  ) {
-		// 雖然是-1 但是默認是+1 的 所以效果上是 -2
-		baseIndent = Math.max(baseIndent - 1, 0);
-		return baseIndent;
 	}
 
 	const mainnKeywordsRegex = /^(SELECT|INSERT|UPDATE|DELETE|WITH)(?=\s|$)/i;
@@ -40,9 +33,26 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 		upperText.startsWith("WHERE") ||
 		["ORDER BY", "GROUP BY", "HAVING", "UNION"].some((keyword) => upperText.startsWith(keyword))
 	) {
-		return baseIndent;
+		return baseIndent + state.sqlSubqueryStack.length;
 	}
 
+	// 表名等其他内容
+	return baseIndent + 1 + state.sqlSubqueryStack.length;
+}
+
+function compareBracket(text: string): number {
+	const leftCount = (text.match(/\(/g) || []).length;
+	const rightCount = (text.match(/\)/g) || []).length;
+
+	if (leftCount > rightCount) {
+		return 1; // 有更多左括号
+	} else if (leftCount < rightCount) {
+		return -1; // 有更多右括号
+	} else {
+		return 0; // 左右括号数量相等
+	}
+}
+/*
 	// 处理CASE WHEN ELSE END结构
 	const caseDepth = state.sqlCaseStack.length;
 
@@ -129,19 +139,5 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 	// 	return baseIndent + 1;
 	// }
 
-	// 表名等其他内容
-	return baseIndent + 1;
-}
 
-function compareBracket(text: string): number {
-	const leftCount = (text.match(/\(/g) || []).length;
-	const rightCount = (text.match(/\)/g) || []).length;
-
-	if (leftCount > rightCount) {
-		return 1; // 有更多左括号
-	} else if (leftCount < rightCount) {
-		return -1; // 有更多右括号
-	} else {
-		return 0; // 左右括号数量相等
-	}
-}
+*/
