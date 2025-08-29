@@ -6,8 +6,9 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 
 	const originalText = text;
 	const upperText = text.toUpperCase().trim();
-	//let baseIndent =  0; // SQL基础缩进
-	let baseIndent = 0; // SQL基础缩进，假设每个子查询增加2个缩进单位
+	let baseIndent = 0;
+
+	const caseDepth = state.sqlCaseStack.length; // 处理CASE WHEN ELSE END结构
 
 	// 检查是否是SQL注释行
 	if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
@@ -36,8 +37,16 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 		return baseIndent + state.sqlSubqueryStack.length;
 	}
 
+	// CASE语句开始 - 与字段列表对齐
+	const currentLevel = baseIndent + 1 + state.sqlSubqueryStack.length;
+	if (upperText === "CASE" || upperText.startsWith(",CASE")) {
+		state.sqlCaseStack.push(currentLevel);
+	}else if(/\bEND\s+AS\b/.test(upperText)){
+		state.sqlCaseStack.pop()
+	}
+
 	// 表名等其他内容
-	return baseIndent + 1 + state.sqlSubqueryStack.length;
+	return baseIndent + 1 + state.sqlSubqueryStack.length + caseDepth;
 }
 
 function compareBracket(text: string): number {
@@ -56,12 +65,7 @@ function compareBracket(text: string): number {
 	// 处理CASE WHEN ELSE END结构
 	const caseDepth = state.sqlCaseStack.length;
 
-	// CASE语句开始 - 与字段列表对齐
-	if (upperText === "CASE" || upperText.startsWith(",CASE")) {
-		const currentLevel = baseIndent + 2; // 与字段对齐
-		state.sqlCaseStack.push(currentLevel);
-		return currentLevel;
-	}
+
 
 	// WHEN 和 ELSE 与 CASE 对齐
 	if (upperText.startsWith("WHEN ") || upperText === "ELSE") {
@@ -95,21 +99,7 @@ function compareBracket(text: string): number {
 			return state.sqlCaseStack[state.sqlCaseStack.length - 1] + 1;
 		}
 	}
-	// // 子查询的左括号 - 与FROM对齐
-	// if (upperText.includes("(") && !upperText.includes(")")) {
-	// 	state.sqlSubqueryStack.push(baseIndent);
-	// 	return baseIndent + 1;
-	// }
-	// if (upperText.includes(")") && !upperText.includes("(")) {
-	// 	state.sqlSubqueryStack.pop();
-	// 	return baseIndent - 1;
-	// }
 
-	// // 子查询的右括号和别名 - 与FROM对齐
-	// if (upperText === ") AS D" || upperText.startsWith(") AS ") || upperText === ")") {
-	// 	state.sqlSubqueryStack.pop();
-	// 	return baseIndent + 1;
-	// }
 
 	// JOIN语句 mysqlを参照
 	// if (
