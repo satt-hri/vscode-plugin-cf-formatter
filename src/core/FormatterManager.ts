@@ -44,7 +44,7 @@ export default class FormatterManager {
 				continue; // 已經處理過注释行，跳过后续处理
 			}
 
-			const { tagName, isClosing, isSelfClosing } = parseTagName(text);
+			const { tagName, isClosing, isSelfClosing, selfLineClosing } = parseTagName(text);
 			let currentIndentLevel = this.state.indentLevel;
 
 			// 3. 处理标签名
@@ -106,9 +106,12 @@ export default class FormatterManager {
 					this.state.sqlCaseStack.length = 0;
 					this.state.sqlSubqueryStack.length = 0;
 				}
-
-				this.state.tagStack.push(tagName);
-				this.state.indentLevel++;
+					
+				// 自己闭合的标签不增加缩进 eg <cfif ...>...</cfif>
+				if (!selfLineClosing) {
+					this.state.tagStack.push(tagName);
+					this.state.indentLevel++;
+				}
 			}
 		}
 

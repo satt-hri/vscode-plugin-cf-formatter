@@ -19,7 +19,7 @@ export const blockTags = {
 		"cfform",
 		"cftable",
 		"cfselect",
-		"cfinvoke"
+		"cfinvoke",
 	],
 	closing: [
 		"cffunction",
@@ -39,7 +39,7 @@ export const blockTags = {
 		"cfform",
 		"cftable",
 		"cfselect",
-		"cfinvoke"
+		"cfinvoke",
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
@@ -63,10 +63,9 @@ export const blockTags = {
 		"cfdocument",
 		"cfpdf",
 		"cfinvokearguments",
+		"cfset",
 	],
-	// 新增：需要特殊處理的標籤
-	//functionParam: ["cfargument"], // 函数参数标签
-	functionContent: ["cfset"], // 函数内容标签
+	//functionContent: ["cfset"], // 函数内容标签
 };
 
 const sqlKeywords = [
@@ -98,16 +97,25 @@ const sqlKeywords = [
 ];
 
 // 解析标签名
-export function parseTagName(line: string): { tagName: string; isClosing: boolean; isSelfClosing: boolean } {
+export function parseTagName(line: string): {
+	tagName: string;
+	isClosing: boolean;
+	isSelfClosing: boolean;
+	selfLineClosing: boolean;
+} {
 	const trimmed = line.trim();
 
 	// 处理结束标签
 	if (trimmed.startsWith("</")) {
 		const match = trimmed.match(/<\/([^>\s]+)/);
+		const tagName = match ? match[1].toLowerCase() : "";
+		const selfLineClosing = trimmed.startsWith(`<${tagName}`) && trimmed.endsWith(`${tagName}/>`);
+
 		return {
-			tagName: match ? match[1].toLowerCase() : "",
+			tagName: tagName,
 			isClosing: true,
 			isSelfClosing: false,
+			selfLineClosing: selfLineClosing,
 		};
 	}
 
@@ -118,17 +126,17 @@ export function parseTagName(line: string): { tagName: string; isClosing: boolea
 		const isSelfClosing =
 			trimmed.endsWith("/>") ||
 			blockTags.selfClosing.includes(tagName) ||
-			//blockTags.functionParam.includes(tagName) ||
-			blockTags.functionContent.includes(tagName) ||
 			(tagName.startsWith("cf") &&
 				(trimmed.includes(" />") || (!trimmed.includes(">") && !blockTags.opening.includes(tagName))));
+		const selfLineClosing = trimmed.startsWith(`<${tagName}`) && trimmed.endsWith(`</${tagName}>`);
 
 		return {
 			tagName,
 			isClosing: false,
 			isSelfClosing,
+			selfLineClosing: selfLineClosing,
 		};
 	}
 
-	return { tagName: "", isClosing: false, isSelfClosing: false };
+	return { tagName: "", isClosing: false, isSelfClosing: false, selfLineClosing: false };
 }
