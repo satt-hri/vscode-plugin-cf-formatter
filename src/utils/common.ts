@@ -101,7 +101,7 @@ export function parseTagName(line: string): {
 	tagName: string;
 	isClosing: boolean;
 	isSelfClosing: boolean;
-	selfLineClosing: boolean;
+	selfLineClosing: boolean; //query 中的cfif
 } {
 	const trimmed = line.trim();
 
@@ -124,10 +124,7 @@ export function parseTagName(line: string): {
 		const match = trimmed.match(/<([^>\s]+)/);
 		const tagName = match ? match[1].toLowerCase() : "";
 		const isSelfClosing =
-			trimmed.endsWith("/>") ||
-			blockTags.selfClosing.includes(tagName) ||
-			(tagName.startsWith("cf") &&
-				(trimmed.includes(" />") || (!trimmed.includes(">") && !blockTags.opening.includes(tagName))));
+			blockTags.selfClosing.includes(tagName) || /^\s*<(cf\w+)\b[^>]*>.*<\/\1>\s*$/i.test(trimmed);
 		const selfLineClosing = trimmed.startsWith(`<${tagName}`) && trimmed.endsWith(`</${tagName}>`);
 
 		return {
