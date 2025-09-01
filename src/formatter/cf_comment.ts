@@ -1,5 +1,9 @@
 import { FormatState } from "../core/FormatState";
 import * as vscode from "vscode";
+import { jsOptions } from "./cf_script";
+
+const indentChar = jsOptions.indent_char!;
+const indentUnit = jsOptions.indent_size!;
 
 export function formatComment(
 	line: vscode.TextLine,
@@ -10,17 +14,36 @@ export function formatComment(
 ): boolean {
 	let text = line.text.trim();
 
-	// 更新注释状态（仅文件头注释）
+	// 更新注释状态
 	updateCommentState(text, lineIndex, state, document);
 
-	// 处理多行注释（仅文件头注释）
-	if (
-		(state.inMultiLineComment || text.startsWith("<!---") || text.endsWith("--->")) &&
-		isFileHeaderComment(lineIndex, state, document)
-	) {
-		const formattedLine = formatCommentLine(text, lineIndex, state, document);
-		edits.push(vscode.TextEdit.replace(line.range, formattedLine));
-		return true; // 跳过其他处理，直接处理下一行
+	//一行コメント
+	if (text.startsWith("<!---") && text.endsWith("--->")) {
+		edits.push(
+			vscode.TextEdit.replace(
+				line.range,
+				indentChar.repeat(indentUnit * (state.indentLevel + state.sqlSubqueryStack.length * 2)) + text
+			)
+		);
+		return true;
+	}
+
+	// 多行コメント
+	if (state.inMultiLineComment || text.startsWith("<!---") || text.endsWith("--->")) {
+		//文件头注释カスタマイズ
+		if (isFileHeaderComment(lineIndex, state, document)) {
+			const formattedLine = formatHeadCommentLine(text, lineIndex, state, document);
+			edits.push(vscode.TextEdit.replace(line.range, formattedLine));
+			return true; // 跳过其他处理，直接处理下一行
+		} else {
+			edits.push(
+				vscode.TextEdit.replace(
+					line.range,
+					indentChar.repeat(indentUnit * (state.indentLevel + state.sqlSubqueryStack.length * 2)) + text
+				)
+			);
+			return true;
+		}
 	}
 
 	return false;
@@ -29,17 +52,15 @@ export function formatComment(
 // 检查是否是文件开头的注释（在任何实际代码之前）
 export function isFileHeaderComment(lineIndex: number, state: FormatState, document: vscode.TextDocument): boolean {
 	// 检查从第一行到当前行之间是否只有注释或空行
+	if (state.indentLevel > 0) {
+		return false;
+	}
 	for (let j = 0; j < lineIndex; j++) {
 		const previousLine = document.lineAt(j).text.trim();
 		if (previousLine === "") continue; // 跳过空行
 
-		// 如果遇到非注释内容，说明不是文件头注释
-		if (!state.inMultiLineComment) {
-			//&& !previousLine.startsWith("<!---") && !previousLine.endsWith("--->") 這個條件是很奇怪的。
-			// 應該是在這之前 如果發現有了---> 説明已經處理過了。
-			if (previousLine.endsWith("--->")) {
-				return false;
-			}
+		if (previousLine.includes("--->")) {
+			return false;
 		}
 	}
 	return true;
@@ -47,11 +68,6 @@ export function isFileHeaderComment(lineIndex: number, state: FormatState, docum
 
 // 检查多行注释状态（仅对文件头注释）
 function updateCommentState(text: string, lineIndex: number, state: FormatState, document: vscode.TextDocument): void {
-	// 只处理文件开头的注释
-	if (!isFileHeaderComment(lineIndex, state, document)) {
-		return;
-	}
-
 	// 检查注释开始
 	if (!state.inMultiLineComment && text.includes("<!---")) {
 		state.inMultiLineComment = true;
@@ -64,15 +80,18 @@ function updateCommentState(text: string, lineIndex: number, state: FormatState,
 }
 
 // 格式化注释内容以实现对齐（仅文件头注释）
-function formatCommentLine(text: string, lineIndex: number, state: FormatState, document: vscode.TextDocument): string {
+function formatHeadCommentLine(
+	text: string,
+	lineIndex: number,
+	state: FormatState,
+	document: vscode.TextDocument
+): string {
 	// 只格式化文件开头的注释
 	if (!isFileHeaderComment(lineIndex, state, document)) {
 		return text; // 方法内注释保持原样
 	}
 
 	const trimmed = text.trim();
-	const indentChar = state.useSpaces ? " " : "\t";
-	const indentUnit = state.useSpaces ? state.indentSize : 1;
 
 	// 注释开始行：保持0缩进
 	if (trimmed.startsWith("<!---")) {

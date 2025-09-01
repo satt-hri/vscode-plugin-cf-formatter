@@ -20,6 +20,8 @@ export const blockTags = {
 		"cftable",
 		"cfselect",
 		"cfinvoke",
+		"cfhttp",
+		"cfmail",
 	],
 	closing: [
 		"cffunction",
@@ -40,6 +42,8 @@ export const blockTags = {
 		"cftable",
 		"cfselect",
 		"cfinvoke",
+		"cfhttp",
+		"cfmail",
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
@@ -54,18 +58,18 @@ export const blockTags = {
 		"cfheader",
 		"cfcookie",
 		"cflocation",
-		"cfmail",
+		
 		"cffile",
 		"cfdirectory",
-		"cfhttp",
 		"cfzip",
 		"cfimage",
 		"cfdocument",
 		"cfpdf",
 		"cfinvokearguments",
 		"cfset",
+		"cfhttpparam",
 	],
-	//functionContent: ["cfset"], // 函数内容标签
+	onlyIndex: ["cfprocessingdirective"], // 函数内容标签
 };
 
 const sqlKeywords = [
@@ -109,7 +113,9 @@ export function parseTagName(line: string): {
 	if (trimmed.startsWith("</")) {
 		const match = trimmed.match(/<\/([^>\s]+)/);
 		const tagName = match ? match[1].toLowerCase() : "";
-		const selfLineClosing = trimmed.startsWith(`<${tagName}`) && trimmed.endsWith(`${tagName}/>`);
+		const selfLineClosing =
+			trimmed.startsWith(`<${tagName}`) &&
+			(trimmed.endsWith(`</${tagName}>`) || trimmed.endsWith(`</${tagName}>,`));
 
 		return {
 			tagName: tagName,
@@ -124,8 +130,12 @@ export function parseTagName(line: string): {
 		const match = trimmed.match(/<([^>\s]+)/);
 		const tagName = match ? match[1].toLowerCase() : "";
 		const isSelfClosing =
-			blockTags.selfClosing.includes(tagName) || /^\s*<(cf\w+)\b[^>]*>.*<\/\1>\s*$/i.test(trimmed);
-		const selfLineClosing = trimmed.startsWith(`<${tagName}`) && trimmed.endsWith(`</${tagName}>`);
+			blockTags.selfClosing.includes(tagName) ||
+			/^\s*<(cf\w+)\b[^>]*>.*<\/\1>\s*$/i.test(trimmed) ||
+			/^<cf\w+\b[^>]*\/>$/i.test(trimmed);
+		const selfLineClosing =
+			trimmed.startsWith(`<${tagName}`) &&
+			(trimmed.endsWith(`</${tagName}>`) || trimmed.endsWith(`</${tagName}>,`));
 
 		return {
 			tagName,

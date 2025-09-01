@@ -46,8 +46,15 @@ export default class FormatterManager {
 
 			const { tagName, isClosing, isSelfClosing, selfLineClosing } = parseTagName(text);
 			let currentIndentLevel = this.state.indentLevel;
+			
 
 			// 3. 处理标签名
+
+			if(blockTags.onlyIndex.includes(tagName)){
+				edits.push(vscode.TextEdit.replace(line.range, jsOptions.indent_char!.repeat(currentIndentLevel * jsOptions.indent_size!) + text))
+				continue
+			}
+
 			// 3.1 檢查是否是多參數的 cfset，需要特殊處理
 			if (tagName === "cfset") {
 				rest = formatCfset(line, i, edits, this.state, document);

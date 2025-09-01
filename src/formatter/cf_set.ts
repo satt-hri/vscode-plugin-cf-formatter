@@ -1,8 +1,7 @@
 import { FormatState } from "../core/FormatState";
-import { blockTags, parseTagName } from "../utils/common";
+import { parseTagName } from "../utils/common";
 import * as vscode from "vscode";
 import { jsOptions } from "./cf_script";
-import { js } from "js-beautify";
 
 export function formatCfset(
 	line: vscode.TextLine,
@@ -50,14 +49,11 @@ export function formatCfset(
 					baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + temText
 				)
 			);
-			
 		}
-		state.lastProcessLine =index, lineIndex;
+		(state.lastProcessLine = index), lineIndex;
 		return true; // 如果是多行 cfset，直接返回
 	}
 	return false; // 緊急修正：暫時不處理多參數的 cfset
-
-
 }
 
 // 新增：檢查是否是多參數函數調用的 cfset

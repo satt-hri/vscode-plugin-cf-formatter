@@ -19,3 +19,8 @@ vsc-extension-quickstart.md
 # 包含 js-beautify
 !node_modules/js-beautify/
 !node_modules/js-beautify/**/*
+
+
+# 包含 sql-formatter
+!node_modules/sql-formatter/
+!node_modules/sql-formatter/**/*
