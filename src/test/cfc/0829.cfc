@@ -16,8 +16,7 @@
 		<cfargument name="parent_sco_id" type="numeric" required="no" default="0" hint="親のSCO ID（隠しパラメータ）" />
 
 		<cfquery name="store_scorm_log" Datasource="#Application.DSN#">
-			INSERT INTO sco_progress_log
-				(
+			INSERT INTO sco_progress_log(
 					rec_date,
 					user_id,
 
