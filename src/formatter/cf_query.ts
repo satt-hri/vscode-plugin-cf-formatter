@@ -6,24 +6,25 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 
 	const originalText = text;
 	const upperText = text.toUpperCase().trim();
-	let baseIndent = 0;
+	let baseIndent = state.sqlSubqueryStack.length * 2;
 
 	const caseDepth = state.sqlCaseStack.length; // 处理CASE WHEN ELSE END结构
 
 	// 检查是否是SQL注释行
 	if (originalText.trim().startsWith("<!---") || originalText.trim().endsWith("--->")) {
-		return baseIndent + state.sqlSubqueryStack.length;
+		return baseIndent;
 	}
 
 	const temp = compareBracket(text);
 	if (temp === 1) {
 		state.sqlSubqueryStack.push(baseIndent);
-		return baseIndent + state.sqlSubqueryStack.length;
+		//return baseIndent;
 	} else if (temp === -1) {
 		state.sqlSubqueryStack.pop();
+		baseIndent = state.sqlSubqueryStack.length * 2;
 	} else {
 		if (/(.?)*\($/.test(text)) {
-			return baseIndent + state.sqlSubqueryStack.length;
+			return Math.max(baseIndent - 1, 0);
 		}
 	}
 
@@ -34,19 +35,18 @@ export function getSqlIndent(text: string, lineIndex: number, state: FormatState
 		upperText.startsWith("WHERE") ||
 		["ORDER BY", "GROUP BY", "HAVING", "UNION"].some((keyword) => upperText.startsWith(keyword))
 	) {
-		return baseIndent + state.sqlSubqueryStack.length;
+		return baseIndent;
 	}
 
 	// CASE语句开始 - 与字段列表对齐
-	const currentLevel = baseIndent + 1 + state.sqlSubqueryStack.length;
 	if (upperText === "CASE" || upperText.startsWith(",CASE")) {
-		state.sqlCaseStack.push(currentLevel);
-	}else if(/\bEND\s+AS\b/.test(upperText)){
-		state.sqlCaseStack.pop()
+		state.sqlCaseStack.push(baseIndent);
+	} else if (/\bEND\s+AS\b/.test(upperText)) {
+		state.sqlCaseStack.pop();
 	}
 
 	// 表名等其他内容
-	return baseIndent + 1 + state.sqlSubqueryStack.length + caseDepth;
+	return baseIndent + 1 + caseDepth;
 }
 
 function compareBracket(text: string): number {
