@@ -10,7 +10,7 @@
 
 
 		<cftry>
-<!--- course_masterの履歴表示情報を取得 --->
+			<!--- course_masterの履歴表示情報を取得 --->
 			<cfquery name="get_hide" datasource="#Application.DSN#">
 				SELECT hide_score,
 					hide_result
@@ -42,8 +42,7 @@
 					<!--- フォルダ --->
 					<cfscript>
 						<!--- フォルダ --->
-						childTreeArray = getCourseTreeCustom(course_id, item_list, get_sco_detail
-						    .sco_id);
+						childTreeArray = getCourseTreeCustom(course_id, item_list, get_sco_detail.sco_id);
 					</cfscript>
 					<cfset StructInsert( workStruct, "id", get_sco_detail.sco_id ) />
 					<cfset StructInsert( workStruct, "name", " "&get_sco_detail.sco_name ) />
@@ -102,11 +101,11 @@
 						SELECT sco_progress.sco_id,
 							sco_progress.completion_status,
 							sco_progress.success_status,
-								CASE
-									WHEN sco_progress.completion_status = 'completed'  THEN  '1'
-									WHEN sco_progress.completion_status = 'passed'  THEN  '1'
-									WHEN sco_progress.success_status = 'passed'  THEN  '1'
-									ELSE '0'
+							CASE
+								WHEN sco_progress.completion_status = 'completed'  THEN  '1'
+								WHEN sco_progress.completion_status = 'passed'  THEN  '1'
+								WHEN sco_progress.success_status = 'passed'  THEN  '1'
+								ELSE '0'
 								END AS statusFlag
 						FROM   sco_progress
 						WHERE  sco_progress.sco_id IN ( <cfqueryparam cfsqltype="cf_sql_integer" list="yes" separator="," value="#ValueList( get_precondition_sco.pre_sco_id )#" /> )
@@ -137,5 +136,5 @@
 
 
 
-</cfprocessingdirective>
+	</cfprocessingdirective>
 </cfcomponent>
