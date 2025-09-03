@@ -5,6 +5,7 @@ import { formatComment } from "../formatter/cf_comment";
 import { formatCfset } from "../formatter/cf_set";
 import { formatCfscript, jsOptions } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
+import { formatSql } from "../formatter/cf_sql_formatter";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -70,6 +71,13 @@ export default class FormatterManager {
 					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
 			}
+			if (tagName === "cfquery") {
+				// 如果这行有闭合大括号，先减少缩进
+				rest = formatSql(line, i, edits, this.state, document);
+				if (rest) {
+					continue; // 已經處理過 cfscript 行，跳过后续处理
+				}
+			}
 
 			// 3.2 如果是结束标签，调整缩进
 			if (isClosing) {
@@ -93,9 +101,9 @@ export default class FormatterManager {
 
 			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
-			if (this.state.inCfquery && tagName !== "cfquery") {
-				sqlIndent = getSqlIndent(text, i, this.state);
-			}
+			// if (this.state.inCfquery && tagName !== "cfquery") {
+			// 	sqlIndent = getSqlIndent(text, i, this.state);
+			// }
 
 			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + sqlIndent;
