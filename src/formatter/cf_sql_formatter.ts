@@ -19,25 +19,37 @@ function formatCFQuery(cfqueryContent: string) {
 
 	// 1. 替换 CF 标签为占位符
 	const sqlWithPlaceholders = cfqueryContent
-		.replace(/<cf.*?>[\s\S]*?<\/cf.*?>|<cf.*?\/>/gi, (match) => {
-			const key = `__CFBLOCK${index}__`;
-			placeholders.push({ key, value: match });
-			index++;
-			return key;
-		})
-		.replace(/#[^#]+#/g, (match) => {
-			const key = `__CFEXPR${index}__`;
-			placeholders.push({ key, value: match });
-			index++;
-			return key;
-		})
 		.replace(/<!---[\s\S]*?--->/g, (match) => {
-			const key = `__CFCOMMENT${index}__`;
+			const key = `__CFC_OMMENT${index}__`;
+			placeholders.push({ key, value: match });
+			index++;
+			return key;
+		})
+		.replace(/<cfqueryparam\b[^>]*\/?\s*>/gi, (match) => {
+			const key = `__CF_PARAM${index}__`;
+			placeholders.push({ key, value: match });
+			index++;
+			return key;
+		})
+		.replace(/<(\/)?(cfif|cfelse|cfelseif)\b[^>]*>/gi, (match) => {
+			const key = `/* __CF_IF${index}__ */`;
+			placeholders.push({ key, value: match });
+			index++;
+			return key;
+		})
+		//すべてのcfタグを修理するのは、危ないね！！！！
+		// .replace(/<cf.*?>[\s\S]*?<\/cf.*?>|<cf.*?\/>/gi, (match) => {
+		// 	const key = `__CFBLOCK${index}__`;
+		// 	placeholders.push({ key, value: match });
+		// 	index++;
+		// 	return key;
+		// })
+		.replace(/#[^#]+#/gi, (match) => {
+			const key = `__CF_EXPR${index}__`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
 		});
-
 	// 2. 格式化 SQL
 	let formattedSQL: string;
 	console.log("placeholders", placeholders);
@@ -47,6 +59,7 @@ function formatCFQuery(cfqueryContent: string) {
 		console.error("SQL 格式化失败，返回原始内容");
 		console.log(e);
 		formattedSQL = sqlWithPlaceholders;
+		return cfqueryContent;
 	}
 
 	// 3. 替换回 CF 标签
@@ -82,7 +95,7 @@ export function formatSql(
 		lines.push({ text: temText, lineIndex: index, range: templine.range });
 	}
 	state.lastProcessLine = index;
-	console.log("lines", lines);
+	//console.log("lines", lines);
 
 	if (lines.length === 0) return false;
 
