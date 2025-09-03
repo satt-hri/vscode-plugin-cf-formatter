@@ -67,7 +67,34 @@ function formatCFQuery(cfqueryContent: string) {
 		formattedSQL = formattedSQL.replace(key, value);
 	});
 
-	return formattedSQL;
+	//4. cfif 再進行一次 tab
+	let ifIndex: string[] = [];
+	let lastSql = formattedSQL
+		.split("\n")
+		.map((item) => {
+			const { tagName, isClosing } = parseTagName(item);
+			let tempText = ifIndex.length
+				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
+				: item;
+			if (tagName == "cfif") {
+				if (isClosing) {
+					ifIndex.pop();
+					tempText = ifIndex.length
+						? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
+						: item;
+				} else {
+					ifIndex.push(item);
+				}
+			} else if (tagName == "cfelse" || tagName == "cfelseif") {
+				tempText = ifIndex.length
+					? jsOptions.indent_char!.repeat(jsOptions.indent_size! * (ifIndex.length - 1)) + item
+					: item;
+			}
+			return tempText;
+		})
+		.join("\n");
+
+	return lastSql;
 }
 
 export function formatSql(
