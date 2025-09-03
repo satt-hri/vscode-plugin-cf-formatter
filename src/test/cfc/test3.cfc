@@ -2,7 +2,7 @@
 	<cfargument name="course_id" type="any" required="true" restargsource="path" />
 
 	<cftry>
-<!--- 1) Auth --->
+		<!--- 1) Auth --->
 		<cfif libCommon.verifyAPIAccess() NEQ 200>
 			<cfthrow type="api_error" errorcode="401" message="Unauthorized" detail="認証失敗" />
 		</cfif>

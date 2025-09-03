@@ -19,7 +19,8 @@
 			</cfquery>
 			<!--- sco_guideやidentifier（マニフェスト対応）を追加した --->
 			<cfquery name="get_sco_detail" datasource="#Application.DSN#">
-				SELECT sco_master.sco_id,
+				SELECT
+					sco_master.sco_id,
 					sco_master.sco_name,
 					sco_master.sco_type,
 					sco_master.sco_guide,

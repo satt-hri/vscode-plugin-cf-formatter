@@ -6,7 +6,7 @@ const sqlFormatter = require("sql-formatter");
 function formatCFQuery(cfqueryContent) {
     let placeholders = [];
     let index = 0;
-
+    console.log("cfqueryContent", cfqueryContent)
     // 1. 替换 CF 标签为占位符
     const sqlWithPlaceholders = cfqueryContent.replace(
         /<cf.*?>[\s\S]*?<\/cf.*?>|<cf.*?\/>/gi,
@@ -35,7 +35,9 @@ function formatCFQuery(cfqueryContent) {
     let formattedSQL;
     console.log("placeholders", placeholders)
     try {
-        formattedSQL = sqlFormatter.format(sqlWithPlaceholders, { language: "mysql" });
+        formattedSQL = sqlFormatter.format(sqlWithPlaceholders,
+            { language: "mysql", keywordCase: "upper", useTabs: true, expressionWidth: 1 });
+        console.log("formattedSQL", formattedSQL)
     } catch (e) {
         console.error("SQL 格式化失败，返回原始内容");
         console.log(e)
@@ -56,14 +58,20 @@ function formatCFMLFile(filePath) {
 
     // 正则匹配 <cfquery>...</cfquery>
     const formattedContent = content.replace(/<cfquery\b[^>]*>[\s\S]*?<\/cfquery>/gi, (match) => {
+        console.log(match)
         const innerSQL = match
             .replace(/^<cfquery\b[^>]*>/i, "")
             .replace(/<\/cfquery>$/i, "");
 
         const formattedSQL = formatCFQuery(innerSQL);
+        const formattedSQL1 = formattedSQL
+            .split("\n")
+            .map(line => "\t\t\t" + line)  // 三个 tab
+            .join("\n");
+        console.log("formattedSQL1", formattedSQL1);
 
         const openTag = match.match(/^<cfquery\b[^>]*>/i)[0];
-        return `${openTag}\n${formattedSQL}\n</cfquery>`;
+        return `${openTag}\n${formattedSQL1}\n</cfquery>`;
     });
 
     return formattedContent;

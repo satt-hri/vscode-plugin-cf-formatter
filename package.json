@@ -25,7 +25,8 @@
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "prepackage": "npm run build",
-    "package": "vsce package"
+    "package": "vsce package",
+    "debug": "node --inspect src/test/sql_format/format.js"
   },
   "main": "./dist/extension.js",
   "contributes": {
