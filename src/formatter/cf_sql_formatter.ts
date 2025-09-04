@@ -1,16 +1,21 @@
 import * as vscode from "vscode";
-import path from "path";
-import fs from "fs";
+// import path from "path";
+// import fs from "fs";
 import { format, FormatOptionsWithLanguage } from "sql-formatter";
 import { FormatState } from "../core/FormatState";
 import { parseTagName } from "../utils/common";
 import { jsOptions } from "./cf_script";
 
+const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
+//tab缩进 が優先
+const useTab = config.get<boolean>("indentWithTabs", true);
+
 const formatOption: FormatOptionsWithLanguage = {
-	language: "mysql",
-	useTabs: true,
+	language: "sql",
+	useTabs: useTab,
+	tabWidth: useTab ? 1 : config.get<number>("indentSize", 4),
 	keywordCase: "upper",
-	expressionWidth: 30,
+	expressionWidth: config.get<number>("expressionWidth", 30),
 };
 
 function formatCFQuery(cfqueryContent: string) {
@@ -20,7 +25,7 @@ function formatCFQuery(cfqueryContent: string) {
 	// 1. 替换 CF 标签为占位符
 	const sqlWithPlaceholders = cfqueryContent
 		.replace(/<!---[\s\S]*?--->/g, (match) => {
-			const key = `__CFC_OMMENT${index}__`;
+			const key = `/* __CFC_COMMENT${index}__ /`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
@@ -147,30 +152,3 @@ export function formatSql(
 
 	return true;
 }
-
-// function formatCFMLFile(filePath: fs.PathOrFileDescriptor) {
-//     const content = fs.readFileSync(filePath, "utf-8");
-
-//     // 正则匹配 <cfquery>...</cfquery>
-//     const formattedContent = content.replace(/<cfquery\b[^>]*>[\s\S]*?<\/cfquery>/gi, (match) => {
-//         const innerSQL = match
-//             .replace(/^<cfquery\b[^>]*>/i, "")
-//             .replace(/<\/cfquery>$/i, "");
-
-//         const formattedSQL = formatCFQuery(innerSQL);
-
-//         const openTagMatch = match.match(/^<cfquery\b[^>]*>/i);
-//         const openTag = openTagMatch ? openTagMatch[0] : "<cfquery>";
-//         return `${openTag}\n${formattedSQL}\n</cfquery>`;
-//     });
-
-//     return formattedContent;
-// }
-
-// ------------------- 测试 -------------------
-// const outputFile = path.resolve(__dirname, "example_formatted.cfm");
-
-// const result = formatCFMLFile(inputFile);
-// fs.writeFileSync(outputFile, result, "utf-8");
-
-// console.log("格式化完成，输出到:", outputFile);
