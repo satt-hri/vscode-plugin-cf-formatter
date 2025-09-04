@@ -38,7 +38,7 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		})
 		.replace(/<(\/)?(cfif|cfelse|cfelseif)\b[^>]*>/gi, (match) => {
-			const key = `/* __CF_IF${index}__ */`;
+			const key = `-- __CF_IF${index}__ `;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
