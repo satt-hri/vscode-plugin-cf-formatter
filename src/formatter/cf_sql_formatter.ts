@@ -3,8 +3,9 @@ import * as vscode from "vscode";
 // import fs from "fs";
 import { format, FormatOptionsWithLanguage } from "sql-formatter";
 import { FormatState } from "../core/FormatState";
-import { parseTagName } from "../utils/common";
+import { blockTags, parseTagName } from "../utils/common";
 import { jsOptions } from "./cf_script";
+import { writeLog } from "../utils/log";
 
 const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
 //tab缩进 が優先
@@ -25,7 +26,7 @@ function formatCFQuery(cfqueryContent: string) {
 	// 1. 替换 CF 标签为占位符
 	const sqlWithPlaceholders = cfqueryContent
 		.replace(/<!---[\s\S]*?--->/g, (match) => {
-			const key = `/* __CFC_COMMENT${index}__ /`;
+			const key = `/* __CFC_COMMENT${index}__ */`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
@@ -38,6 +39,12 @@ function formatCFQuery(cfqueryContent: string) {
 		})
 		.replace(/<(\/)?(cfif|cfelse|cfelseif)\b[^>]*>/gi, (match) => {
 			const key = `/* __CF_IF${index}__ */`;
+			placeholders.push({ key, value: match });
+			index++;
+			return key;
+		})
+		.replace(/<(\/)?cf\w+\b[^>]*\/?\s*>/gi, (match) => {
+			const key = `/* __CF_Other${index}__ */`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
@@ -56,7 +63,7 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		});
 	// 2. 格式化 SQL
-	let formattedSQL: string;
+	let formattedSQL: string="";
 	console.log("placeholders", placeholders);
 	try {
 		formattedSQL = format(sqlWithPlaceholders, formatOption);
@@ -65,6 +72,11 @@ function formatCFQuery(cfqueryContent: string) {
 		console.log(e);
 		formattedSQL = sqlWithPlaceholders;
 		return cfqueryContent;
+	} finally {
+		writeLog("cfqueryContent:" + cfqueryContent);
+		writeLog("sqlWithPlaceholders:" + sqlWithPlaceholders);
+		writeLog("placeholders:" + placeholders.toString());
+		writeLog("formattedSQL:" + formattedSQL);
 	}
 
 	// 3. 替换回 CF 标签
@@ -81,7 +93,8 @@ function formatCFQuery(cfqueryContent: string) {
 			let tempText = ifIndex.length
 				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
 				: item;
-			if (tagName == "cfif") {
+			//cfif cfswitch cfcase cfdefaultcase等
+			if (blockTags.opening.includes(tagName)) {
 				if (isClosing) {
 					ifIndex.pop();
 					tempText = ifIndex.length

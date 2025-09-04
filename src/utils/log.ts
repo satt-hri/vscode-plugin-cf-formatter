@@ -4,7 +4,8 @@ import * as fs from "fs";
 
 let logDir: string;
 export function initLog(context: vscode.ExtensionContext) {
-	logDir = vscode.Uri.joinPath(context.logUri, "logs").fsPath;
+	//globalStorageUri => C:\Users\h_ri\AppData\Roaming\Code\User\globalStorage\hri.cfml-auto-formatter\logs
+	logDir = vscode.Uri.joinPath(context.globalStorageUri, "logs").fsPath;
 	if (!fs.existsSync(logDir)) {
 		fs.mkdirSync(logDir, { recursive: true });
 	}

@@ -50,7 +50,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 | <small>`hri.cfml.formatter.breakChainedMethods`</small> | <small>`false`</small> | <small>boolean</small> | <small>メソッドチェーンを複数行に分割するかどうか。</small> |
 | <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small> | <small>boolean</small> | <small>条件文（if, while, for）の前にスペースを入れるか。</small> |
 | <small>`hri.cfml.formatter.endWithNewline`</small> | <small>`false`</small> | <small>boolean</small> | <small>ファイル末尾に改行を追加するかどうか。</small> |
-| <small>`hri.cfml.formatter.expressionWidth`</small> | <small>`30`</small> | <small>number</small> | <small>指定文字列長さを超えると改行</small> |
+| <small>`hri.cfml.formatter.expressionWidth`</small> | <small>`30`</small> | <small>number</small> | <small>sql指定文字列長さを超えると改行</small> |
 
 
 💡 **設定変更方法**  
