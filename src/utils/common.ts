@@ -12,6 +12,7 @@ export const blockTags = {
 		"cfoutput",
 		"cfswitch",
 		"cfcase",
+		"cfdefaultcase",
 		"cfsavecontent",
 		"cfthread",
 		"cflock",
@@ -34,6 +35,7 @@ export const blockTags = {
 		"cfoutput",
 		"cfswitch",
 		"cfcase",
+		"cfdefaultcase",
 		"cfsavecontent",
 		"cfthread",
 		"cflock",
@@ -58,7 +60,7 @@ export const blockTags = {
 		"cfheader",
 		"cfcookie",
 		"cflocation",
-		
+
 		"cffile",
 		"cfdirectory",
 		"cfzip",

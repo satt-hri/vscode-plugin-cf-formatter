@@ -2,10 +2,13 @@ import * as vscode from "vscode";
 import { messages, Lang } from "./config";
 import path from "path";
 import FormatterManager from "./core/FormatterManager";
+import { initLog, writeLog } from "./utils/log";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
-
+	// 初始化日志系统
+	initLog(context);
+	writeLog("插件已激活");
 	// 检查注册的语言
 	//console.log("支持的语言:", vscode.languages.getLanguages());
 	const lang = vscode.env.language.toLowerCase() as Lang;
@@ -36,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const debugCommand = vscode.commands.registerCommand("satt.cfml.debug", () => {
 		const editor = vscode.window.activeTextEditor;
 		if (editor) {
-		//	console.log("当前文件语言ID:", editor.document.languageId);
+			//	console.log("当前文件语言ID:", editor.document.languageId);
 			//console.log("当前文件路径:", editor.document.fileName);
 			const val = messages.langInfo[lang];
 			vscode.window.showInformationMessage(
@@ -92,6 +95,7 @@ export function activate(context: vscode.ExtensionContext) {
 		} catch (error) {
 			const val = messages.formatError[lang];
 			console.error("格式化错误:", error);
+			writeLog("格式化错误:" + String(error));
 			vscode.window.showErrorMessage(typeof val === "function" ? val(error) : val);
 		}
 	});

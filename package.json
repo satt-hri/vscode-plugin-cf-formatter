@@ -4,7 +4,7 @@
   "publisher": "hri",
   "description": "CFML Indent Formatter / CFML 自动缩进",
   "icon": "images/icon.png",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
@@ -131,6 +131,12 @@
           "type": "boolean",
           "default": false,
           "description": "End files with a newline character."
+        },
+        "hri.cfml.formatter.expressionWidth": {
+        "type": "number",
+          "default": 30,
+          "minimum": 0,
+          "description": "Maximum number of characters in parenthesized expressions to be kept on single line."
         }
       }
     }

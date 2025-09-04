@@ -5,6 +5,7 @@ import { formatComment } from "../formatter/cf_comment";
 import { formatCfset } from "../formatter/cf_set";
 import { formatCfscript, jsOptions } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
+import { formatSql } from "../formatter/cf_sql_formatter";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -49,7 +50,6 @@ export default class FormatterManager {
 			
 
 			// 3. 处理标签名
-
 			if(blockTags.onlyIndex.includes(tagName)){
 				edits.push(vscode.TextEdit.replace(line.range, jsOptions.indent_char!.repeat(currentIndentLevel * jsOptions.indent_size!) + text))
 				continue
@@ -70,16 +70,23 @@ export default class FormatterManager {
 					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
 			}
+			if (tagName === "cfquery") {
+				// 如果这行有闭合大括号，先减少缩进
+				rest = formatSql(line, i, edits, this.state, document);
+				if (rest) {
+					continue;
+				}
+			}
 
 			// 3.2 如果是结束标签，调整缩进
 			if (isClosing) {
 				// 特殊处理cfscript和cfquery
-				if (tagName === "cfquery") {
-					this.state.inCfquery = false;
-					// 清空SQL CASE栈
-					this.state.sqlCaseStack.length = 0;
-					this.state.sqlSubqueryStack.length = 0;
-				}
+				// if (tagName === "cfquery") {
+				// 	this.state.inCfquery = false;
+				// 	// 清空SQL CASE栈
+				// 	this.state.sqlCaseStack.length = 0;
+				// 	this.state.sqlSubqueryStack.length = 0;
+				// }
 
 				// 弹出标签栈并调整缩进
 				if (this.state.tagStack.length > 0) {
@@ -93,9 +100,9 @@ export default class FormatterManager {
 
 			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
-			if (this.state.inCfquery && tagName !== "cfquery") {
-				sqlIndent = getSqlIndent(text, i, this.state);
-			}
+			// if (this.state.inCfquery && tagName !== "cfquery") {
+			// 	sqlIndent = getSqlIndent(text, i, this.state);
+			// }
 
 			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + sqlIndent;
@@ -107,12 +114,12 @@ export default class FormatterManager {
 			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
 				// 特殊处理cfscript和cfquery
-				if (tagName === "cfquery") {
-					this.state.inCfquery = true;
-					// 重置SQL CASE栈
-					this.state.sqlCaseStack.length = 0;
-					this.state.sqlSubqueryStack.length = 0;
-				}
+				// if (tagName === "cfquery") {
+				// 	this.state.inCfquery = true;
+				// 	// 重置SQL CASE栈
+				// 	this.state.sqlCaseStack.length = 0;
+				// 	this.state.sqlSubqueryStack.length = 0;
+				// }
 					
 				// 自己闭合的标签不增加缩进 eg <cfif ...>...</cfif>
 				if (!selfLineClosing) {
