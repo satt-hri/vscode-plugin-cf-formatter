@@ -136,7 +136,7 @@
         "type": "number",
           "default": 30,
           "minimum": 0,
-          "description": "Maximum number of characters in parenthesized expressions to be kept on single line."
+          "description": "Wrap lines when sql specified string length is exceeded"
         }
       }
     }
