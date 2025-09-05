@@ -2,8 +2,6 @@
 
 <!-- ## 🌐 Languages
 - [English](#-english)&nbsp;&nbsp;&nbsp;&nbsp;[日本語](#-日本語) &nbsp;&nbsp;[中文](#-中文)
-
-
 ---
  -->
 
