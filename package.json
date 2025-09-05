@@ -4,7 +4,7 @@
   "publisher": "hri",
   "description": "CFML Indent Formatter / CFML 自动缩进",
   "icon": "images/icon.png",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "author": "SATT李",
   "license": "MIT",
   "engines": {

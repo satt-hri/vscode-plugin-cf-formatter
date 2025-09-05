@@ -38,7 +38,7 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		})
 		.replace(/<(\/)?(cfif|cfelse|cfelseif)\b[^>]*>/gi, (match) => {
-			const key = `/* __CF_IF${index}__ */`;
+			const key = `-- __CF_IF${index}__`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
@@ -63,7 +63,8 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		});
 	// 2. 格式化 SQL
-	let formattedSQL: string="";
+	let formattedSQL: string = "";
+	console.log("sqlWithPlaceholders", sqlWithPlaceholders);
 	console.log("placeholders", placeholders);
 	try {
 		formattedSQL = format(sqlWithPlaceholders, formatOption);
@@ -75,7 +76,7 @@ function formatCFQuery(cfqueryContent: string) {
 	} finally {
 		writeLog("cfqueryContent:" + cfqueryContent);
 		writeLog("sqlWithPlaceholders:" + sqlWithPlaceholders);
-		writeLog("placeholders:" + placeholders.toString());
+		writeLog("placeholders:" + JSON.stringify(placeholders));
 		writeLog("formattedSQL:" + formattedSQL);
 	}
 
@@ -89,12 +90,13 @@ function formatCFQuery(cfqueryContent: string) {
 	let lastSql = formattedSQL
 		.split("\n")
 		.map((item) => {
-			const { tagName, isClosing } = parseTagName(item);
+			const { tagName, isClosing, selfLineClosing } = parseTagName(item);
 			let tempText = ifIndex.length
 				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
 				: item;
 			//cfif cfswitch cfcase cfdefaultcase等
-			if (blockTags.opening.includes(tagName)) {
+			//!selfLineClosing  if 在一條綫等問題上很複雜，假如是一行的 if  endif 這種 就不處理了。
+			if (blockTags.opening.includes(tagName) && !selfLineClosing) {
 				if (isClosing) {
 					ifIndex.pop();
 					tempText = ifIndex.length
@@ -115,6 +117,8 @@ function formatCFQuery(cfqueryContent: string) {
 	return lastSql;
 }
 
+const SkipTags = ["cfloop", "cfscript"];
+
 export function formatSql(
 	line: vscode.TextLine,
 	lineIndex: number,
@@ -133,6 +137,12 @@ export function formatSql(
 		const templine = document.lineAt(index);
 		const temText = templine.text.trim();
 		const { tagName, isClosing } = parseTagName(temText);
+
+		//cfqueryに cfscirpt cfloop等存在的話就 跳過
+		if (SkipTags.includes(tagName)) {
+			return false;
+		}
+
 		if (isClosing && tagName === "cfquery") {
 			endQuery = temText;
 			break;
@@ -140,15 +150,14 @@ export function formatSql(
 		lines.push({ text: temText, lineIndex: index, range: templine.range });
 	}
 	state.lastProcessLine = index;
-	//console.log("lines", lines);
 
 	if (lines.length === 0) return false;
 
 	edits.push(vscode.TextEdit.replace(document.lineAt(lineIndex).range, baseIndent + startQuery));
 	let formattedContent = lines.map((item) => item.text).join("\n");
-	console.log("formattedContent", formattedContent);
+	//console.log("formattedContent", formattedContent);
 	let formattedSQL = formatCFQuery(formattedContent);
-	console.log("formattedSQL", formattedSQL);
+	//console.log("formattedSQL", formattedSQL);
 
 	const indentedLines = formattedSQL
 		.split("\n")

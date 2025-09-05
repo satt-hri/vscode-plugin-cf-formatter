@@ -47,12 +47,16 @@ export default class FormatterManager {
 
 			const { tagName, isClosing, isSelfClosing, selfLineClosing } = parseTagName(text);
 			let currentIndentLevel = this.state.indentLevel;
-			
 
-			// 3. 处理标签名
-			if(blockTags.onlyIndex.includes(tagName)){
-				edits.push(vscode.TextEdit.replace(line.range, jsOptions.indent_char!.repeat(currentIndentLevel * jsOptions.indent_size!) + text))
-				continue
+			// 3. 处理特殊标签名
+			if (blockTags.onlyIndex.includes(tagName)) {
+				edits.push(
+					vscode.TextEdit.replace(
+						line.range,
+						jsOptions.indent_char!.repeat(currentIndentLevel * jsOptions.indent_size!) + text
+					)
+				);
+				continue;
 			}
 
 			// 3.1 檢查是否是多參數的 cfset，需要特殊處理
@@ -70,8 +74,8 @@ export default class FormatterManager {
 					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
 			}
-			if (tagName === "cfquery") {
-				// 如果这行有闭合大括号，先减少缩进
+			// 先用sql-format處理 如果還不行，那就用自己寫的sql去format -> 3.4
+			if (tagName === "cfquery" && !this.state.inCfquery) {
 				rest = formatSql(line, i, edits, this.state, document);
 				if (rest) {
 					continue;
@@ -80,13 +84,13 @@ export default class FormatterManager {
 
 			// 3.2 如果是结束标签，调整缩进
 			if (isClosing) {
-				// 特殊处理cfscript和cfquery
-				// if (tagName === "cfquery") {
-				// 	this.state.inCfquery = false;
-				// 	// 清空SQL CASE栈
-				// 	this.state.sqlCaseStack.length = 0;
-				// 	this.state.sqlSubqueryStack.length = 0;
-				// }
+				// 特殊处理cfquery
+				if (tagName === "cfquery") {
+					this.state.inCfquery = false;
+					// 清空SQL CASE栈
+					this.state.sqlCaseStack.length = 0;
+					this.state.sqlSubqueryStack.length = 0;
+				}
 
 				// 弹出标签栈并调整缩进
 				if (this.state.tagStack.length > 0) {
@@ -100,9 +104,10 @@ export default class FormatterManager {
 
 			// 3.4 处理SQL缩进
 			let sqlIndent = 0;
-			// if (this.state.inCfquery && tagName !== "cfquery") {
-			// 	sqlIndent = getSqlIndent(text, i, this.state);
-			// }
+			if (this.state.inCfquery && tagName !== "cfquery") {
+				//自己寫的sqlformat處理
+				sqlIndent = getSqlIndent(text, i, this.state);
+			}
 
 			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + sqlIndent;
@@ -114,13 +119,13 @@ export default class FormatterManager {
 			// 3.7 处理开始标签
 			if (!isClosing && !isSelfClosing && blockTags.opening.includes(tagName)) {
 				// 特殊处理cfscript和cfquery
-				// if (tagName === "cfquery") {
-				// 	this.state.inCfquery = true;
-				// 	// 重置SQL CASE栈
-				// 	this.state.sqlCaseStack.length = 0;
-				// 	this.state.sqlSubqueryStack.length = 0;
-				// }
-					
+				if (tagName === "cfquery") {
+					this.state.inCfquery = true;
+					// 重置SQL CASE栈
+					this.state.sqlCaseStack.length = 0;
+					this.state.sqlSubqueryStack.length = 0;
+				}
+
 				// 自己闭合的标签不增加缩进 eg <cfif ...>...</cfif>
 				if (!selfLineClosing) {
 					this.state.tagStack.push(tagName);
