@@ -1,14 +1,14 @@
 # 🐧🎈ᓚᘏᗢ    CFML Auto Formatter 
 
-## 🌐 Languages
-- 日本語
-- English
-- 中文
+<!-- ## 🌐 Languages
+- [English](#-english)&nbsp;&nbsp;&nbsp;&nbsp;[日本語](#-日本語) &nbsp;&nbsp;[中文](#-中文)
+
 
 ---
+ -->
 
 
-## 🏈 English
+### 🏈 English
 
 
 **CFML Code Auto-Formatting Extension** for VS Code.  
@@ -34,7 +34,7 @@ This extension is **specialized in indent formatting** and does not make unneces
 ### Notes
 - `.cfc` file formatting operates stably  
 - `.cfm` files may have formatting issues → improvement planned for the future  
-- SQL statements should avoid trailing commas
+- SQL statements should avoid <mark>leading commas</mark>.<small>[why?](https://github.com/sql-formatter-org/sql-formatter/issues/899)</small>
 
 ---
 
@@ -97,7 +97,8 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### 注意点
 - `.cfc` ファイルの整形は安定動作  
 - `.cfm` ファイルは整形が乱れる場合あり → 今後改善予定  
-- SQL文はカンマ後置をしないように
+- SQL文は<mark>カンマ前置をしないように</mark> <small>[何故?](https://github.com/sql-formatter-org/sql-formatter/issues/899)
+
 
 ---
 <details>
