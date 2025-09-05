@@ -63,7 +63,7 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		});
 	// 2. 格式化 SQL
-	let formattedSQL: string="";
+	let formattedSQL: string = "";
 	console.log("placeholders", placeholders);
 	try {
 		formattedSQL = format(sqlWithPlaceholders, formatOption);
@@ -89,7 +89,7 @@ function formatCFQuery(cfqueryContent: string) {
 	let lastSql = formattedSQL
 		.split("\n")
 		.map((item) => {
-			const { tagName, isClosing ,selfLineClosing} = parseTagName(item);
+			const { tagName, isClosing, selfLineClosing } = parseTagName(item);
 			let tempText = ifIndex.length
 				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
 				: item;
@@ -116,6 +116,8 @@ function formatCFQuery(cfqueryContent: string) {
 	return lastSql;
 }
 
+const SkipTags=["cfloop","cfscript"];
+
 export function formatSql(
 	line: vscode.TextLine,
 	lineIndex: number,
@@ -134,6 +136,12 @@ export function formatSql(
 		const templine = document.lineAt(index);
 		const temText = templine.text.trim();
 		const { tagName, isClosing } = parseTagName(temText);
+
+		//cfqueryに cfscirpt cfloop等存在的話就 跳過
+		if (SkipTags.includes(tagName)) {
+			return false
+		}
+
 		if (isClosing && tagName === "cfquery") {
 			endQuery = temText;
 			break;
@@ -141,7 +149,6 @@ export function formatSql(
 		lines.push({ text: temText, lineIndex: index, range: templine.range });
 	}
 	state.lastProcessLine = index;
-	//console.log("lines", lines);
 
 	if (lines.length === 0) return false;
 
