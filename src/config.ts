@@ -32,8 +32,8 @@ export const messages: MessageMap = {
 		ja: (error: any) => `フォーマットに失敗しました: ${error}`,
 	},
 	warnMsg: {
-		en: "CFM file formatting is under development and cannot be used temporarily.",
-		"zh-cn": "CFM文件的格式化功能正在开发中，暂时无法使用。",
-		ja: "CFMファイルのフォーマット機能は現在開発中1で、使用できません。",
+		en: "CFM files containing HTML, CSS, JS, etc. may not be formatted effectively. Are you sure you want to proceed?",
+		"zh-cn": "CFM文件中如果含有html,css,js等，可能不能有效的格式化，你確定要執行嗎？",
+		ja: "CFMファイルにHTML、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。実行してもよろしいですか？",
 	},
 };

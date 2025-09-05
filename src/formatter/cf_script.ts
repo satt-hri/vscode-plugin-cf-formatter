@@ -2,6 +2,7 @@ import { FormatState } from "../core/FormatState";
 import beautify from "js-beautify";
 import * as vscode from "vscode";
 import { parseTagName } from "../utils/common";
+import { writeLog } from "../utils/log";
 
 const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
 //console.log("config", config);
@@ -71,12 +72,16 @@ export function formatCfscript(
 	}
 
 	try {
+		writeLog("script_Content:" + scriptContent);
 		const formattedCode = beautify.js(scriptContent, jsOptions);
+		writeLog("script_formattedCode:" + formattedCode);
 
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
 			.split("\n")
-			.map((line) => (line.trim() ? baseIndent +  jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : ""))
+			.map((line) =>
+				line.trim() ? baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : ""
+			)
 			.join("\n");
 
 		// 创建替换范围：从当前行到结束标签的前一行
@@ -92,6 +97,7 @@ export function formatCfscript(
 		return true;
 	} catch (error) {
 		console.error("格式化 cfscript 时出错:", error);
+		writeLog("script_error:" + String(error));
 		return false;
 	}
 }

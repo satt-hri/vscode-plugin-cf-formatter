@@ -14,11 +14,11 @@ export function activate(context: vscode.ExtensionContext) {
 	const lang = vscode.env.language.toLowerCase() as Lang;
 
 	const provider: vscode.DocumentFormattingEditProvider = {
-		provideDocumentFormattingEdits(
+		async provideDocumentFormattingEdits(
 			document: vscode.TextDocument,
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
-		): vscode.TextEdit[] {
+		): Promise<vscode.TextEdit[]> {
 			// console.log("格式化器被调用！");
 			// console.log("文档语言ID:", document.languageId);
 			// console.log("文档行数:", document.lineCount);
@@ -28,8 +28,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const ext = path.extname(document.fileName).toLowerCase();
 			if (ext === ".cfm") {
-				vscode.window.showWarningMessage(messages.warnMsg[lang] as string, { modal: true });
-				return []; // 只处理 .cfc 文件
+				const result = await vscode.window.showWarningMessage(
+					messages.warnMsg[lang] as string,
+					"Yes",
+					"No"
+				);
+				if (result === "No") {
+					return [];
+				}
 			}
 			return manager.formatDocument(document, options, token);
 		},

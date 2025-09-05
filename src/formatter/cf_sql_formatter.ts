@@ -38,7 +38,7 @@ function formatCFQuery(cfqueryContent: string) {
 			return key;
 		})
 		.replace(/<(\/)?(cfif|cfelse|cfelseif)\b[^>]*>/gi, (match) => {
-			const key = `-- __CF_IF${index}__ `;
+			const key = `-- __CF_IF${index}__`;
 			placeholders.push({ key, value: match });
 			index++;
 			return key;
@@ -64,6 +64,7 @@ function formatCFQuery(cfqueryContent: string) {
 		});
 	// 2. 格式化 SQL
 	let formattedSQL: string = "";
+	console.log("sqlWithPlaceholders", sqlWithPlaceholders);
 	console.log("placeholders", placeholders);
 	try {
 		formattedSQL = format(sqlWithPlaceholders, formatOption);
@@ -75,7 +76,7 @@ function formatCFQuery(cfqueryContent: string) {
 	} finally {
 		writeLog("cfqueryContent:" + cfqueryContent);
 		writeLog("sqlWithPlaceholders:" + sqlWithPlaceholders);
-		writeLog("placeholders:" + placeholders.toString());
+		writeLog("placeholders:" + JSON.stringify(placeholders));
 		writeLog("formattedSQL:" + formattedSQL);
 	}
 
@@ -116,7 +117,7 @@ function formatCFQuery(cfqueryContent: string) {
 	return lastSql;
 }
 
-const SkipTags=["cfloop","cfscript"];
+const SkipTags = ["cfloop", "cfscript"];
 
 export function formatSql(
 	line: vscode.TextLine,
@@ -139,7 +140,7 @@ export function formatSql(
 
 		//cfqueryに cfscirpt cfloop等存在的話就 跳過
 		if (SkipTags.includes(tagName)) {
-			return false
+			return false;
 		}
 
 		if (isClosing && tagName === "cfquery") {
@@ -154,9 +155,9 @@ export function formatSql(
 
 	edits.push(vscode.TextEdit.replace(document.lineAt(lineIndex).range, baseIndent + startQuery));
 	let formattedContent = lines.map((item) => item.text).join("\n");
-	console.log("formattedContent", formattedContent);
+	//console.log("formattedContent", formattedContent);
 	let formattedSQL = formatCFQuery(formattedContent);
-	console.log("formattedSQL", formattedSQL);
+	//console.log("formattedSQL", formattedSQL);
 
 	const indentedLines = formattedSQL
 		.split("\n")
