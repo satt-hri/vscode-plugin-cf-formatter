@@ -89,12 +89,13 @@ function formatCFQuery(cfqueryContent: string) {
 	let lastSql = formattedSQL
 		.split("\n")
 		.map((item) => {
-			const { tagName, isClosing } = parseTagName(item);
+			const { tagName, isClosing ,selfLineClosing} = parseTagName(item);
 			let tempText = ifIndex.length
 				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
 				: item;
 			//cfif cfswitch cfcase cfdefaultcase等
-			if (blockTags.opening.includes(tagName)) {
+			//!selfLineClosing  if 在一條綫等問題上很複雜，假如是一行的 if  endif 這種 就不處理了。
+			if (blockTags.opening.includes(tagName) && !selfLineClosing) {
 				if (isClosing) {
 					ifIndex.pop();
 					tempText = ifIndex.length
