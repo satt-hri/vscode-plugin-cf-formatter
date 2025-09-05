@@ -74,9 +74,8 @@ export default class FormatterManager {
 					continue; // 已經處理過 cfscript 行，跳过后续处理
 				}
 			}
-			// 先用sql-format處理 如果還不行，那就用自己寫的sql去format -> 3.4 
+			// 先用sql-format處理 如果還不行，那就用自己寫的sql去format -> 3.4
 			if (tagName === "cfquery" && !this.state.inCfquery) {
-	
 				rest = formatSql(line, i, edits, this.state, document);
 				if (rest) {
 					continue;
