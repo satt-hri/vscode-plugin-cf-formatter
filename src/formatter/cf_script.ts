@@ -54,7 +54,7 @@ export function formatCfscript(
 	let i = lineIndex + 1;
 	for (; i < document.lineCount; i++) {
 		const templine = document.lineAt(i);
-		const temText = templine.text.trim();
+		const temText = wrapIgnoreCode(templine.text.trim());
 		const { tagName, isClosing } = parseTagName(temText);
 
 		if (isClosing && tagName === "cfscript") {
@@ -73,8 +73,9 @@ export function formatCfscript(
 
 	try {
 		writeLog("script_Content:" + scriptContent);
-		const formattedCode = beautify.js(scriptContent, jsOptions);
+		let formattedCode = beautify.js(scriptContent, jsOptions);
 		writeLog("script_formattedCode:" + formattedCode);
+		formattedCode = removeIgnoreCode(formattedCode)
 
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
@@ -100,4 +101,25 @@ export function formatCfscript(
 		writeLog("script_error:" + String(error));
 		return false;
 	}
+}
+
+const ignoreFunction = ["replace"];
+const ignoreStart = "/* beautify ignore:start */";
+const ignoreEnd = "/* beautify ignore:end */";
+
+function wrapIgnoreCode(code: string): string {
+	const pattern = `\\b(${ignoreFunction.join("|")})\\s*\\(`;
+	if (new RegExp(pattern, "i").test(code)) {
+		let temp = `${ignoreStart}${code}${ignoreEnd}`;
+		writeLog("wrapIgnoreCode:" + temp);
+		return temp;
+	}
+
+	return code;
+}
+function removeIgnoreCode(code: string): string {
+	writeLog("removeIgnoreCode_code:" + code);
+	let temp = code.replaceAll(ignoreStart, "").replaceAll(ignoreEnd, "");
+	writeLog("removeIgnoreCode_temp:" + code);
+	return temp;
 }
