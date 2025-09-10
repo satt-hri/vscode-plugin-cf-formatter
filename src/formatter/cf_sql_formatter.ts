@@ -12,11 +12,12 @@ const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
 const useTab = config.get<boolean>("indentWithTabs", true);
 
 const formatOption: FormatOptionsWithLanguage = {
-	language: "sql",
+	language: config.get<string>("sqlLanguage", "mysql") as any,
 	useTabs: useTab,
 	tabWidth: useTab ? 1 : config.get<number>("indentSize", 4),
 	keywordCase: "upper",
 	expressionWidth: config.get<number>("expressionWidth", 30),
+	
 };
 
 function formatCFQuery(cfqueryContent: string) {
