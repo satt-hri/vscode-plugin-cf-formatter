@@ -2,9 +2,9 @@
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
   "publisher": "hri",
-  "description": "CFML Indent Formatter / CFML 自动缩进",
+  "description": "CFML Indent Formatter / CFML インデント整形",
   "icon": "images/icon.png",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
@@ -65,14 +65,14 @@
         "hri.cfml.formatter.indentWithTabs": {
           "type": "boolean",
           "default": true,
-          "description": "Use tabs for indentation instead of spaces."
+          "description": "Use tabs for indentation instead of spaces.(js-beautify)"
         },
         "hri.cfml.formatter.indentSize": {
           "type": "number",
           "default": 4,
           "minimum": 1,
           "maximum": 10,
-          "description": "Number of spaces to use for indentation when using spaces."
+          "description": "Number of spaces to use for indentation when using spaces.(js-beautify)"
         },
         "hri.cfml.formatter.indentChar": {
           "type": "string",
@@ -81,20 +81,20 @@
             " ",
             "\t"
           ],
-          "description": "Character to use for indentation. ' ' (space) or '\\t' (tab). Note: This setting is overridden by indentWithTabs."
+          "description": "Character to use for indentation. ' ' (space) or '\\t' (tab). Note: This setting is overridden by indentWithTabs.(js-beautify)"
         },
         "hri.cfml.formatter.wrapLineLength": {
           "type": "number",
           "default": 0,
           "minimum": 0,
-          "description": "Maximum line length before wrapping. Set to 0 for no limit."
+          "description": "Maximum line length before wrapping. Set to 0 for no limit.(js-beautify)"
         },
         "hri.cfml.formatter.maxPreserveNewlines": {
           "type": "number",
           "default": 2,
           "minimum": 0,
           "maximum": 10,
-          "description": "Maximum number of consecutive newlines to preserve in the output."
+          "description": "Maximum number of consecutive newlines to preserve in the output.(js-beautify)"
         },
         "hri.cfml.formatter.preserveNewlines": {
           "type": "boolean",
@@ -104,7 +104,7 @@
         "hri.cfml.formatter.keepArrayIndentation": {
           "type": "boolean",
           "default": false,
-          "description": "Preserve the original indentation of arrays instead of re-indenting them."
+          "description": "Preserve the original indentation of arrays instead of re-indenting them.(js-beautify)"
         },
         "hri.cfml.formatter.braceStyle": {
           "type": "string",
@@ -115,28 +115,77 @@
             "end-expand",
             "none"
           ],
-          "description": "Brace style to use. 'collapse': opening brace on same line, 'expand': opening brace on new line, 'end-expand': new line for functions/blocks only, 'none': keep original position."
+          "description": "Brace style to use. 'collapse': opening brace on same line, 'expand': opening brace on new line, 'end-expand': new line for functions/blocks only, 'none': keep original position.(js-beautify)"
         },
         "hri.cfml.formatter.breakChainedMethods": {
           "type": "boolean",
           "default": false,
-          "description": "Break chained method calls across multiple lines."
+          "description": "Break chained method calls across multiple lines.(js-beautify)"
         },
         "hri.cfml.formatter.spaceBeforeConditional": {
           "type": "boolean",
           "default": true,
-          "description": "Add space before conditional statements (if, while, for)."
+          "description": "Add space before conditional statements (if, while, for).(js-beautify)"
         },
         "hri.cfml.formatter.endWithNewline": {
           "type": "boolean",
           "default": false,
-          "description": "End files with a newline character."
+          "description": "End files with a newline character.(js-beautify)"
         },
         "hri.cfml.formatter.expressionWidth": {
-        "type": "number",
+          "type": "number",
           "default": 30,
           "minimum": 0,
-          "description": "Wrap lines when sql specified string length is exceeded"
+          "description": "Wrap lines when sql specified string length is exceeded (sql-formatter)"
+        },
+        "hri.cfml.formatter.sqlLanguage": {
+          "type": "string",
+          "enum": [
+            "sql",
+            "mysql",
+            "postgresql",
+            "sqlite",
+            "mariadb",
+            "tidb",
+            "tsql",
+            "transactsql",
+            "plsql",
+            "bigquery",
+            "redshift",
+            "snowflake",
+            "spark",
+            "hive",
+            "trino",
+            "duckdb",
+            "db2",
+            "db2i",
+            "n1ql",
+            "singlestoredb"
+          ],
+          "enumDescriptions": [
+            "Standard SQL",
+            "MySQL",
+            "PostgreSQL",
+            "SQLite",
+            "MariaDB",
+            "TiDB",
+            "SQL Server (T-SQL)",
+            "Transact-SQL",
+            "Oracle PL/SQL",
+            "Google BigQuery",
+            "Amazon Redshift",
+            "Snowflake",
+            "Apache Spark SQL",
+            "Apache Hive",
+            "Trino",
+            "DuckDB",
+            "IBM DB2",
+            "IBM DB2 for i",
+            "Couchbase N1QL",
+            "SingleStore DB"
+          ],
+          "default": "mysql",
+          "description": "Select SQL dialect for formatting(sql-formatter)"
         }
       }
     }
