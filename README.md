@@ -32,6 +32,9 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 - `.cfc` ファイルの整形は安定動作  
 - `.cfm` ファイルは整形が乱れる場合あり → 今後改善予定  
 - SQL文は<mark>カンマ前置をしないように</mark> <small>[何故?](https://github.com/sql-formatter-org/sql-formatter/issues/899)
+- 開始タグにフォーカスしてからフォーマットすると、自動で閉じタグが追加されてしまう場合がある。これは他のプラグインの問題である。例: (Auto Close Tag)
+- SQL のフォーマットは、まず **sql-formatter** を使用します。ただし、`cfloop` など特に複雑なものを含む場合は、自作のロジックでフォーマットします。  
+- `cfscript` のフォーマットは、JavaScript と非常に似ています。
 
 
 ---
@@ -43,9 +46,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 </div>
 
 ---
-<details>
-<summary>他のはクリックして表示</summary>
-### ⚙️ CFML フォーマッタ デフォルト設定
+### CFML フォーマッタ デフォルト設定
 
 | 設定項目                                                   | デフォルト値                | 型                     | 説明                                                                                         |
 | ---------------------------------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
@@ -60,12 +61,12 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 | <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>メソッドチェーンを複数行に分割するかどうか。</small>                                  |
 | <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>条件文（if, while, for）の前にスペースを入れるか。</small>                            |
 | <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>ファイル末尾に改行を追加するかどうか。</small>                                        |
-| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                                               |
+| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                
+| <small>`hri.cfml.formatter.sqlLanguage`</small>        | <small>`"mysql"`</small>         | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                  |
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
 
-</details>
 
 ---
 
@@ -96,6 +97,11 @@ This extension is **specialized in indent formatting** and does not make unneces
 - `.cfc` file formatting operates stably  
 - `.cfm` files may have formatting issues → improvement planned for the future  
 - SQL statements should avoid <mark>leading commas</mark>.<small>[why?](https://github.com/sql-formatter-org/sql-formatter/issues/899)</small>
+- When formatting after focusing on the opening tag, the closing tag may be automatically added. This is an issue caused by another plugin.
+e.g.: (Auto Close Tag)
+- SQL formatting is first done using **sql-formatter**.  
+However, if it includes something particularly complex such as `cfloop`, I use my own custom logic to format it.  
+- The formatting of `cfscript` is quite similar to JavaScript.  
 
 ---
 <details>
@@ -124,7 +130,8 @@ This extension is **specialized in indent formatting** and does not make unneces
 | <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>Whether to break chained methods into multiple lines.</small>                  |
 | <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>Whether to add space before conditionals (if, while, for).</small>             |
 | <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>Whether to add a newline at the end of the file.</small>                       |
-| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>Wrap lines when sql specified string length is exceeded</small>                |
+| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>Wrap lines when sql specified string length is exceeded(sql-formatter)</small> 
+| <small>`hri.cfml.formatter.sqlLanguage`</small>        | <small>`"mysql"`</small>         | <small>string</small>  | <small>Select SQL dialect for formatting(sql-formatter)</small>                     |
 
 💡 **How to Change Settings**  
 Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search box to make changes. Don't forget to reload the window after making changes!  
@@ -162,5 +169,7 @@ Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search 
 ### 注意事项
 - `.cfc` 文件格式化支持稳定  
 - `.cfm` 文件缩进可能不准确，将在后续优化  
+- SQL 的格式化先使用 **sql-formatter** 进行，如果包含 `cfloop` 等特别复杂的情况，会使用自己写的逻辑去格式化。  
+- `cfscript` 的格式化，很类似 JavaScript。  
 
 </details>
