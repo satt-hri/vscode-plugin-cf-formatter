@@ -120,6 +120,6 @@ function wrapIgnoreCode(code: string): string {
 function removeIgnoreCode(code: string): string {
 	writeLog("removeIgnoreCode_code:" + code);
 	let temp = code.replaceAll(ignoreStart, "").replaceAll(ignoreEnd, "");
-	writeLog("removeIgnoreCode_temp:" + code);
+	writeLog("removeIgnoreCode_temp:" + temp);
 	return temp;
 }
