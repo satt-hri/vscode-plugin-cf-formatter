@@ -64,7 +64,6 @@ export function formatCfscript(
 	if (tagName !== "cfscript" || text.length == 0) {
 		return false; // 只處理 cfset 標籤
 	}
-
 	const totalIndent = state.indentLevel;
 	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
 
@@ -120,7 +119,7 @@ export function formatCfscript(
 		const indentedLines = formattedCode
 			.split("\n")
 			.map((line) =>
-				line.trim() ? baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : ""
+				line.trim() ? baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : line
 			)
 			.join("\n");
 
