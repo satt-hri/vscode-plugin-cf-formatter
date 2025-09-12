@@ -35,6 +35,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 - 開始タグにフォーカスしてからフォーマットすると、自動で閉じタグが追加されてしまう場合がある。これは他のプラグインの問題である。例: (Auto Close Tag)
 - SQL のフォーマットは、まず **sql-formatter** を使用します。ただし、`cfloop` など特に複雑なものを含む場合は、自作のロジックでフォーマットします。  
 - `cfscript` のフォーマットは、JavaScript と非常に似ています。
+   SQL 文や XML、HTML タグが含まれていると、タグが壊れることがあるので、使わないほうがいいです。
 
 
 ---
@@ -102,6 +103,7 @@ e.g.: (Auto Close Tag)
 - SQL formatting is first done using **sql-formatter**.  
 However, if it includes something particularly complex such as `cfloop`, I use my own custom logic to format it.  
 - The formatting of `cfscript` is quite similar to JavaScript.  
+  If the string contains SQL statements, XML, or HTML tags, there is a possibility that the tags may be broken, so it’s better not to use it.
 
 ---
 <details>

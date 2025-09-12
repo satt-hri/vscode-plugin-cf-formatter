@@ -3,6 +3,7 @@ import { messages, Lang } from "./config";
 import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
+import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -28,11 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const ext = path.extname(document.fileName).toLowerCase();
 			if (ext === ".cfm") {
-				const result = await vscode.window.showWarningMessage(
-					messages.warnMsg[lang] as string,
-					"Yes",
-					"No"
-				);
+				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string, "Yes", "No");
 				if (result === "No") {
 					return [];
 				}
@@ -73,30 +70,34 @@ export function activate(context: vscode.ExtensionContext) {
 
 		//console.log("手动格式化命令被调用");
 		//console.log("文档语言ID1:", editor.document.languageId);
-
 		try {
-			// 直接调用我们的格式化器，提供所需的参数y
-			const options: vscode.FormattingOptions = {
-				tabSize: 4,
-				insertSpaces: true,
-			};
-			const token = new vscode.CancellationTokenSource().token;
+			const originalStates = await disableAutoCloseTag();
+			try {
+				// 直接调用我们的格式化器，提供所需的参数
+				const options: vscode.FormattingOptions = {
+					tabSize: 4,
+					insertSpaces: true,
+				};
+				const token = new vscode.CancellationTokenSource().token;
 
-			const editsResult = provider.provideDocumentFormattingEdits(editor.document, options, token);
+				const editsResult = provider.provideDocumentFormattingEdits(editor.document, options, token);
 
-			// 处理可能的Promise返回值
-			const edits = await Promise.resolve(editsResult);
-			//console.log("计算得到的编辑操作:", edits);
+				// 处理可能的Promise返回值
+				const edits = await Promise.resolve(editsResult);
+				//console.log("计算得到的编辑操作:", edits);
 
-			if (edits && edits.length > 0) {
-				await editor.edit((editBuilder: vscode.TextEditorEdit) => {
-					edits.forEach((edit: vscode.TextEdit) => {
-						editBuilder.replace(edit.range, edit.newText);
+				if (edits && edits.length > 0) {
+					await editor.edit((editBuilder: vscode.TextEditorEdit) => {
+						edits.forEach((edit: vscode.TextEdit) => {
+							editBuilder.replace(edit.range, edit.newText);
+						});
 					});
-				});
-				vscode.window.showInformationMessage(messages.formatDone[lang] as string);
-			} else {
-				vscode.window.showInformationMessage(messages.noContent[lang] as string);
+					vscode.window.showInformationMessage(messages.formatDone[lang] as string);
+				} else {
+					vscode.window.showInformationMessage(messages.noContent[lang] as string);
+				}
+			} finally {
+				await restoreAutoCloseTag(originalStates);
 			}
 		} catch (error) {
 			const val = messages.formatError[lang];
