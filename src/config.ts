@@ -32,8 +32,8 @@ export const messages: MessageMap = {
 		ja: (error: any) => `フォーマットに失敗しました: ${error}`,
 	},
 	warnMsg: {
-		en: "CFM files containing HTML, CSS, JS, etc. may not be formatted effectively. Are you sure you want to proceed?",
-		"zh-cn": "CFM文件中如果含有html,css,js等，可能不能有效的格式化，你確定要執行嗎？",
-		ja: "CFMファイルにHTML、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。実行してもよろしいですか？",
+		en: "CFM files containing HTML(xml), CSS, JS, etc. may not be formatted effectively. Are you sure you want to proceed?",
+		"zh-cn": "CFM文件中如果含有html(xml),css,js等，可能不能有效的格式化，你確定要執行嗎？",
+		ja: "CFMファイルにHTML(xml)、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。実行してもよろしいですか？",
 	},
 };

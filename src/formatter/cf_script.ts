@@ -28,6 +28,29 @@ export const jsOptions: js_beautify.JSBeautifyOptions = {
 	indent_empty_lines: false,
 };
 
+const ignoreFunction = ["replace"];
+const ignoreStart = "/* beautify ignore:start */";
+const ignoreEnd = "/* beautify ignore:end */";
+const cusIgnoreStart = "/* cf:start */";
+const cusIgnoreEnd= "/* cf:end */";
+
+function wrapIgnoreCode(code: string): string {
+	const pattern = `\\b(${ignoreFunction.join("|")})\\s*\\(`;
+	if (new RegExp(pattern, "i").test(code)) {
+		let temp = `${ignoreStart}${code}${ignoreEnd}`;
+		writeLog("wrapIgnoreCode:" + temp);
+		return temp;
+	}
+
+	return code;
+}
+function removeIgnoreCode(code: string): string {
+	writeLog("removeIgnoreCode_code:" + code);
+	let temp = code.replaceAll(ignoreStart, "").replaceAll(ignoreEnd, "");
+	writeLog("removeIgnoreCode_temp:" + temp);
+	return temp;
+}
+
 export function formatCfscript(
 	line: vscode.TextLine,
 	lineIndex: number,
@@ -71,11 +94,27 @@ export function formatCfscript(
 		return true; // 如果 cfscript 内容为空，直接返回
 	}
 
+	// let placeholders: { key: string; value: string }[] = [];
+	// let index = 0;
+
+	// const strWithPlaceholders = scriptContent.replace(/(['"])([^'"]*<\s*[A-Za-z][\s\S]*?>[^'"])\1/g, (match) => {
+	// 	const key = `__XML_HTML_${index}_`;
+	// 	placeholders.push({ key, value: match });
+	// 	index++;
+	// 	return key;
+	// });
+	// console.log(strWithPlaceholders);
+
 	try {
 		writeLog("script_Content:" + scriptContent);
 		let formattedCode = beautify.js(scriptContent, jsOptions);
 		writeLog("script_formattedCode:" + formattedCode);
-		formattedCode = removeIgnoreCode(formattedCode)
+
+		formattedCode = removeIgnoreCode(formattedCode);
+
+		// placeholders.forEach(({ key, value }) => {
+		// 	formattedCode = formattedCode.replace(key, value);
+		// });
 
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
@@ -101,25 +140,4 @@ export function formatCfscript(
 		writeLog("script_error:" + String(error));
 		return false;
 	}
-}
-
-const ignoreFunction = ["replace"];
-const ignoreStart = "/* beautify ignore:start */";
-const ignoreEnd = "/* beautify ignore:end */";
-
-function wrapIgnoreCode(code: string): string {
-	const pattern = `\\b(${ignoreFunction.join("|")})\\s*\\(`;
-	if (new RegExp(pattern, "i").test(code)) {
-		let temp = `${ignoreStart}${code}${ignoreEnd}`;
-		writeLog("wrapIgnoreCode:" + temp);
-		return temp;
-	}
-
-	return code;
-}
-function removeIgnoreCode(code: string): string {
-	writeLog("removeIgnoreCode_code:" + code);
-	let temp = code.replaceAll(ignoreStart, "").replaceAll(ignoreEnd, "");
-	writeLog("removeIgnoreCode_temp:" + temp);
-	return temp;
 }
