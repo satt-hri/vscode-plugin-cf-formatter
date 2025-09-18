@@ -434,3 +434,61 @@ console.log(/^(?!.*cf).*\/>$/.test(text)); // false - 整體失敗
 ```
 
 這樣理解前瞻/後瞻了嗎？它們主要用於設置匹配的**前置條件**，而不是實際匹配內容。
+
+---
+
+1. 基于操作的生命周期钩子
+```bash
+# 安装流程
+preinstall → install → postinstall
+
+# 发布流程
+prepublishOnly → prepack → prepare → postpack → publish → postpublish
+
+# 卸载流程
+preuninstall → uninstall → postuninstall
+```
+2. 基于脚本的自定义生命周期钩子
+```bash
+# 对于任何自定义脚本 "xyz"
+prexyz → xyz → postxyz
+```
+
+实际应用示例
+```json
+{
+  "scripts": {
+    // 安装相关
+    "preinstall": "echo '开始安装依赖...'",
+    "postinstall": "echo '依赖安装完成!'",
+    
+    // 测试相关
+    "pretest": "npm run lint", // 先检查代码风格再测试
+    "test": "mocha tests/",
+    "posttest": "echo '测试完成，覆盖率报告已生成'",
+    
+    // 构建相关
+    "prebuild": "rimraf dist/", // 先清理旧构建文件
+    "build": "webpack --mode production",
+    "postbuild": "npm run size-report", // 构建后分析包大小
+    
+    // 自定义脚本（如您的配置）
+    "prepackage": "npm run build", // 打包前先构建
+    "package": "vsce package",
+    
+    // 发布相关
+    "prepublishOnly": "npm test && npm run build",
+    "postpublish": "git push && git push --tags"
+  }
+}
+```
+
+## 常用内置生命周期钩子
+| 钩子名称 | 执行时机 | 常见用途 |
+|---------|---------|---------|
+| `preinstall` | 在安装包依赖之前 | 环境检查、权限设置 |
+| `postinstall` | 在安装包依赖之后 | 构建项目、生成配置文件 |
+| `prepublishOnly` | 在包发布到 npm 之前 | 运行测试、构建生产版本 |
+| `prepare` | 在包打包和发布之前 | 编译源代码、生成类型定义 |
+| `prepack` | 在打包 tarball 之前 | 清理临时文件 |
+| `postpack` | 在打包 tarball 之后 | 备份、通知 |
