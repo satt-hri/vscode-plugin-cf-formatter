@@ -13,6 +13,11 @@
   "categories": [
     "Formatters"
   ],
+  "tags": [
+    "CFML",
+    "ColdFusion",
+    "Lucee"
+  ],
   "activationEvents": [
     "onLanguage:cfml",
     "onLanguage:cfc"

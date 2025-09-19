@@ -492,3 +492,15 @@ prexyz → xyz → postxyz
 | `prepare` | 在包打包和发布之前 | 编译源代码、生成类型定义 |
 | `prepack` | 在打包 tarball 之前 | 清理临时文件 |
 | `postpack` | 在打包 tarball 之后 | 备份、通知 |
+
+---
+
+| 命令                               | 说明              |
+| -------------------------------- | --------------- |
+| `git stash push -m "message"`    | 保存修改到 stash 栈   |
+| `git stash push -u -m "message"` | 保存修改 + 未跟踪文件    |
+| `git stash list`                 | 查看 stash 栈      |
+| `git stash pop`                  | 恢复最新 stash 并删除  |
+| `git stash apply stash@{1}`      | 恢复指定 stash，但不删除 |
+| `git stash drop stash@{0}`       | 删除指定 stash      |
+
