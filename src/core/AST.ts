@@ -1,6 +1,11 @@
 import * as vscode from "vscode";
 import { FormatState } from "./FormatState";
 
+//coldfusion 的话 下面的代码也是有效的。
+// <   cfoutput>
+//     123
+// <   /           cfoutput    >
+
 class ASTNode {
 	private children: ASTNode[] = [];
 
@@ -35,15 +40,23 @@ class CFCNode extends ASTNode {
 	}
 }
 
-export function creatAst(
-	line: vscode.TextLine,
-	lineIndex: number,
+export function createAst(
+	// line: vscode.TextLine,
+	// lineIndex: number,
 	edits: vscode.TextEdit[],
 	state: FormatState,
 	document: vscode.TextDocument
 ): boolean {
 	const root = new CFCNode();
-	const cfTagRegex = /<\s*(cf\w+)\b[\s\S]*?(\/?)>/gi;
+
+	// 开始标签（包括自闭合）
+	const cfOpenTagRegex = /<\s*(cf\w+)\b[\s\S]*?(\/?)>/gi;
+
+	// 结束标签
+	const cfCloseTagRegex = /<\s*\/(cf\w+)\s*>/gi;
+
+	const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b([\s\S]*?)(\/?)>/gi;
+
 	let currentTag = root;
 
 	let stack: ASTNode[] = [root];
@@ -51,7 +64,7 @@ export function creatAst(
 		const originalText = document.lineAt(i).text;
 		const trimText = originalText.trim();
 		if (!trimText) continue;
-		const matches = [...trimText.matchAll(cfTagRegex)];
+		const matches = [...trimText.matchAll(cfOpenTagRegex)];
 		let lastIndex = 0;
 		if (matches.length) {
 			matches.forEach((match) => {
