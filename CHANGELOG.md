@@ -1,80 +1,132 @@
-# 更改日志
+# Changelog
 
-本文件记录了 **CFML Auto Formatter** 插件的所有重要更新。  
-更新日志的格式参考 [Keep a Changelog](http://keepachangelog.com/)。  
+All notable changes to the **CFML Auto Formatter** extension will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ## [Unreleased]
-### 改进
-- `.cfm` 文件缩进格式化的支持（计划中）
-- 增强对复杂 CFML 模板的兼容性
+
+### Planned
+- Enhanced indentation formatting support for `.cfm` files
+- Improved compatibility with complex CFML templates
+
+---
+
+## [10.0.16] - 2025-09-23
+
+### Added
+- Introduced automatic tag line breaking functionality
+
+---
 
 ## [10.0.15] - 2025-09-12
-### 修改
-- bug: 'auto-close-tag'と競合
-- bug:replace改行
 
+### Fixed
+- Fixed conflict with 'auto-close-tag' extension
+- Fixed replace line break related bugs
+
+---
 
 ## [10.0.14] - 2025-09-10
-### 修改
-- sql-formatのように、自由にlanguageを選ぶようにする
 
+### Changed
+- Added flexible language selection similar to sql-format extension
 
-## [10.0.13] - 2025-09-5
-### 修改
-- bug
+---
+
+## [10.0.13] - 2025-09-05
+
+### Fixed
+- Fixed known bugs
+
+---
 
 ## [10.0.12] - 2025-09-04
-### 修改
-- sql-formatterを導入
 
-## [10.0.11] - 2025-09-1
-### 修改
-- bug
+### Added
+- Integrated sql-formatter functionality
+
+---
+
+## [10.0.11] - 2025-09-01
+
+### Fixed
+- Fixed known bugs
+
+---
 
 ## [10.0.10] - 2025-08-28
-### 修改
-- cfsetの表示
 
-## [10.0.7&8] - 2025-08-25
-### 修改
-- cfscript中の不具合修正
+### Changed
+- Improved cfset tag display rendering
 
-## [10.0.7&8] - 2025-08-25
-### 修改
-- cfscript内容はjs-beautifyでフォーマットするようにする
+---
+
+## [10.0.8] - 2025-08-25
+
+### Fixed
+- Fixed formatting issues within cfscript blocks
+
+---
+
+## [10.0.7] - 2025-08-25
+
+### Changed
+- cfscript content now uses js-beautify for formatting
+
+---
 
 ## [10.0.6] - 2025-08-22
-### 修改
-- cfquery内のフォーマット改善
+
+### Changed
+- Improved formatting within cfquery blocks
+
+---
 
 ## [10.0.5] - 2025-08-20
-### 修改
-- cfsetタグのバグ対応
+
+### Fixed
+- Fixed cfset tag related bugs
+
+---
 
 ## [10.0.4] - 2025-08-19
-### 新增
-- メッセージは多言語対応
-### 修改
-- サブselect改善
+
+### Added
+- Multi-language message support
+
+### Changed
+- Improved subselect query formatting
+
+---
 
 ## [10.0.3] - 2025-08-19
-### 修改
-- cfsetタグ
+
+### Changed
+- Optimized cfset tag handling
+
+---
 
 ## [10.0.2] - 2025-08-18
-### 修改
-- コメントのフォーマット
+
+### Changed
+- Improved comment formatting
+
+---
 
 ## [10.0.1] - 2025-08-18
-### 新增
-- 增加插件图标和详细说明（README.md）
-- 在 Marketplace / VSIX 扩展页面显示更改日志
 
-### 修复
-- 修复 `publisher` 显示为 `undefined_publisher` 的问题
+### Added
+- Added extension icon and detailed documentation (README.md)
+- Display changelog in Marketplace / VSIX extension page
+
+### Fixed
+- Fixed `publisher` showing as `undefined_publisher`
+
+---
 
 ## [1.0.0] - 2025-08-17
-### 初始版本
-- 支持 CFML 缩进自动格式化
-- 对 `.cfc` 文件提供较好的格式化效果
-- `.cfm` 文件可尝试格式化，但支持有限
+
+### Initial Release
+- Support for CFML automatic indentation formatting
+- Good for

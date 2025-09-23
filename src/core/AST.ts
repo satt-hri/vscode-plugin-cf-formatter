@@ -45,6 +45,11 @@ export function autoTagWrapping(document: vscode.TextDocument): vscode.TextEdit[
 
 			writeLog("autoTagWrapping_before:" + original);
 			writeLog("autoTagWrapping_after:" + afterContent);
+
+			//假如内容没有变化的话，也就是本来就是独立的一行的情况下。
+			if (trimText == afterContent.trim()) {
+				continue;
+			}
 			edits.push(vscode.TextEdit.replace(original.range, afterContent.trim())); //因为是独立的一行，左右如果存在换行是不对的。
 		}
 	}
@@ -105,10 +110,6 @@ function parseAttributes(attrString: string): Record<string, string> {
 
 	return attributes;
 }
-
-
-
-
 
 class ASTNode {
 	private children: ASTNode[] = [];

@@ -1,6 +1,11 @@
 
 <cfprocessingdirective pageencoding="UTF-8" suppresswhitespace="yes">
-<cfcomponent>
+                <!--- aaaa
+                sdfasdfasd
+                ssddfdddddddd
+
+                sdfasdfasd--->
+        <cfcomponent>
     <cfset a =123 /><cfif true><cfset a =456 /></cfif>
             <cfswitch expression="#sponsorshipDisplayID#"><cfcase value="1"><cfset result = "su" />
             </cfcase><cfdefaultcase>
@@ -27,4 +32,4 @@ str = Replace(str, '<br>', "&##xA;", "all");LogOutputcfc = CreateObject("compone
 		
 				</cfquery></cffunction>
 </cfcomponent>
-</cfprocessingdirective>
+                </cfprocessingdirective>

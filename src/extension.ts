@@ -31,8 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
 			if (preprocessedEdits.length > 0) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
 				workspaceEdit.set(document.uri, preprocessedEdits);
-				await vscode.workspace.applyEdit(workspaceEdit);
-				//await new Promise(resolve =>setTimeout(resolve,10))
+				const success = await vscode.workspace.applyEdit(workspaceEdit);
+				//await new Promise((resolve) => setTimeout(resolve, 10));
+				console.log(success);
 			}
 
 			const manager = new FormatterManager();
