@@ -1,11 +1,4 @@
-
-<cfprocessingdirective pageencoding="UTF-8" suppresswhitespace="yes">
-                <!--- aaaa
-                sdfasdfasd
-                ssddfdddddddd
-
-                sdfasdfasd--->
-        <cfcomponent>
+        <cfcomponent><cfprocessingdirective pageencoding="UTF-8" suppresswhitespace="yes">
     <cfset a =123 /><cfif true><cfset a =456 /></cfif>
             <cfswitch expression="#sponsorshipDisplayID#"><cfcase value="1"><cfset result = "su" />
             </cfcase><cfdefaultcase>
@@ -31,5 +24,6 @@ str = Replace(str, '<br>', "&##xA;", "all");LogOutputcfc = CreateObject("compone
 					WHERE  user_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#user_id#" />
 		
 				</cfquery></cffunction>
+    </cfprocessingdirective>
 </cfcomponent>
-                </cfprocessingdirective>
+                

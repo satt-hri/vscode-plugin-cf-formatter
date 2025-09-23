@@ -22,7 +22,8 @@ const extensionConfig = {
     vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
     // modules added here also need to be added in the .vscodeignore file
     'js-beautify': 'commonjs js-beautify',
-    'sql-formatter': 'commonjs sql-formatter'
+    //'sql-formatter': 'commonjs sql-formatter' 
+    //注意 20250923 本来想着这个地方不要打包依赖，结果就发现有错误，因为这个还在依赖 nearly 。真的是调查了很久。干。
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader

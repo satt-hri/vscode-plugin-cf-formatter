@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { messages, Lang } from "./config";
-import path, { resolve } from "path";
+import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";

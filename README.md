@@ -44,7 +44,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### フォーマット前後の例
 <h4>1.タグ自動改行</h4>
 <div align="center">
-  <img src="./images/2025-09-23_autotagwrap.gif" alt="插件演示">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
 </div>
 <h4>2.インデント整形</h4>
 <div align="center">
@@ -118,7 +118,7 @@ However, if it includes something particularly complex such as `cfloop`, I use m
 ### Before/After Formatting Example
 <h4>1.tag wrap</h4>
 <div align="center">
-  <img src="./images/2025-09-23_autotagwrap.gif" alt="插件演示">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
 </div>
 <h4>2.indent formatting</h4>
 <div align="center">
