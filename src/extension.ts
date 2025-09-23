@@ -4,6 +4,7 @@ import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
+import { autoTagWrapping } from "./core/AST";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -25,6 +26,16 @@ export function activate(context: vscode.ExtensionContext) {
 			// console.log("文档行数:", document.lineCount);
 			// console.log("文档文件名:", document.fileName);
 			// console.log("格式化选项:", options);
+			//const originText = document.getText();
+			const preprocessedEdits = autoTagWrapping(document);
+			if (preprocessedEdits.length > 0) {
+				const workspaceEdit = new vscode.WorkspaceEdit();
+				workspaceEdit.set(document.uri, preprocessedEdits);
+				const success = await vscode.workspace.applyEdit(workspaceEdit);
+				//await new Promise((resolve) => setTimeout(resolve, 10));
+				console.log(success);
+			}
+
 			const manager = new FormatterManager();
 
 			const ext = path.extname(document.fileName).toLowerCase();

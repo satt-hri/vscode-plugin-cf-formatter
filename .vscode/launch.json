@@ -2,17 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch via NPM",
+      "name": "Debug my mjs file",
       "request": "launch",
-      "runtimeArgs": [
-        "run-script",
-        "debug"
-      ],
-      "runtimeExecutable": "npm",
+      // "runtimeArgs": [
+      //   "run-script",
+      //   "debug"
+      // ], 这个是运行npm 的时候。
+      "runtimeExecutable": "node",
       "skipFiles": [
         "<node_internals>/**"
       ],
-      "type": "node"
+      "type": "node",
+      "program": "${workspaceFolder}/src/test/cfc/0922.mjs"
     },
     
     
@@ -29,19 +30,19 @@
       ],
       "preLaunchTask": "webpack: watch" // 改为 Webpack 监视任务
     },
-    {
-      "name": "Extension Tests (Webpack)",
-      "type": "extensionHost",
-      "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/dist/test/suite/index"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ],
-      "preLaunchTask": "webpack: watch"
-    }
+    // {
+    //   "name": "Extension Tests (Webpack)",
+    //   "type": "extensionHost",
+    //   "request": "launch",
+    //   "runtimeExecutable": "${execPath}",
+    //   "args": [
+    //     "--extensionDevelopmentPath=${workspaceFolder}",
+    //     "--extensionTestsPath=${workspaceFolder}/dist/test/suite/index"
+    //   ],
+    //   "outFiles": [
+    //     "${workspaceFolder}/dist/**/*.js"
+    //   ],
+    //   "preLaunchTask": "webpack: watch"
+    // }
   ]
 }

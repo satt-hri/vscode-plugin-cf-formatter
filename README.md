@@ -9,13 +9,13 @@
 
 
 VS Code 用 **CFML コード自動整形拡張機能**。  
-この拡張機能は **インデント整形に特化** しており、余計なコードスタイルの変更は行いません。
+この拡張機能は **タグの自動改行**、**インデント整形に特化** しており、余計なコードスタイルの変更は行いません。
 
 ---
 
 ### 機能
 - **CFML (.cfc)** コードの自動インデント整形（安定動作）
-- `.cfm` ファイルも試せますが、対応は不十分
+- タグの自動改行
 - 元のコードスタイルを保持
 - 手動実行 & 保存時自動整形に対応
 
@@ -36,17 +36,23 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 - SQL のフォーマットは、まず **sql-formatter** を使用します。ただし、`cfloop` など特に複雑なものを含む場合は、自作のロジックでフォーマットします。  
 - `cfscript` のフォーマットは、JavaScript と非常に似ています。
    SQL 文や XML、HTML タグが含まれていると、タグが壊れることがあるので、使わないほうがいいです。
-
+- タグの自動改行は属性が多い場合に便利ですが、インラインで短いタグを使いたいケースでは改行されることがあります。
 
 ---
 
 
 ### フォーマット前後の例
+<h4>1.タグ自動改行</h4>
+<div align="center">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
+</div>
+<h4>2.インデント整形</h4>
 <div align="center">
   <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">
 </div>
 
 ---
+
 ### CFML フォーマッタ デフォルト設定
 
 | 設定項目                                                   | デフォルト値                | 型                     | 説明                                                                                         |
@@ -75,13 +81,13 @@ VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** 
 
 
 **CFML Code Auto-Formatting Extension** for VS Code.  
-This extension is **specialized in indent formatting** and does not make unnecessary code style changes.
+This extension is **atuo tag wrap**.**specialized in indent formatting** and does not make unnecessary code style changes.
 
 ---
 
 ### Features
 - **CFML (.cfc)** automatic indent formatting (stable operation)
-- `.cfm` files are also supported, but coverage is limited
+- Automatic tag wrapping
 - Preserves original code style
 - Supports manual execution & automatic formatting on save
 
@@ -104,14 +110,19 @@ e.g.: (Auto Close Tag)
 However, if it includes something particularly complex such as `cfloop`, I use my own custom logic to format it.  
 - The formatting of `cfscript` is quite similar to JavaScript.  
   If the string contains SQL statements, XML, or HTML tags, there is a possibility that the tags may be broken, so it’s better not to use it.
-
+- Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
 ---
 <details>
 <summary>Click to expand</summary>
 
 ### Before/After Formatting Example
+<h4>1.tag wrap</h4>
 <div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="Plugin Demo">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
+</div>
+<h4>2.indent formatting</h4>
+<div align="center">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">
 </div>
 
 ---
@@ -140,38 +151,3 @@ Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search 
 
 </details>
 
----
-
-
-
-## 🐼 中文
-<details>
-<summary>点击展开</summary>
-
-一个用于 **CFML 代码自动格式化** 的 VS Code 插件。  
-本插件专注于 **缩进格式化**，不会修改代码风格。
-
----
-
-### 🔧 功能特点
-- 自动缩进 **CFML (.cfc)** 代码
-- `.cfm` 文件也支持，但格式化可能不够完善
-- 保持原有代码风格
-- 支持手动触发 & 保存时自动格式化
-
----
-
-### 使用方法
-1. 安装插件  
-2. 打开 CFML 文件（推荐 `.cfc`）  
-3. 使用快捷键 **`Shift+Alt+M`** 或右键 → **`Format CFML (satt)` → 格式化文档**  
-
----
-
-### 注意事项
-- `.cfc` 文件格式化支持稳定  
-- `.cfm` 文件缩进可能不准确，将在后续优化  
-- SQL 的格式化先使用 **sql-formatter** 进行，如果包含 `cfloop` 等特别复杂的情况，会使用自己写的逻辑去格式化。  
-- `cfscript` 的格式化，很类似 JavaScript。  
-
-</details>

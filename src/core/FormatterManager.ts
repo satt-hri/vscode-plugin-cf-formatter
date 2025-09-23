@@ -7,6 +7,7 @@ import { formatCfscript, jsOptions } from "../formatter/cf_script";
 import { blockTags, parseTagName } from "../utils/common";
 import { formatSql } from "../formatter/cf_sql_formatter";
 
+
 export default class FormatterManager {
 	private state: FormatState;
 	constructor() {
@@ -22,6 +23,7 @@ export default class FormatterManager {
 	): vscode.TextEdit[] {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
+
 
 		for (let i = 0; i < document.lineCount; i++) {
 			const line = document.lineAt(i);
