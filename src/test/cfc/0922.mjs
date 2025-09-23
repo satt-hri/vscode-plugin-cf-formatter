@@ -60,8 +60,79 @@ const testCFML = `
     </cfif></cffunction></cfprocessingdirective>
 `;
 
+const testCFML1 = `<cfcomponent>    
+    
+	<cfset notEncrypFlag = 0><!---デバッグ用のフラグ 1で暗号化を無効にする--->
+    
+    <cffunction name="init" access="public" returntype="encrypt" output="no" hint="コンストラクタ">        
+        <cfargument name="id"  type="numeric" required="no" default="1" hint="暗号化のID">        
+        <cfscript>
+		var qEncrypt = "";
+		
+		Variables.encryptKey = "";
+		Variables.encryptType = "";
+		</cfscript>        
+        <cfquery name="qEncrypt" datasource="#application.DSN#">
+			SELECT 
+            	ei.id
+                ,ei.encrypt_key
+                ,ei.encrypt_type
+                ,ei.encrypt_description
+			FROM 
+            	ENCRYPT_INFO AS ei
+			WHERE 
+            	ei.id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_integer" />
+		</cfquery>       
+        <cfif qEncrypt.RecordCount eq 1>
+        	<cfscript>
+			Variables.encryptKey = qEncrypt.encrypt_key;
+			Variables.encryptType =qEncrypt.encrypt_type;
+			</cfscript>
+        </cfif>        
+        <cfreturn this />        
+    </cffunction>    
+
+
+    <!--- 暗号化 --->
+	<cffunction name="myEncrypt" access="remote" returntype="string" output="no" hint="暗号化した文字列">
+		<cfargument name="str" type="string"  required="yes" hint="暗号化する文字列">
+		<cfscript>
+			// 文字列を暗号化
+			encrypted = encrypt(str, Variables.encryptKey, Variables.encryptType, "Hex");
+		</cfscript>		
+		<!---
+		<cfif notEncrypFlag eq 1>
+			<cfset encrypted = str>
+		</cfif>
+		--->
+		<cfreturn encrypted>
+	</cffunction>
+	
+    <!--- 複合化 --->
+	<cffunction name="myDecrypt" access="remote" returntype="string" output="no" hint="複合化した文字列。不正文字列の場合、-1が返る">
+		<cfargument name="str" type="string"  required="yes" hint="複合化する文字列">
+
+		<cftry>
+			<cfscript>
+				// 文字列を複合化
+				decrypted = decrypt(str, Variables.encryptKey, Variables.encryptType, "Hex");
+			</cfscript>
+		<cfcatch>
+			<cfset decrypted = "-1">
+		</cfcatch>
+		</cftry>
+		
+		<cfif notEncrypFlag eq 1>
+			<cfset decrypted = str>
+		</cfif>
+		
+		<cfreturn decrypted>
+	</cffunction>
+
+</cfcomponent>`
+
 console.log('=== 解析所有CFML标签 ===');
-const allTags = parseCFMLTags(testCFML);
+const allTags = parseCFMLTags(testCFML1);
 
 allTags.forEach((tag, index) => {
     console.log(`${index + 1}. ${tag.fullMatch}`);
