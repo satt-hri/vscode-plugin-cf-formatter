@@ -28,8 +28,9 @@ export function autoTagWrapping(document: vscode.TextDocument): vscode.TextEdit[
 				if (match.startIndex > lastIndex) {
 					const before = trimText.slice(lastIndex, match.startIndex);
 					console.log("前面非标签:", before);
-
-					afterContent = afterContent + before + eol;
+					if (before.trim().length > 0) {
+						afterContent = afterContent + before + eol;
+					}
 				}
 				// 2. 更新 lastIndex
 				lastIndex = match.endIndex;
