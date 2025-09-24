@@ -23,6 +23,8 @@ export const blockTags = {
 		"cfinvoke",
 		"cfhttp",
 		"cfmail",
+		"cfsilent",
+		"cfstoredproc",
 	],
 	closing: [
 		"cffunction",
@@ -46,6 +48,8 @@ export const blockTags = {
 		"cfinvoke",
 		"cfhttp",
 		"cfmail",
+		"cfsilent",
+		"cfstoredproc",
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
@@ -69,6 +73,8 @@ export const blockTags = {
 		"cfinvokearguments",
 		"cfset",
 		"cfhttpparam",
+		"cfprocparam",
+		"cfzipparam"
 	],
 	onlyIndex: ["cfprocessingdirective"], // 函数内容标签
 };
