@@ -60,7 +60,6 @@ export const blockTags = {
 		"cfheader",
 		"cfcookie",
 		"cflocation",
-
 		"cffile",
 		"cfdirectory",
 		"cfzip",

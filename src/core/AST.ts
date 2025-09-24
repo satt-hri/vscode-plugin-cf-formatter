@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { writeLog } from "../utils/log";
+import { blockTags } from "../utils/common";
 
 //coldfusion 的话 下面的代码也是有效的。
 // <   cfoutput>
@@ -63,7 +64,7 @@ const cfOpenTagRegex = /<\s*(cf\w+)\b[\s\S]*?(\/?)>/gi;
 const cfCloseTagRegex = /<\s*\/(cf\w+)\s*>/gi;
 // 统一的CFML标签正则表达式
 //const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b([\s\S]*?)(\/?)>/gi; 字符串中如果有 > 会有问题。
-const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b(?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|[^>"'])*(\/?)\s*>/gi;
+const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b((?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|[^>"'])*)(\/?)\s*>/gi;
 
 function parseCFMLTags(cfmlCode: string) {
 	const tags = [];
@@ -79,7 +80,7 @@ function parseCFMLTags(cfmlCode: string) {
 			fullMatch: fullMatch,
 			tagName: tagName,
 			isClosing: isClosing === "/",
-			isSelfClosing: isSelfClosing === "/",
+			isSelfClosing: isSelfClosing === "/" || blockTags.selfClosing.includes(tagName),
 			attributes: attributes.trim(),
 			startIndex: match.index,
 			endIndex: match.index + fullMatch.length,
