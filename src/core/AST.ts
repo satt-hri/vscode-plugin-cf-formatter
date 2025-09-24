@@ -62,7 +62,9 @@ const cfOpenTagRegex = /<\s*(cf\w+)\b[\s\S]*?(\/?)>/gi;
 // 结束标签
 const cfCloseTagRegex = /<\s*\/(cf\w+)\s*>/gi;
 // 统一的CFML标签正则表达式
-const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b([\s\S]*?)(\/?)>/gi;
+//const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b([\s\S]*?)(\/?)>/gi; 字符串中如果有 > 会有问题。
+const cfAllTagsRegex = /<\s*(\/?)(cf\w+)\b(?:'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|[^>"'])*(\/?)\s*>/gi;
+
 function parseCFMLTags(cfmlCode: string) {
 	const tags = [];
 	let match;
@@ -99,7 +101,8 @@ function parseAttributes(attrString: string): Record<string, string> {
 	const attributes: Record<string, string> = {};
 
 	// 支持多种属性格式的正则表达式
-	const attrRegex = /([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|(\w+))/gi;
+	// /([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(?:"([^"]*)"|'([^']*)'|(\w+))/gi;
+	const attrRegex = /([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\w+))/gi;
 	let attrMatch;
 
 	while ((attrMatch = attrRegex.exec(attrString)) !== null) {

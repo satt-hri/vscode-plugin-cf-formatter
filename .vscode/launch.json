@@ -13,7 +13,7 @@
         "<node_internals>/**"
       ],
       "type": "node",
-      "program": "${workspaceFolder}/src/test/cfc/0922.mjs"
+      "program": "${workspaceFolder}/src/test/cfc/0924.mjs"
     },
     
     

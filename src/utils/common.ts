@@ -74,34 +74,6 @@ export const blockTags = {
 	onlyIndex: ["cfprocessingdirective"], // 函数内容标签
 };
 
-const sqlKeywords = [
-	"SELECT",
-	"FROM",
-	"WHERE",
-	"AND",
-	"OR",
-	"INNER JOIN",
-	"LEFT JOIN",
-	"RIGHT JOIN",
-	"FULL JOIN",
-	"ORDER BY",
-	"GROUP BY",
-	"HAVING",
-	"INSERT",
-	"UPDATE",
-	"DELETE",
-	"VALUES",
-	"SET",
-	"INTO",
-	"UNION",
-	"UNION ALL",
-	"CASE",
-	"WHEN",
-	"THEN",
-	"ELSE",
-	"END",
-];
-
 // 解析标签名
 export function parseTagName(line: string): {
 	tagName: string;
