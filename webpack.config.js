@@ -3,6 +3,7 @@
 'use strict';
 
 const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
 
 //@ts-check
 /** @typedef {import('webpack').Configuration} WebpackConfig **/
@@ -41,6 +42,19 @@ const extensionConfig = {
         ]
       }
     ]
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,     // 删除所有 console.log, console.info 等
+            drop_debugger: true,    // 删除 debugger 语句
+          },
+        },
+      }),
+    ],
   },
   devtool: 'nosources-source-map',
   infrastructureLogging: {
