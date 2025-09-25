@@ -4,7 +4,7 @@
   "publisher": "hri",
   "description": "CFML Indent Formatter / CFML インデント整形",
   "icon": "images/icon.png",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "author": "SATT李",
   "license": "MIT",
   "engines": {

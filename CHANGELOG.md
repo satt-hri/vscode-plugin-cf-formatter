@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
+## [10.0.17] - 2025-09-26
+
+### Fixed
+- Fixed RegExp bus
+
+---
+
 ## [10.0.16] - 2025-09-23
 
 ### Added
