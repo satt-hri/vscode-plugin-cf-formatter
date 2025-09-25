@@ -4,7 +4,7 @@ import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
-import { autoTagWrapping } from "./core/AST";
+import { autoTagWrapping } from "./core/TagParser";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
