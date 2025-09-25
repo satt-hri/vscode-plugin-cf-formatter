@@ -4,7 +4,7 @@ import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
-import { autoTagWrapping } from "./core/AST";
+import { autoTagWrapping } from "./core/TagParser";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -27,6 +27,15 @@ export function activate(context: vscode.ExtensionContext) {
 			// console.log("文档文件名:", document.fileName);
 			// console.log("格式化选项:", options);
 			//const originText = document.getText();
+
+			const ext = path.extname(document.fileName).toLowerCase();
+			if (ext === ".cfm") {
+				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string, "Yes", "No");
+				if (result === "No") {
+					return [];
+				}
+			}
+
 			const preprocessedEdits = autoTagWrapping(document);
 			if (preprocessedEdits.length > 0) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
@@ -38,13 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 			const manager = new FormatterManager();
 
-			const ext = path.extname(document.fileName).toLowerCase();
-			if (ext === ".cfm") {
-				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string, "Yes", "No");
-				if (result === "No") {
-					return [];
-				}
-			}
 			return manager.formatDocument(document, options, token);
 		},
 	};

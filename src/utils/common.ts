@@ -23,6 +23,8 @@ export const blockTags = {
 		"cfinvoke",
 		"cfhttp",
 		"cfmail",
+		"cfsilent",
+		"cfstoredproc",
 	],
 	closing: [
 		"cffunction",
@@ -46,6 +48,8 @@ export const blockTags = {
 		"cfinvoke",
 		"cfhttp",
 		"cfmail",
+		"cfsilent",
+		"cfstoredproc",
 	],
 	elselike: ["cfelse", "cfelseif", "cfdefaultcase"],
 	selfClosing: [
@@ -60,7 +64,6 @@ export const blockTags = {
 		"cfheader",
 		"cfcookie",
 		"cflocation",
-
 		"cffile",
 		"cfdirectory",
 		"cfzip",
@@ -70,37 +73,11 @@ export const blockTags = {
 		"cfinvokearguments",
 		"cfset",
 		"cfhttpparam",
+		"cfprocparam",
+		"cfzipparam"
 	],
 	onlyIndex: ["cfprocessingdirective"], // 函数内容标签
 };
-
-const sqlKeywords = [
-	"SELECT",
-	"FROM",
-	"WHERE",
-	"AND",
-	"OR",
-	"INNER JOIN",
-	"LEFT JOIN",
-	"RIGHT JOIN",
-	"FULL JOIN",
-	"ORDER BY",
-	"GROUP BY",
-	"HAVING",
-	"INSERT",
-	"UPDATE",
-	"DELETE",
-	"VALUES",
-	"SET",
-	"INTO",
-	"UNION",
-	"UNION ALL",
-	"CASE",
-	"WHEN",
-	"THEN",
-	"ELSE",
-	"END",
-];
 
 // 解析标签名
 export function parseTagName(line: string): {
