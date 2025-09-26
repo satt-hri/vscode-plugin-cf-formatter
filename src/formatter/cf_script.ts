@@ -13,8 +13,9 @@ const useTab = config.get<boolean>("indentWithTabs", true);
 export const jsOptions: js_beautify.JSBeautifyOptions = {
 	indent_size: useTab ? 1 : config.get<number>("indentSize", 4),
 	indent_char: useTab ? "\t" : " ",
-	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 2),
-	preserve_newlines: config.get<boolean>("preserveNewlines", true),
+	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 1) + 1, //不知道为什么js会比实际设置的行数少1 20250926
+	preserve_newlines:
+		config.get<number>("maxPreserveNewlines", 1) == -1 ? false : config.get<boolean>("preserveNewlines", true),
 	keep_array_indentation: config.get<boolean>("keepArrayIndentation", false),
 	break_chained_methods: config.get<boolean>("breakChainedMethods", false),
 	brace_style: config.get<string>("braceStyle", "collapse") as any,
@@ -32,7 +33,7 @@ const ignoreFunction = ["replace"];
 const ignoreStart = "/* beautify ignore:start */";
 const ignoreEnd = "/* beautify ignore:end */";
 const cusIgnoreStart = "/* cf:start */";
-const cusIgnoreEnd= "/* cf:end */";
+const cusIgnoreEnd = "/* cf:end */";
 
 function wrapIgnoreCode(code: string): string {
 	const pattern = `\\b(${ignoreFunction.join("|")})\\s*\\(`;
@@ -66,6 +67,9 @@ export function formatCfscript(
 	}
 	const totalIndent = state.indentLevel;
 	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+
+	console.log(`jsOptions`);
+	console.log(jsOptions);
 
 	// 開始 <cfscript> 標籤
 	if (!isClosing && /^<cfscript\b.*>$/i.test(text)) {
