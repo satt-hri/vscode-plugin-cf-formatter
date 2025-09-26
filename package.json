@@ -96,10 +96,16 @@
         },
         "hri.cfml.formatter.maxPreserveNewlines": {
           "type": "number",
-          "default": 2,
-          "minimum": 0,
-          "maximum": 10,
-          "description": "Maximum number of consecutive newlines to preserve in the output.(js-beautify)"
+          "default": 1,
+          "enum": [
+             -1,
+             0,
+             1,
+             2,
+             5,
+             10
+          ],
+          "description": "Maximum number of consecutive newlines to preserve in the output.   -1:remove all extral newlies,1: allow 1newline between tokens,0:unlimited newlines between tokens  (js-beautify) "
         },
         "hri.cfml.formatter.preserveNewlines": {
           "type": "boolean",

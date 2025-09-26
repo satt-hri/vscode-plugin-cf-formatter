@@ -273,42 +273,130 @@ testCases.forEach((test, index) => {
 // console.log('2. 复杂情况：使用状态机解析器');
 // console.log('3. 生产环境：建议使用专门的HTML/XML解析器');
 
-// // 实用函数：提取所有CF标签
-// function extractCFTags(input, method = 'parser') {
-//     if (method === 'regex') {
-//         const regex = createCFTagRegex();
-//         return [...input.matchAll(regex)].map(match => ({
-//             fullMatch: match[0],
-//             isClosing: match[1] === '/',
-//             tagName: match[2].toLowerCase(),
-//             attributes: match[3].trim(),
-//             isSelfClosing: match[4] === '/'
-//         }));
-//     } else {
-//         const parser = new CFTagParser();
-//         return parser.parse(input);
-//     }
-// }
+// 实用函数：提取所有CF标签
+function extractCFTags(input, method = 'parser') {
+    if (method === 'regex') {
+        const regex = createCFTagRegex();
+        return [...input.matchAll(regex)].map(match => ({
+            fullMatch: match[0],
+            isClosing: match[1] === '/',
+            tagName: match[2].toLowerCase(),
+            attributes: match[3].trim(),
+            isSelfClosing: match[4] === '/'
+        }));
+    } else {
+        const parser = new CFTagParser();
+        return parser.parse(input);
+    }
+}
 
 // 使用示例
-// const sampleCode = `
-// <cfcomponent>
-//     <cfproperty name="test" default='[<>]' />
-//     <cfset var pattern = "[\\\\/:*?\\"<>|]" />
-//     <cffunction name="test">
-//         <cfif condition EQ 'value with "quotes" and <brackets>'>
-//             <cfoutput>Hello World</cfoutput>
-//         </cfif>
-//     </cffunction>
-// </cfcomponent>
-// `;
+const sampleCode = `
+<cfcomponent>
+    <cfproperty name="test" default='[<>]' />
+    <cfset var pattern = '[\\\\/:*?\\"<>|]' />
+    <cfset var pattern = "A \B > A" />
+    <cfset var pattern =  'He said > \"hi\"' />
+
+    <cfset var invalidPattern = '[\\/:*?"<>|]' />
+    <cfset x = "a > b">
+    <cffunction name="test">
+        <cfif condition EQ 'value with "quotes" and <brackets>'>
+            <cfoutput>
+                Hello World
+            </cfoutput>
+        </cfif>
+    </cffunction>
+    <cfzip action = "list"
+    file = "#file#"
+    recurse = "yes"
+    showDirectory = "yes"
+    name = "listResult" />
+    <cfquery name="queryUpdateUserMaster" datasource="#Application.DSN#">
+        UPDATE user_master
+        SET
+            PASSWORD = <cfqueryparam cfsqltype="cf_sql_varchar" value="#password#" />,
+            last_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lastName#" />,
+            first_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#firstName#" />,
+            login_start_date =
+            <cfif loginStartDate neq "">
+                <cfqueryparam cfsqltype="cf_sql_timestamp" value="#loginStartDate#" />,
+            <cfelse>
+                NULL,
+            </cfif>
+            login_end_date =
+            <cfif loginEndDate neq "">
+                <cfqueryparam cfsqltype="cf_sql_timestamp" value="#loginEndDate#" />,
+            <cfelse>
+                NULL,
+            </cfif>
+            login_stop = <cfqueryparam cfsqltype="cf_sql_char" value="#loginStopFlag#" />,
+            user_note = <cfqueryparam cfsqltype="cf_sql_varchar" value="#userNote#" />,
+            <cfif themaID gt 0>
+                user_thema_id = <cfqueryparam value="#themaID#" cfsqltype="cf_sql_integer" />,
+            </cfif>
+            change_date = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#uploadEntryDate#" />
+        WHERE
+            user_id = <cfqueryparam cfsqltype="cf_sql_integer" value="#userID#" />
+    </cfquery>
+
+    <cffunction name="create" returntype="boolean" access="public" hint="新規学校の申請">
+        <cfargument name="dto" type="ExpensesTestingSchoolRegisterWithoutExpensesDTO"/>
+        <cfquery name="qCreate" datasource="#Variables.DSN#">
+            INSERT INTO
+                EXPENSES_TESTING_CENTRE_NO_APPLICATION (
+                    fiscal_year_id,
+                    school_id,
+                    examination_id,
+                    update_user_id,
+                    entry_date
+                )
+            VALUES
+                (
+                    <cfqueryparam value="#arguments.dto.getFiscalYearId()#" cfsqltype="cf_sql_integer"/>,
+                    <cfqueryparam value="#arguments.dto.getSchoolId()#" cfsqltype="cf_sql_integer"/>,
+                    <cfqueryparam value="#arguments.dto.getExaminationId()#" cfsqltype="cf_sql_integer"/>,
+                    <cfqueryparam value="#arguments.dto.getUpdateUserId()#" cfsqltype="cf_sql_integer"/>,
+                    <cfqueryparam value="#arguments.dto.getEntryDate()#" cfsqltype="cf_sql_timestamp"/>
+                )
+        </cfquery>
+        <cfreturn true/>
+    </cffunction>
+
+    <cffunction name="update" returntype="boolean" access="public" hint="更新">
+        <cfargument name="dto" type="ExpensesTestingSchoolRegisterWithoutExpensesDTO"/>
+        <cfquery name="qUpdate" datasource="#Variables.DSN#">
+            update EXPENSES_TESTING_CENTRE_NO_APPLICATION
+            set update_user_id =
+            <cfqueryparam value="#arguments.dto.getUpdateUserId#" cfsqltype="cf_sql_integer"/>
+            ,update_date = GETDATE()
+            where fiscal_year＿id = 22 AND school_id = 1322 AND examination_id = 389
+        </cfquery>
+    </cffunction>
+</cfcomponent>
+`;
 
 // console.log('\n\n=== 实际代码测试 ===');
 // console.log('代码:');
 // console.log(sampleCode);
 
-// console.log('\n提取的CF标签:');
-// const extractedTags = extractCFTags(sampleCode, 'parser');
-// extractedTags.forEach((tag, index) => {
-//     console.log(`${index + 1}. ${tag.tagName} - ${tag.fullMatch.substring(0, 50)}...`);
-// });
+console.log('\n提取的CF标签:');
+const extractedTags = extractCFTags(sampleCode, 'parser');
+extractedTags.forEach((tag, index) => {
+    console.log(`${index + 1}. ${tag.tagName} - ${tag.fullMatch.substring(0, 50)}...`);
+});
+
+
+    const tags = parser.parse(sampleCode);
+    
+    if (tags.length > 0) {
+        tags.forEach(tag => {
+            console.log(`  解析结果: ${tag.fullMatch}`);
+            console.log(`  标签名: ${tag.tagName}`);
+            console.log(`  属性: "${tag.attributes}"`);
+            console.log(`  自闭合: ${tag.isSelfClosing}`);
+            console.log(`  结束标签: ${tag.isClosing} ` + `\n`);
+        });
+    } else {
+        console.log('  无CF标签');
+    }
