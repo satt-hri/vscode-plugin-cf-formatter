@@ -1,4 +1,4 @@
-import { FormatState } from "../core/FormatState";
+import { FormatState } from "@/core/FormatState";
 
 // 改进的SQL缩进处理
 export function getSqlIndent(text: string, lineIndex: number, state: FormatState): number {

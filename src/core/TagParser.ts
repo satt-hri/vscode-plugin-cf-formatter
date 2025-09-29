@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { writeLog } from "../utils/log";
-import { blockTags } from "../utils/common";
+import { writeLog } from "@/utils/log";
+import { blockTags } from "@/utils/common";
 
 //coldfusion 的话 下面的代码也是有效的。
 // <   cfoutput>

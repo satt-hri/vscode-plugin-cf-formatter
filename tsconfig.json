@@ -5,6 +5,12 @@
     "lib": [
       "ESNext"
     ],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
     "sourceMap": true,
     "outDir": "out",
     "rootDir": "src",

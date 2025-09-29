@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 import { createInitiaLState, FormatState } from "./FormatState";
-import { getSqlIndent } from "../formatter/cf_query";
-import { formatComment } from "../formatter/cf_comment";
-import { formatCfset } from "../formatter/cf_set";
-import { formatCfscript, jsOptions } from "../formatter/cf_script";
-import { blockTags, parseTagName } from "../utils/common";
-import { formatSql } from "../formatter/cf_sql_formatter";
+import { getSqlIndent } from "@/formatter/cf_query";
+import { formatComment } from "@/formatter/cf_comment";
+import { formatCfset } from "@/formatter/cf_set";
+import { formatCfscript } from "@/formatter/beautify/cf_script";
+import { coreOptions } from "@/formatter/beautify/base_opitons";
 
+import { blockTags, parseTagName } from "@/utils/common";
+import { formatSql } from "@/formatter/cf_sql_formatter";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -23,7 +24,6 @@ export default class FormatterManager {
 	): vscode.TextEdit[] {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
-
 
 		for (let i = 0; i < document.lineCount; i++) {
 			const line = document.lineAt(i);
@@ -55,7 +55,7 @@ export default class FormatterManager {
 				edits.push(
 					vscode.TextEdit.replace(
 						line.range,
-						jsOptions.indent_char!.repeat(currentIndentLevel * jsOptions.indent_size!) + text
+						coreOptions.indent_char!.repeat(currentIndentLevel * coreOptions.indent_size!) + text
 					)
 				);
 				continue;
@@ -113,7 +113,7 @@ export default class FormatterManager {
 
 			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + sqlIndent;
-			const indent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+			const indent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!);
 
 			// 应用格式化
 			edits.push(vscode.TextEdit.replace(line.range, indent + text));

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Lang } from "../config";
+import { Lang } from "@/config";
 
 export interface FormatState {
 	lang: Lang;

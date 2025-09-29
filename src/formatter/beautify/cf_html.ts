@@ -1,32 +1,13 @@
-import { FormatState } from "../core/FormatState";
-import { JSBeautifyOptions, js_beautify } from "js-beautify";
+import { FormatState } from "@/core/FormatState";
+import { HTMLBeautifyOptions, html_beautify } from "js-beautify";
 import * as vscode from "vscode";
-import { parseTagName } from "../utils/common";
-import { writeLog } from "../utils/log";
+import { parseTagName } from "@/utils/common";
+import { writeLog } from "@/utils/log";
+import { coreOptions } from "./base_opitons";
 
-const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
-//console.log("config", config);
-
-//tab缩进 が優先
-const useTab = config.get<boolean>("indentWithTabs", true);
-
-export const jsOptions: JSBeautifyOptions = {
-	indent_size: useTab ? 1 : config.get<number>("indentSize", 4),
-	indent_char: useTab ? "\t" : " ",
-	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 1) + 1, //不知道为什么js会比实际设置的行数少1 20250926
-	preserve_newlines:
-		config.get<number>("maxPreserveNewlines", 1) == -1 ? false : config.get<boolean>("preserveNewlines", true),
-	keep_array_indentation: config.get<boolean>("keepArrayIndentation", false),
-	break_chained_methods: config.get<boolean>("breakChainedMethods", false),
-	brace_style: config.get<string>("braceStyle", "collapse") as any,
-	space_before_conditional: config.get<boolean>("spaceBeforeConditional", true),
-	unescape_strings: false,
-	jslint_happy: false,
-	end_with_newline: config.get<boolean>("endWithNewline", false),
-	wrap_line_length: config.get<number>("wrapLineLength", 0), // 0 means no limit
-	comma_first: false,
-	e4x: false,
-	indent_empty_lines: false,
+export const jsOptions: HTMLBeautifyOptions = {
+	...coreOptions,
+	//html配置开始
 };
 
 const ignoreFunction = ["replace"];
@@ -52,7 +33,7 @@ function removeIgnoreCode(code: string): string {
 	return temp;
 }
 
-export function formatCfscript(
+export function formatHtml(
 	line: vscode.TextLine,
 	lineIndex: number,
 	edits: vscode.TextEdit[],
@@ -92,26 +73,15 @@ export function formatCfscript(
 	}
 
 	state.lastProcessLine = i; // 更新全局缩进位置，跳过已处理的行
-	const scriptContent = lines.join("\n");
-	if (scriptContent.trim() === "") {
+	const htmlContent = lines.join("\n");
+	if (htmlContent.trim() === "") {
 		return true; // 如果 cfscript 内容为空，直接返回
 	}
 
-	// let placeholders: { key: string; value: string }[] = [];
-	// let index = 0;
-
-	// const strWithPlaceholders = scriptContent.replace(/(['"])([^'"]*<\s*[A-Za-z][\s\S]*?>[^'"])\1/g, (match) => {
-	// 	const key = `__XML_HTML_${index}_`;
-	// 	placeholders.push({ key, value: match });
-	// 	index++;
-	// 	return key;
-	// });
-	// console.log(strWithPlaceholders);
-
 	try {
-		writeLog("script_Content:" + scriptContent);
-		let formattedCode = js_beautify(scriptContent, jsOptions);
-		writeLog("script_formattedCode:" + formattedCode);
+		writeLog("html_Content:" + htmlContent);
+		let formattedCode = html_beautify(htmlContent, jsOptions);
+		writeLog("html_formattedCode:" + formattedCode);
 
 		formattedCode = removeIgnoreCode(formattedCode);
 

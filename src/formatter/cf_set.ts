@@ -1,7 +1,7 @@
-import { FormatState } from "../core/FormatState";
-import { parseTagName } from "../utils/common";
+import { FormatState } from "@/core/FormatState";
+import { parseTagName } from "@/utils/common";
 import * as vscode from "vscode";
-import { jsOptions } from "./cf_script";
+import { coreOptions } from "./beautify/base_opitons";
 
 export function formatCfset(
 	line: vscode.TextLine,
@@ -18,7 +18,7 @@ export function formatCfset(
 	}
 
 	const totalIndent = state.indentLevel;
-	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!);
 
 	//原來内容是一行
 	if (/^<cfset\b.*\/?\s*>$/i.test(text)) {
@@ -46,7 +46,7 @@ export function formatCfset(
 			edits.push(
 				vscode.TextEdit.replace(
 					templine.range,
-					baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + temText
+					baseIndent + coreOptions.indent_char!.repeat(coreOptions.indent_size!) + temText
 				)
 			);
 		}

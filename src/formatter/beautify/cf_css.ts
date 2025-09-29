@@ -1,31 +1,13 @@
-import { FormatState } from "../core/FormatState";
+import { FormatState } from "@/core/FormatState";
 import { CSSBeautifyOptions, css_beautify } from "js-beautify";
 import * as vscode from "vscode";
-import { parseTagName } from "../utils/common";
-import { writeLog } from "../utils/log";
-
-const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
-
-//tab缩进 が優先
-const useTab = config.get<boolean>("indentWithTabs", true);
+import { parseTagName } from "@/utils/common";
+import { writeLog } from "@/utils/log";
+import { coreOptions } from "./base_opitons";
 
 const cssOptions: CSSBeautifyOptions = {
-	indent_size: useTab ? 1 : config.get<number>("indentSize", 4),
-	indent_char: useTab ? "\t" : " ",
-	max_preserve_newlines: config.get<number>("maxPreserveNewlines", 1),
-	preserve_newlines:
-		config.get<number>("maxPreserveNewlines", 1) == -1 ? false : config.get<boolean>("preserveNewlines", true),
-	//keep_array_indentation: config.get<boolean>("keepArrayIndentation", false),
-	//break_chained_methods: config.get<boolean>("breakChainedMethods", false),
-	//brace_style: config.get<string>("braceStyle", "collapse") as any,
-	//space_before_conditional: config.get<boolean>("spaceBeforeConditional", true),
-	//unescape_strings: false,
-	//jslint_happy: false,
-	end_with_newline: config.get<boolean>("endWithNewline", false),
-	wrap_line_length: config.get<number>("wrapLineLength", 0), // 0 means no limit
-	//comma_first: false,
-	//e4x: false,
-	indent_empty_lines: false,
+	...coreOptions,
+	//css配置开始
 };
 
 const ignoreFunction = ["replace"];

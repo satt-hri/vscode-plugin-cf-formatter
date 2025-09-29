@@ -1,9 +1,9 @@
-import { FormatState } from "../core/FormatState";
+import { FormatState } from "@/core/FormatState";
 import * as vscode from "vscode";
-import { jsOptions } from "./cf_script";
+import { coreOptions } from "./beautify/base_opitons";
 
-const indentChar = jsOptions.indent_char!;
-const indentUnit = jsOptions.indent_size!;
+const indentChar = coreOptions.indent_char!;
+const indentUnit = coreOptions.indent_size!;
 
 export function formatComment(
 	line: vscode.TextLine,
