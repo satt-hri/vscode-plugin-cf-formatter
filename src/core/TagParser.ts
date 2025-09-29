@@ -59,6 +59,61 @@ export function autoTagWrapping(document: vscode.TextDocument): vscode.TextEdit[
 	return edits;
 }
 
+export function autoTagWrappingByRange(document: vscode.TextDocument, range: vscode.Range): vscode.TextEdit[] {
+	const edits: vscode.TextEdit[] = [];
+	const eol = document.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
+
+	const startLine = range ? range.start.line : 0;
+	const endLine = range ? range.end.line : document.lineCount;
+
+	for (let i = startLine; i < endLine; i++) {
+		const original = document.lineAt(i);
+		const trimText = original.text.trim();
+		if (!trimText) continue;
+		const matches = parseCFMLTags(trimText);
+
+		let afterContent = "";
+		let lastIndex = 0;
+
+		if (matches.length) {
+			matches.forEach((match, index) => {
+				console.log(match);
+
+				// 1. 取标签前面的“非标签内容”
+				if (match.startIndex > lastIndex) {
+					const before = trimText.slice(lastIndex, match.startIndex);
+					console.log("前面非标签:", before);
+					if (before.trim().length > 0) {
+						afterContent = afterContent + before + eol;
+					}
+				}
+				// 2. 更新 lastIndex
+				lastIndex = match.endIndex;
+
+				afterContent = afterContent + match.fullMatch + eol;
+
+				// 3. 最后可能还有剩余“非标签内容”
+				if (matches.length == index + 1 && lastIndex < trimText.length) {
+					const after = trimText.slice(lastIndex);
+					console.log("后面非标签:", after);
+					afterContent = afterContent + after;
+				}
+			});
+
+			writeLog("autoTagWrapping_before:" + original);
+			writeLog("autoTagWrapping_after:" + afterContent);
+
+			//假如内容没有变化的话，也就是本来就是独立的一行的情况下。
+			if (trimText == afterContent.trim()) {
+				continue;
+			}
+			edits.push(vscode.TextEdit.replace(original.range, afterContent.trim())); //因为是独立的一行，左右如果存在换行是不对的。
+		}
+	}
+
+	return edits;
+}
+
 // 开始标签（包括自闭合）
 const cfOpenTagRegex = /<\s*(cf\w+)\b[\s\S]*?(\/?)>/gi;
 // 结束标签
