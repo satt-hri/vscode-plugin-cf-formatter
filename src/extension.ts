@@ -4,7 +4,7 @@ import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
-import { autoTagWrapping, autoTagWrappingByRange } from "./core/TagParser";
+import { autoTagWrapping, autoTagWrappingByRange, findBlockTag } from "./core/TagParser";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -59,6 +59,13 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 			}
 
+			const { tag } = findBlockTag(document, range);
+			if (tag == "") {
+				const lang = vscode.env.language.toLowerCase() as Lang;
+				vscode.window.showWarningMessage(messages.blockTagWarn[lang] as string, { modal: true });
+				return [];
+			}
+
 			const preprocessedEdits = autoTagWrappingByRange(document, range);
 			if (preprocessedEdits.length > 0) {
 				const workspaceEdit = new vscode.WorkspaceEdit();
@@ -76,7 +83,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const linesAdded = preprocessedEdits.reduce((sum, edit) => {
 					return sum + edit.newText.split(eol).length - 1;
 				}, 0);
-				
+
 				const newRange = new vscode.Range(
 					range.start.line,
 					0,

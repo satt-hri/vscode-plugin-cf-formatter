@@ -18,7 +18,7 @@ export function formatCfset(
 	}
 
 	const totalIndent = state.indentLevel;
-	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!);
+	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!) + state.rangeLeftSpace;
 
 	//原來内容是一行
 	if (/^<cfset\b.*\/?\s*>$/i.test(text)) {

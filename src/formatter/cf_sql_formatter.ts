@@ -13,7 +13,6 @@ const formatOption: FormatOptionsWithLanguage = {
 	tabWidth: coreOptions.indent_with_tabs ? 1 : config.get<number>("indentSize", 4),
 	keywordCase: "upper",
 	expressionWidth: config.get<number>("expressionWidth", 30),
-	
 };
 
 function formatCFQuery(cfqueryContent: string) {
@@ -124,7 +123,7 @@ export function formatSql(
 	document: vscode.TextDocument
 ): boolean {
 	const totalIndent = state.indentLevel;
-	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!);
+	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!) + state.rangeLeftSpace;
 
 	const lines: { text: string; range: vscode.Range; lineIndex: number }[] = [];
 	let startQuery = line.text.trim();
@@ -158,7 +157,9 @@ export function formatSql(
 
 	const indentedLines = formattedSQL
 		.split("\n")
-		.map((line) => (line.trim() ? baseIndent + coreOptions.indent_char!.repeat(coreOptions.indent_size!) + line : ""))
+		.map((line) =>
+			line.trim() ? baseIndent + coreOptions.indent_char!.repeat(coreOptions.indent_size!) + line : ""
+		)
 		.join("\n");
 
 	const startPos = new vscode.Position(lineIndex + 1, 0);

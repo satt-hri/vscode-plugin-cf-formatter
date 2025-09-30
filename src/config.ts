@@ -36,4 +36,9 @@ export const messages: MessageMap = {
 		"zh-cn": "CFM文件中如果含有html(xml),css,js等，可能不能有效的格式化，你確定要執行嗎？",
 		ja: "CFMファイルにHTML(xml)、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。実行してもよろしいですか？",
 	},
+	blockTagWarn: {
+		en: "Since formatting is applied by block tags, please select within the block CF tag range.",
+		"zh-cn": "由于是按块标签进行格式化的，请选择块级 CF 标签范围。",
+		ja: "ブロックタグ単位でフォーマットしているため、ブロックCFタグの範囲を選択してください。",
+	},
 };

@@ -60,7 +60,7 @@ export function formatCfscript(
 		return false; // 只處理 cfset 標籤
 	}
 	const totalIndent = state.indentLevel;
-	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!) + state.rangeLeftSpace;
 
 	console.log(`jsOptions`);
 	console.log(jsOptions);

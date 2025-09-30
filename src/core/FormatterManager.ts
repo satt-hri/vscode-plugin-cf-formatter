@@ -8,6 +8,7 @@ import { coreOptions } from "@/formatter/beautify/base_opitons";
 
 import { blockTags, parseTagName } from "@/utils/common";
 import { formatSql } from "@/formatter/cf_sql_formatter";
+import { findBlockTag } from "./TagParser";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -148,13 +149,16 @@ export default class FormatterManager {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
 
+		const {leadingSpaces } = findBlockTag(document, range);
+
+		this.state.rangeLeftSpace = leadingSpaces;
+
 		const startLine = range.start.line;
 		const endLine = range.end.line;
-		for (let i = startLine; i < endLine; i++) {
+		for (let i = startLine; i <= endLine; i++) {
 			const line = document.lineAt(i);
 			let text = line.text.trim();
 
-			//
 			if (this.state.lastProcessLine > 0 && i <= this.state.lastProcessLine) {
 				continue;
 			}
@@ -180,7 +184,7 @@ export default class FormatterManager {
 				edits.push(
 					vscode.TextEdit.replace(
 						line.range,
-						coreOptions.indent_char!.repeat(currentIndentLevel * coreOptions.indent_size!) + text
+						leadingSpaces + coreOptions.indent_char!.repeat(currentIndentLevel * coreOptions.indent_size!) + text
 					)
 				);
 				continue;
@@ -238,7 +242,7 @@ export default class FormatterManager {
 
 			// 3.6 计算最终缩进
 			const totalIndent = currentIndentLevel + sqlIndent;
-			const indent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!);
+			const indent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!) + leadingSpaces;
 
 			// 应用格式化
 			edits.push(vscode.TextEdit.replace(line.range, indent + text));
@@ -263,4 +267,5 @@ export default class FormatterManager {
 
 		return edits;
 	}
+	
 }
