@@ -32,9 +32,9 @@ export const messages: MessageMap = {
 		ja: (error: any) => `フォーマットに失敗しました: ${error}`,
 	},
 	warnMsg: {
-		en: "CFM files containing HTML(xml), CSS, JS, etc. may not be formatted effectively. Are you sure you want to proceed?",
-		"zh-cn": "CFM文件中如果含有html(xml),css,js等，可能不能有效的格式化，你確定要執行嗎？",
-		ja: "CFMファイルにHTML(xml)、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。実行してもよろしいですか？",
+		en: "If you execute full formatting, CFM files containing HTML(xml), CSS, JS, etc. may not be formatted effectively. Are you sure you want to proceed? Alternatively, you can choose partial formatting for more controlled scope.",
+		"zh-cn": "执行全部格式化的话，CFM文件中如果含有html(xml),css,js等，可能不能有效的格式化，你确定要执行吗？或者可以选择局部格式化，范围更加可控",
+		ja: "全体フォーマットを実行すると、CFMファイルにHTML(xml)、CSS、JSなどが含まれている場合、効果的にフォーマットできない可能性があります。本当に実行しますか？あるいは部分的なフォーマットを選択して、範囲をより制御することもできます。",
 	},
 	blockTagWarn: {
 		en: "Since formatting is applied by block tags, please select within the block CF tag range.",

@@ -3,12 +3,13 @@ import { createInitiaLState, FormatState } from "./FormatState";
 import { getSqlIndent } from "@/formatter/cf_query";
 import { formatComment } from "@/formatter/cf_comment";
 import { formatCfset } from "@/formatter/cf_set";
-import { formatCfscript } from "@/formatter/beautify/cf_script";
+import { formatCfscript, formatRangeScript } from "@/formatter/beautify/cf_script";
 import { coreOptions } from "@/formatter/beautify/base_opitons";
 
 import { blockTags, parseTagName } from "@/utils/common";
 import { formatSql } from "@/formatter/cf_sql_formatter";
 import { findBlockTag } from "./TagParser";
+import { ExtendedFormattingOptions } from "@/types/type";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -149,7 +150,7 @@ export default class FormatterManager {
 		const edits: vscode.TextEdit[] = [];
 		this.resetState();
 
-		const {leadingSpaces } = findBlockTag(document, range);
+		const { leadingSpaces } = findBlockTag(document, range);
 
 		this.state.rangeLeftSpace = leadingSpaces;
 
@@ -184,7 +185,9 @@ export default class FormatterManager {
 				edits.push(
 					vscode.TextEdit.replace(
 						line.range,
-						leadingSpaces + coreOptions.indent_char!.repeat(currentIndentLevel * coreOptions.indent_size!) + text
+						leadingSpaces +
+							coreOptions.indent_char!.repeat(currentIndentLevel * coreOptions.indent_size!) +
+							text
 					)
 				);
 				continue;
@@ -267,5 +270,41 @@ export default class FormatterManager {
 
 		return edits;
 	}
-	
+
+	beautifyRange(
+		document: vscode.TextDocument,
+		range: vscode.Range,
+		options: ExtendedFormattingOptions,
+		token: vscode.CancellationToken
+	): vscode.TextEdit[] {
+		const edits: vscode.TextEdit[] = [];
+		this.resetState();
+
+		const startLine = range.start.line;
+		const endLine = Math.min(range.end.line, document.lineCount);
+
+		this.state.rangeLeftSpace = document.lineAt(startLine).text.match(/^(\s*)/)?.[1] || "";
+
+		const lines: string[] = [];
+		for (let i = startLine; i <= endLine; i++) {
+			const line = document.lineAt(i);
+			let text = line.text.trim();
+			lines.push(text);
+		}
+		let content = lines.join("\n");
+		if (content.trim() === "") {
+			return edits;
+		}
+		if (options.flag === "script") {
+			content = formatRangeScript(this.state, content);
+		} else if (options.flag === "css") {
+			content = formatRangeScript(this.state, content);
+		} else if (options.flag === "html") {
+			content = formatRangeScript(this.state, content);
+		}
+
+		edits.push(vscode.TextEdit.replace(range, content));
+
+		return edits;
+	}
 }
