@@ -10,6 +10,8 @@ import { blockTags, parseTagName } from "@/utils/common";
 import { formatSql } from "@/formatter/cf_sql_formatter";
 import { findBlockTag } from "./TagParser";
 import { ExtendedFormattingOptions } from "@/types/type";
+import { formatRangeHtml } from "@/formatter/beautify/cf_html";
+import { formatRangeCss } from "@/formatter/beautify/cf_css";
 
 export default class FormatterManager {
 	private state: FormatState;
@@ -298,9 +300,9 @@ export default class FormatterManager {
 		if (options.flag === "script") {
 			content = formatRangeScript(this.state, content);
 		} else if (options.flag === "css") {
-			content = formatRangeScript(this.state, content);
+			content = formatRangeCss(this.state, content);
 		} else if (options.flag === "html") {
-			content = formatRangeScript(this.state, content);
+			content = formatRangeHtml(this.state, content);
 		}
 
 		edits.push(vscode.TextEdit.replace(range, content));
