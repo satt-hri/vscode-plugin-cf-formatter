@@ -1,12 +1,5 @@
 # 🐧🎈ᓚᘏᗢ    CFML Auto Formatter 
 
-<!-- ## 🌐 Languages
-- [English](#-english)&nbsp;&nbsp;&nbsp;&nbsp;[日本語](#-日本語) &nbsp;&nbsp;[中文](#-中文)
----
- -->
-
-
-
 ## 🏈 English
 
 **CFML Code Auto-Formatting Extension** for VS Code.
@@ -28,7 +21,7 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 1. Install the extension
 2. Open a CFML file (recommended: `.cfc`)
-3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) Format Document`**
+3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) `**
 
 ---
 
@@ -126,6 +119,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### CFML フォーマッタ デフォルト設定
 
 <details>
+
 | 設定項目                                                   | デフォルト値                | 型                     | 説明                                                                                         |
 | ---------------------------------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
 | <small>`hri.cfml.formatter.indentWithTabs`</small>         | <small>`true`</small>       | <small>boolean</small> | <small>インデントにスペースではなくタブを使用する。</small>                                  |
@@ -144,5 +138,6 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
+
 </details>
----
+
