@@ -504,3 +504,19 @@ prexyz → xyz → postxyz
 | `git stash apply stash@{1}`      | 恢复指定 stash，但不删除 |
 | `git stash drop stash@{0}`       | 删除指定 stash      |
 
+
+
+---
+```json
+{
+  "menus": {
+    "commandPalette": [],      // 命令面板 (Ctrl+Shift+P)
+    "editor/context": [],       // 编辑器右键菜单
+    "editor/title": [],         // 编辑器标题栏
+    "editor/title/context": [], // 编辑器标签右键菜单
+    "explorer/context": [],     // 文件浏览器右键菜单
+    "view/title": [],          // 视图标题栏
+    "view/item/context": []    // 视图项目右键菜单
+  }
+}
+```

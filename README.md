@@ -5,8 +5,90 @@
 ---
  -->
 
-## 👘 日本語
 
+
+## 🏈 English
+
+**CFML Code Auto-Formatting Extension** for VS Code.
+This extension is **specialized in automatic tag wrapping** and **indent formatting**, without making unnecessary code style changes.
+
+---
+
+### Features
+
+* **CFML (.cfc)** automatic indent formatting (stable operation)
+* Automatic tag wrapping
+* Partial formatting by block tags
+* Preserves original code style
+* Supports manual execution & automatic formatting on save
+
+---
+
+### Usage
+
+1. Install the extension
+2. Open a CFML file (recommended: `.cfc`)
+3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) Format Document`**
+
+---
+
+### Notes
+
+* `.cfc` file formatting operates stably
+* `.cfm` files may have formatting issues → planned to improve in the future
+* SQL statements should avoid <mark>leading commas</mark> <small>[why?](https://github.com/sql-formatter-org/sql-formatter/issues/899)</small>
+* When formatting after focusing on the opening tag, the closing tag may be automatically added.
+  This is an issue caused by another plugin (e.g. Auto Close Tag).
+* SQL formatting is first done using **sql-formatter**.
+  However, if it includes something particularly complex such as `cfloop`, my own custom logic is applied.
+* The formatting of `cfscript` is very similar to JavaScript.
+  If the string contains SQL statements, XML, or HTML tags, tags may break, so it’s better not to use it.
+* Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
+
+---
+
+### Before/After Formatting Example
+
+<h4>1. Tag wrapping</h4>
+<div align="center">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo">
+</div>
+<h4>2. Partial formatting</h4>
+<div align="center">
+  <img src="./images/2025-10-01_12h04_46.gif" alt="Demo">
+</div>
+<h4>3. Indent formatting</h4>
+<div align="center">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo">
+</div>
+
+---
+
+### ⚙️ CFML Formatter Default Settings
+
+| Setting                                                    | Default Value               | Type                   | Description                                                                           |
+| ---------------------------------------------------------- | --------------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| <small>`hri.cfml.formatter.indentWithTabs`</small>         | <small>`true`</small>       | <small>boolean</small> | <small>Use tabs instead of spaces for indentation.</small>                            |
+| <small>`hri.cfml.formatter.indentSize`</small>             | <small>`4`</small>          | <small>number</small>  | <small>Number of spaces when indenting with spaces (1–10).</small>                    |
+| <small>`hri.cfml.formatter.indentChar`</small>             | <small>`" "`</small>        | <small>string</small>  | <small>Indent character: space `" "` or `\t`. Overridden by `indentWithTabs`.</small> |
+| <small>`hri.cfml.formatter.wrapLineLength`</small>         | <small>`0`</small>          | <small>number</small>  | <small>Wrap lines after this many characters. `0` means no limit.</small>             |
+| <small>`hri.cfml.formatter.maxPreserveNewlines`</small>    | <small>`2`</small>          | <small>number</small>  | <small>Maximum number of consecutive newlines to preserve (0–10).</small>             |
+| <small>`hri.cfml.formatter.preserveNewlines`</small>       | <small>`true`</small>       | <small>boolean</small> | <small>Whether to preserve existing newlines.</small>                                 |
+| <small>`hri.cfml.formatter.keepArrayIndentation`</small>   | <small>`false`</small>      | <small>boolean</small> | <small>Whether to preserve original array indentation.</small>                        |
+| <small>`hri.cfml.formatter.braceStyle`</small>             | <small>`"collapse"`</small> | <small>string</small>  | <small>Brace style: `collapse` / `expand` / `end-expand` / `none`.</small>            |
+| <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>Whether to break chained methods into multiple lines.</small>                  |
+| <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>Whether to add a space before conditionals (if, while, for).</small>           |
+| <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>Whether to add a newline at the end of the file.</small>                       |
+| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>Wrap lines when the SQL string length exceeds this value.</small>              |
+| <small>`hri.cfml.formatter.sqlLanguage`</small>            | <small>`"mysql"`</small>    | <small>string</small>  | <small>Select SQL dialect for formatting.</small>                                     |
+
+💡 **How to Change Settings**
+Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search box to make changes.
+After modifying, don’t forget to reload the window!
+
+---
+
+## 👘 日本語
 
 VS Code 用 **CFML コード自動整形拡張機能**。  
 この拡張機能は **タグの自動改行**、**インデント整形に特化** しており、余計なコードスタイルの変更は行いません。
@@ -16,6 +98,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### 機能
 - **CFML (.cfc)** コードの自動インデント整形（安定動作）
 - タグの自動改行
+- ブロックタグごとで部分的にフォーマット
 - 元のコードスタイルを保持
 - 手動実行 & 保存時自動整形に対応
 
@@ -40,21 +123,9 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ---
 
-
-### フォーマット前後の例
-<h4>1.タグ自動改行</h4>
-<div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
-</div>
-<h4>2.インデント整形</h4>
-<div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">
-</div>
-
----
-
 ### CFML フォーマッタ デフォルト設定
 
+<details>
 | 設定項目                                                   | デフォルト値                | 型                     | 説明                                                                                         |
 | ---------------------------------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
 | <small>`hri.cfml.formatter.indentWithTabs`</small>         | <small>`true`</small>       | <small>boolean</small> | <small>インデントにスペースではなくタブを使用する。</small>                                  |
@@ -73,81 +144,5 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
-
-
----
-
-### 🏈 English
-
-
-**CFML Code Auto-Formatting Extension** for VS Code.  
-This extension is **atuo tag wrap**.**specialized in indent formatting** and does not make unnecessary code style changes.
-
----
-
-### Features
-- **CFML (.cfc)** automatic indent formatting (stable operation)
-- Automatic tag wrapping
-- Preserves original code style
-- Supports manual execution & automatic formatting on save
-
----
-
-### Usage
-1. Install the extension
-2. Open a CFML file (recommended: `.cfc`)
-3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) Format Document`**
-
----
-
-### Notes
-- `.cfc` file formatting operates stably  
-- `.cfm` files may have formatting issues → improvement planned for the future  
-- SQL statements should avoid <mark>leading commas</mark>.<small>[why?](https://github.com/sql-formatter-org/sql-formatter/issues/899)</small>
-- When formatting after focusing on the opening tag, the closing tag may be automatically added. This is an issue caused by another plugin.
-e.g.: (Auto Close Tag)
-- SQL formatting is first done using **sql-formatter**.  
-However, if it includes something particularly complex such as `cfloop`, I use my own custom logic to format it.  
-- The formatting of `cfscript` is quite similar to JavaScript.  
-  If the string contains SQL statements, XML, or HTML tags, there is a possibility that the tags may be broken, so it’s better not to use it.
-- Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
----
-<details>
-<summary>Click to expand</summary>
-
-### Before/After Formatting Example
-<h4>1.tag wrap</h4>
-<div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="插件演示">
-</div>
-<h4>2.indent formatting</h4>
-<div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="插件演示">
-</div>
-
----
-
-
-### ⚙️ CFML Formatter Default Settings
-
-| Setting                                                    | Default Value               | Type                   | Description                                                                           |
-| ---------------------------------------------------------- | --------------------------- | ---------------------- | ------------------------------------------------------------------------------------- |
-| <small>`hri.cfml.formatter.indentWithTabs`</small>         | <small>`true`</small>       | <small>boolean</small> | <small>Use tabs instead of spaces for indentation.</small>                            |
-| <small>`hri.cfml.formatter.indentSize`</small>             | <small>`4`</small>          | <small>number</small>  | <small>Number of spaces when indenting with spaces (1–10).</small>                    |
-| <small>`hri.cfml.formatter.indentChar`</small>             | <small>`" "`</small>        | <small>string</small>  | <small>Indent character: space `" "` or `\t`. Overridden by `indentWithTabs`.</small> |
-| <small>`hri.cfml.formatter.wrapLineLength`</small>         | <small>`0`</small>          | <small>number</small>  | <small>Wrap lines after this many characters. `0` means no limit.</small>             |
-| <small>`hri.cfml.formatter.maxPreserveNewlines`</small>    | <small>`2`</small>          | <small>number</small>  | <small>Maximum number of consecutive newlines to preserve (0–10).</small>             |
-| <small>`hri.cfml.formatter.preserveNewlines`</small>       | <small>`true`</small>       | <small>boolean</small> | <small>Whether to preserve existing newlines.</small>                                 |
-| <small>`hri.cfml.formatter.keepArrayIndentation`</small>   | <small>`false`</small>      | <small>boolean</small> | <small>Whether to preserve original array indentation.</small>                        |
-| <small>`hri.cfml.formatter.braceStyle`</small>             | <small>`"collapse"`</small> | <small>string</small>  | <small>Brace style: `collapse` / `expand` / `end-expand` / `none`.</small>            |
-| <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>Whether to break chained methods into multiple lines.</small>                  |
-| <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>Whether to add space before conditionals (if, while, for).</small>             |
-| <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>Whether to add a newline at the end of the file.</small>                       |
-| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>Wrap lines when sql specified string length is exceeded(sql-formatter)</small> 
-| <small>`hri.cfml.formatter.sqlLanguage`</small>        | <small>`"mysql"`</small>         | <small>string</small>  | <small>Select SQL dialect for formatting(sql-formatter)</small>                     |
-
-💡 **How to Change Settings**  
-Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search box to make changes. Don't forget to reload the window after making changes!  
-
 </details>
-
+---

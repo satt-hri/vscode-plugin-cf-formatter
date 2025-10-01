@@ -119,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
 		console.log(`已为语言ID "${langId}" 注册格式化器`);
 	});
 
-	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatDocument", async () => {
+	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatTagSyntax", async () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
 			vscode.window.showErrorMessage(messages.noEditor[lang] as string);

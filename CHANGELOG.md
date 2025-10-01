@@ -12,21 +12,28 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
-## [10.0.17] - 2025-09-26
+## [1.0.18] - 2025-10-01
+
+### Added
+-  Partial formatting by block tags
+
+---
+
+## [1.0.17] - 2025-09-26
 
 ### Fixed
 - Fixed RegExp bus
 
 ---
 
-## [10.0.16] - 2025-09-23
+## [1.0.16] - 2025-09-23
 
 ### Added
 - Introduced automatic tag line breaking functionality
 
 ---
 
-## [10.0.15] - 2025-09-12
+## [1.0.15] - 2025-09-12
 
 ### Fixed
 - Fixed conflict with 'auto-close-tag' extension
@@ -34,70 +41,70 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
-## [10.0.14] - 2025-09-10
+## [1.0.14] - 2025-09-10
 
 ### Changed
 - Added flexible language selection similar to sql-format extension
 
 ---
 
-## [10.0.13] - 2025-09-05
+## [1.0.13] - 2025-09-05
 
 ### Fixed
 - Fixed known bugs
 
 ---
 
-## [10.0.12] - 2025-09-04
+## [1.0.12] - 2025-09-04
 
 ### Added
 - Integrated sql-formatter functionality
 
 ---
 
-## [10.0.11] - 2025-09-01
+## [1.0.11] - 2025-09-01
 
 ### Fixed
 - Fixed known bugs
 
 ---
 
-## [10.0.10] - 2025-08-28
+## [1.0.10] - 2025-08-28
 
 ### Changed
 - Improved cfset tag display rendering
 
 ---
 
-## [10.0.8] - 2025-08-25
+## [1.0.8] - 2025-08-25
 
 ### Fixed
 - Fixed formatting issues within cfscript blocks
 
 ---
 
-## [10.0.7] - 2025-08-25
+## [1.0.7] - 2025-08-25
 
 ### Changed
 - cfscript content now uses js-beautify for formatting
 
 ---
 
-## [10.0.6] - 2025-08-22
+## [1.0.6] - 2025-08-22
 
 ### Changed
 - Improved formatting within cfquery blocks
 
 ---
 
-## [10.0.5] - 2025-08-20
+## [1.0.5] - 2025-08-20
 
 ### Fixed
 - Fixed cfset tag related bugs
 
 ---
 
-## [10.0.4] - 2025-08-19
+## [1.0.4] - 2025-08-19
 
 ### Added
 - Multi-language message support
@@ -107,21 +114,21 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
-## [10.0.3] - 2025-08-19
+## [1.0.3] - 2025-08-19
 
 ### Changed
 - Optimized cfset tag handling
 
 ---
 
-## [10.0.2] - 2025-08-18
+## [1.0.2] - 2025-08-18
 
 ### Changed
-- Improved comment formatting
+- Improved comment **formatting**
 
 ---
 
-## [10.0.1] - 2025-08-18
+## [1.0.1] - 2025-08-18
 
 ### Added
 - Added extension icon and detailed documentation (README.md)

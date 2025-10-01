@@ -4,7 +4,7 @@
   "publisher": "hri",
   "description": "CFML Indent Formatter / CFML インデント整形",
   "icon": "images/icon.png",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
@@ -37,30 +37,86 @@
   "contributes": {
     "commands": [
       {
-        "command": "hri.cfml.formatDocument",
-        "title": "Format CFML (satt)",
+        "command": "hri.cfml.formatTagSyntax",
+        "title": "CFTag Syntax",
         "category": "CFML"
+      },
+      {
+        "command": "hri.cfml.formatScriptSyntax",
+        "title": "Script Syntax",
+        "category": "CFML"
+      },
+      {
+        "command": "hri.cfml.formatHtmlSyntax",
+        "title": "HTML Syntax",
+        "category": "CFML"
+      },
+      {
+        "command": "hri.cfml.formatCssSyntax",
+        "title": "CSS Syntax",
+        "category": "CFML"
+      }
+    ],
+    "submenus": [
+      {
+        "label": "Format CFML (satt)",
+        "id": "hri.cfml.formatMenu"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "hri.cfml.formatDocument",
+          "submenu": "hri.cfml.formatMenu",
           "when": "editorLangId == cfml",
           "group": "1_modification"
         }
       ],
+      "hri.cfml.formatMenu": [
+        {
+          "command": "hri.cfml.formatTagSyntax",
+          "group": "format@1"
+        },
+        {
+          "command": "hri.cfml.formatScriptSyntax",
+          "group": "format@2"
+        },
+        {
+          "command": "hri.cfml.formatHtmlSyntax",
+          "group": "format@3"
+        },
+        {
+          "command": "hri.cfml.formatCssSyntax",
+          "group": "format@4"
+        }
+      ],
       "commandPalette": [
         {
-          "command": "hri.cfml.formatDocument",
+          "command": "hri.cfml.formatTagSyntax",
+          "when": "editorLangId == cfml"
+        },
+        {
+          "command": "hri.cfml.formatScriptSyntax",
+          "when": "editorLangId == cfml"
+        },
+        {
+          "command": "hri.cfml.formatHtmlSyntax",
+          "when": "editorLangId == cfml"
+        },
+        {
+          "command": "hri.cfml.formatCssSyntax",
           "when": "editorLangId == cfml"
         }
       ]
     },
     "keybindings": [
       {
-        "command": "hri.cfml.formatDocument",
+        "command": "hri.cfml.formatTagSyntax",
         "key": "shift+alt+m",
+        "when": "editorLangId == cfml && editorTextFocus"
+      },
+      {
+        "command": "hri.cfml.formatScriptSyntax",
+        "key": "shift+alt+n",
         "when": "editorLangId == cfml && editorTextFocus"
       }
     ],
@@ -98,12 +154,12 @@
           "type": "number",
           "default": 1,
           "enum": [
-             -1,
-             0,
-             1,
-             2,
-             5,
-             10
+            -1,
+            0,
+            1,
+            2,
+            5,
+            10
           ],
           "description": "Maximum number of consecutive newlines to preserve in the output.   -1:remove all extral newlies,1: allow 1newline between tokens,0:unlimited newlines between tokens  (js-beautify) "
         },
