@@ -4,7 +4,7 @@ import path from "path";
 import FormatterManager from "./core/FormatterManager";
 import { initLog, writeLog } from "./utils/log";
 import { disableAutoCloseTag, restoreAutoCloseTag } from "./utils/conflicts";
-import { autoTagWrapping } from "./core/TagParser";
+import { autoTagWrapping, autoTagWrappingByRange, findBlockTag } from "./core/TagParser";
 
 export function activate(context: vscode.ExtensionContext) {
 	//console.log("CFML Auto Formatter 插件已激活");
@@ -15,19 +15,13 @@ export function activate(context: vscode.ExtensionContext) {
 	//console.log("支持的语言:", vscode.languages.getLanguages());
 	const lang = vscode.env.language.toLowerCase() as Lang;
 
-	const provider: vscode.DocumentFormattingEditProvider = {
+	// 全文档格式化 Provider
+	const fullDocumentProvider: vscode.DocumentFormattingEditProvider = {
 		async provideDocumentFormattingEdits(
 			document: vscode.TextDocument,
 			options: vscode.FormattingOptions,
 			token: vscode.CancellationToken
 		): Promise<vscode.TextEdit[]> {
-			// console.log("格式化器被调用！");
-			// console.log("文档语言ID:", document.languageId);
-			// console.log("文档行数:", document.lineCount);
-			// console.log("文档文件名:", document.fileName);
-			// console.log("格式化选项:", options);
-			//const originText = document.getText();
-
 			const ext = path.extname(document.fileName).toLowerCase();
 			if (ext === ".cfm") {
 				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string, "Yes", "No");
@@ -50,31 +44,82 @@ export function activate(context: vscode.ExtensionContext) {
 			return manager.formatDocument(document, options, token);
 		},
 	};
+	const rangeFormattingPrvider: vscode.DocumentRangeFormattingEditProvider = {
+		async provideDocumentRangeFormattingEdits(
+			document: vscode.TextDocument,
+			range: vscode.Range,
+			options: vscode.FormattingOptions,
+			token: vscode.CancellationToken
+		): Promise<vscode.TextEdit[]> {
+			const ext = path.extname(document.fileName).toLowerCase();
+			if (ext === ".cfm") {
+				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string, "Yes", "No");
+				if (result === "No") {
+					return [];
+				}
+			}
 
-	// 添加调试命令
-	const debugCommand = vscode.commands.registerCommand("satt.cfml.debug", () => {
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			//	console.log("当前文件语言ID:", editor.document.languageId);
-			//console.log("当前文件路径:", editor.document.fileName);
-			const val = messages.langInfo[lang];
-			vscode.window.showInformationMessage(
-				typeof val === "function" ? val(editor.document.languageId, editor.document.fileName) : val
-			);
-		}
-	});
-	context.subscriptions.push(debugCommand);
+			const { tag } = findBlockTag(document, range);
+			if (tag == "") {
+				const lang = vscode.env.language.toLowerCase() as Lang;
+				vscode.window.showWarningMessage(messages.blockTagWarn[lang] as string, { modal: true });
+				return [];
+			}
+
+			const preprocessedEdits = autoTagWrappingByRange(document, range);
+			if (preprocessedEdits.length > 0) {
+				const workspaceEdit = new vscode.WorkspaceEdit();
+				workspaceEdit.set(document.uri, preprocessedEdits);
+				const success = await vscode.workspace.applyEdit(workspaceEdit);
+				//await new Promise((resolve) => setTimeout(resolve, 10));
+				console.log(success);
+
+				const editor = vscode.window.activeTextEditor;
+				if (!editor || editor.document.uri.toString() !== document.uri.toString()) {
+					return [];
+				}
+
+				const eol = document.eol === vscode.EndOfLine.CRLF ? "\r\n" : "\n";
+				const linesAdded = preprocessedEdits.reduce((sum, edit) => {
+					return sum + edit.newText.split(eol).length - 1;
+				}, 0);
+
+				const newRange = new vscode.Range(
+					range.start.line,
+					0,
+					range.end.line + linesAdded,
+					document.lineAt(Math.min(range.end.line + linesAdded, document.lineCount - 1)).text.length
+				);
+
+				const manager = new FormatterManager();
+				return manager.formatRange(document, newRange, options, token);
+			}
+
+			const manager = new FormatterManager();
+
+			return manager.formatRange(document, range, options, token);
+		},
+	};
 
 	// 注册多个可能的语言ID
 	const languageIds = ["cfml", "cfm", "cfc"];
 
 	languageIds.forEach((langId) => {
-		const registration = vscode.languages.registerDocumentFormattingEditProvider(langId, provider);
-		context.subscriptions.push(registration);
+		const fullDocRegistration = vscode.languages.registerDocumentFormattingEditProvider(
+			langId,
+			fullDocumentProvider
+		);
+		context.subscriptions.push(fullDocRegistration);
+		const rangeRegistration = vscode.languages.registerDocumentRangeFormattingEditProvider(
+			langId,
+			rangeFormattingPrvider
+		);
+		context.subscriptions.push(rangeRegistration);
+
 		console.log(`已为语言ID "${langId}" 注册格式化器`);
 	});
 
-	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatDocument", async () => {
+	const formatCommand = vscode.commands.registerCommand("hri.cfml.formatTagSyntax", async () => {
 		const editor = vscode.window.activeTextEditor;
 		if (!editor) {
 			vscode.window.showErrorMessage(messages.noEditor[lang] as string);
@@ -92,8 +137,18 @@ export function activate(context: vscode.ExtensionContext) {
 					insertSpaces: true,
 				};
 				const token = new vscode.CancellationTokenSource().token;
-
-				const editsResult = provider.provideDocumentFormattingEdits(editor.document, options, token);
+				const selection = editor.selection;
+				let editsResult;
+				if (!selection.isEmpty) {
+					editsResult = rangeFormattingPrvider.provideDocumentRangeFormattingEdits(
+						editor.document,
+						selection,
+						options,
+						token
+					);
+				} else {
+					editsResult = fullDocumentProvider.provideDocumentFormattingEdits(editor.document, options, token);
+				}
 
 				// 处理可能的Promise返回值
 				const edits = await Promise.resolve(editsResult);

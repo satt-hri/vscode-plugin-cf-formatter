@@ -1,23 +1,18 @@
 import * as vscode from "vscode";
-// import path from "path";
-// import fs from "fs";
 import { format, FormatOptionsWithLanguage } from "sql-formatter";
-import { FormatState } from "../core/FormatState";
-import { blockTags, parseTagName } from "../utils/common";
-import { jsOptions } from "./cf_script";
-import { writeLog } from "../utils/log";
+import { FormatState } from "@/core/FormatState";
+import { blockTags, parseTagName } from "@/utils/common";
+import { coreOptions } from "./beautify/base_opitons";
+import { writeLog } from "@/utils/log";
 
 const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
-//tab缩进 が優先
-const useTab = config.get<boolean>("indentWithTabs", true);
 
 const formatOption: FormatOptionsWithLanguage = {
 	language: config.get<string>("sqlLanguage", "mysql") as any,
-	useTabs: useTab,
-	tabWidth: useTab ? 1 : config.get<number>("indentSize", 4),
+	useTabs: coreOptions.indent_with_tabs,
+	tabWidth: coreOptions.indent_with_tabs ? 1 : config.get<number>("indentSize", 4),
 	keywordCase: "upper",
 	expressionWidth: config.get<number>("expressionWidth", 30),
-	
 };
 
 function formatCFQuery(cfqueryContent: string) {
@@ -93,7 +88,7 @@ function formatCFQuery(cfqueryContent: string) {
 		.map((item) => {
 			const { tagName, isClosing, selfLineClosing } = parseTagName(item);
 			let tempText = ifIndex.length
-				? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
+				? coreOptions.indent_char!.repeat(coreOptions.indent_size! * ifIndex.length) + item
 				: item;
 			//cfif cfswitch cfcase cfdefaultcase等
 			//!selfLineClosing  if 在一條綫等問題上很複雜，假如是一行的 if  endif 這種 就不處理了。
@@ -101,14 +96,14 @@ function formatCFQuery(cfqueryContent: string) {
 				if (isClosing) {
 					ifIndex.pop();
 					tempText = ifIndex.length
-						? jsOptions.indent_char!.repeat(jsOptions.indent_size! * ifIndex.length) + item
+						? coreOptions.indent_char!.repeat(coreOptions.indent_size! * ifIndex.length) + item
 						: item;
 				} else {
 					ifIndex.push(item);
 				}
 			} else if (tagName == "cfelse" || tagName == "cfelseif") {
 				tempText = ifIndex.length
-					? jsOptions.indent_char!.repeat(jsOptions.indent_size! * (ifIndex.length - 1)) + item
+					? coreOptions.indent_char!.repeat(coreOptions.indent_size! * (ifIndex.length - 1)) + item
 					: item;
 			}
 			return tempText;
@@ -128,7 +123,7 @@ export function formatSql(
 	document: vscode.TextDocument
 ): boolean {
 	const totalIndent = state.indentLevel;
-	const baseIndent = jsOptions.indent_char!.repeat(totalIndent * jsOptions.indent_size!);
+	const baseIndent = coreOptions.indent_char!.repeat(totalIndent * coreOptions.indent_size!) + state.rangeLeftSpace;
 
 	const lines: { text: string; range: vscode.Range; lineIndex: number }[] = [];
 	let startQuery = line.text.trim();
@@ -162,7 +157,9 @@ export function formatSql(
 
 	const indentedLines = formattedSQL
 		.split("\n")
-		.map((line) => (line.trim() ? baseIndent + jsOptions.indent_char!.repeat(jsOptions.indent_size!) + line : ""))
+		.map((line) =>
+			line.trim() ? baseIndent + coreOptions.indent_char!.repeat(coreOptions.indent_size!) + line : ""
+		)
 		.join("\n");
 
 	const startPos = new vscode.Position(lineIndex + 1, 0);

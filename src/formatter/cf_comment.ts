@@ -1,9 +1,9 @@
-import { FormatState } from "../core/FormatState";
+import { FormatState } from "@/core/FormatState";
 import * as vscode from "vscode";
-import { jsOptions } from "./cf_script";
+import { coreOptions } from "./beautify/base_opitons";
 
-const indentChar = jsOptions.indent_char!;
-const indentUnit = jsOptions.indent_size!;
+const indentChar = coreOptions.indent_char!;
+const indentUnit = coreOptions.indent_size!;
 
 export function formatComment(
 	line: vscode.TextLine,
@@ -14,6 +14,8 @@ export function formatComment(
 ): boolean {
 	let text = line.text.trim();
 
+	const baseIndent = indentChar.repeat(indentUnit * (state.indentLevel + state.sqlSubqueryStack.length * 2)) + state.rangeLeftSpace
+
 	// 更新注释状态
 	updateCommentState(text, lineIndex, state, document);
 
@@ -22,7 +24,7 @@ export function formatComment(
 		edits.push(
 			vscode.TextEdit.replace(
 				line.range,
-				indentChar.repeat(indentUnit * (state.indentLevel + state.sqlSubqueryStack.length * 2)) + text
+				baseIndent + text
 			)
 		);
 		return true;
@@ -39,7 +41,7 @@ export function formatComment(
 			edits.push(
 				vscode.TextEdit.replace(
 					line.range,
-					indentChar.repeat(indentUnit * (state.indentLevel + state.sqlSubqueryStack.length * 2)) + text
+					baseIndent + text
 				)
 			);
 			return true;

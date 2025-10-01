@@ -74,7 +74,7 @@ export const blockTags = {
 		"cfset",
 		"cfhttpparam",
 		"cfprocparam",
-		"cfzipparam"
+		"cfzipparam",
 	],
 	onlyIndex: ["cfprocessingdirective"], // 函数内容标签
 };
@@ -125,4 +125,8 @@ export function parseTagName(line: string): {
 	}
 
 	return { tagName: "", isClosing: false, isSelfClosing: false, selfLineClosing: false };
+}
+
+export function getLeadingSpacesCount(str: string): number {
+	return str.length - str.trimStart().length;
 }

@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { Lang } from "../config";
+import { Lang } from "@/config";
 
 export interface FormatState {
 	lang: Lang;
@@ -16,6 +16,7 @@ export interface FormatState {
 	sqlCaseStack: number[];
 	sqlSubqueryStack: number[];
 	tagStack: string[];
+	rangeLeftSpace:string;
 }
 
 export function createInitiaLState(): FormatState {
@@ -35,5 +36,6 @@ export function createInitiaLState(): FormatState {
 		sqlCaseStack: [],
 		sqlSubqueryStack: [],
 		tagStack: [],
+		rangeLeftSpace:""
 	};
 }
