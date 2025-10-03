@@ -51,28 +51,29 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 * The formatting of `cfscript` is very similar to JavaScript.
   If the string contains SQL statements, XML, or HTML tags, tags may break, so it’s better not to use it.
 * Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
+* I have already tried using Lucee’s AST methods `astFromString()` and `astFromPath()`, but I couldn’t get detailed information from them. Below is the execution result I obtained, and I’m still experimenting with this. [See issue #20](https://github.com/satt-hri/vscode-plugin-cf-formatter/issues/20)
 
 ---
 
-### Before/After Formatting Example
-
 #### 1. Tag wrapping
 <div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo" width="600">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo" width="500">
 </div>
 
 #### 2. Partial formatting
-- <div align="left">
-  <p>2.1 CFTag Syntax</p>
-  <img src="./images/2025-10-01_12h04_46.gif" alt="Demo" width="600">
-  - <p>2.2 Script Syntax</p>
-  <img src="./images/2025-10-03_11h35_23.gif" alt="Demo" width="600">
+<div align="center">
+
+| 2.1 CFTag Syntax | 2.2 Script Syntax |
+| ---------------- | ----------------- |
+| <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400"> | <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400"> |
+
 </div>
 
 #### 3. Indent formatting
 <div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo" width="600">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo" width="500">
 </div>
+
 
 ---
 
