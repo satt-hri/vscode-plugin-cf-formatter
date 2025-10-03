@@ -1,7 +1,5 @@
 import { FormatState } from "@/core/FormatState";
 import { CSSBeautifyOptions, css_beautify } from "js-beautify";
-import * as vscode from "vscode";
-import { parseTagName } from "@/utils/common";
 import { writeLog } from "@/utils/log";
 import { coreOptions } from "./base_opitons";
 
@@ -10,107 +8,22 @@ const cssOptions: CSSBeautifyOptions = {
 	//css配置开始
 };
 
-const ignoreFunction = ["replace"];
-const ignoreStart = "/* beautify ignore:start */";
-const ignoreEnd = "/* beautify ignore:end */";
-const cusIgnoreStart = "/* cf:start */";
-const cusIgnoreEnd = "/* cf:end */";
 
-function wrapIgnoreCode(code: string): string {
-	const pattern = `\\b(${ignoreFunction.join("|")})\\s*\\(`;
-	if (new RegExp(pattern, "i").test(code)) {
-		let temp = `${ignoreStart}${code}${ignoreEnd}`;
-		writeLog("wrapIgnoreCode:" + temp);
-		return temp;
-	}
-
-	return code;
-}
-function removeIgnoreCode(code: string): string {
-	writeLog("removeIgnoreCode_code:" + code);
-	let temp = code.replaceAll(ignoreStart, "").replaceAll(ignoreEnd, "");
-	writeLog("removeIgnoreCode_temp:" + temp);
-	return temp;
-}
-
-export function formatHtml(
-	line: vscode.TextLine,
-	lineIndex: number,
-	edits: vscode.TextEdit[],
-	state: FormatState,
-	document: vscode.TextDocument
-): boolean {
-	// 跳过已处理的行
-	let text = line.text.trim();
-	const { tagName, isClosing } = parseTagName(text);
-	if (tagName !== "cfscript" || text.length == 0) {
-		return false; // 只處理 cfset 標籤
-	}
-	const totalIndent = state.indentLevel;
-	const baseIndent = cssOptions.indent_char!.repeat(totalIndent * cssOptions.indent_size!);
-
-	console.log(`cssOptions`);
-	console.log(cssOptions);
-
-	// 開始 <cfscript> 標籤
-	if (!isClosing && /^<cfscript\b.*>$/i.test(text)) {
-		edits.push(vscode.TextEdit.replace(line.range, baseIndent + text));
-	}
-	// 中間内容
-	const lines: string[] = [];
-	let i = lineIndex + 1;
-	for (; i < document.lineCount; i++) {
-		const templine = document.lineAt(i);
-		const temText = wrapIgnoreCode(templine.text.trim());
-		const { tagName, isClosing } = parseTagName(temText);
-
-		if (isClosing && tagName === "cfscript") {
-			edits.push(vscode.TextEdit.replace(templine.range, baseIndent + temText));
-			break; // 退出循环
-		} else {
-			lines.push(temText);
-		}
-	}
-
-	state.lastProcessLine = i; // 更新全局缩进位置，跳过已处理的行
-	const cssContent = lines.join("\n");
-	if (cssContent.trim() === "") {
-		return true; // 如果 cfscript 内容为空，直接返回
-	}
-
+export function formatRangeCss(state: FormatState, scriptContent: string): string {
 	try {
-		writeLog("html_Content:" + cssContent);
-		let formattedCode = css_beautify(cssContent, cssOptions);
-		writeLog("html_formattedCode:" + formattedCode);
-
-		formattedCode = removeIgnoreCode(formattedCode);
-
-		// placeholders.forEach(({ key, value }) => {
-		// 	formattedCode = formattedCode.replace(key, value);
-		// });
+		let formattedCode = css_beautify(scriptContent, cssOptions);
+		writeLog("formatRangeCss_formattedCode:" + formattedCode);
 
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
 			.split("\n")
-			.map((line) =>
-				line.trim() ? baseIndent + cssOptions.indent_char!.repeat(cssOptions.indent_size!) + line : line
-			)
+			.map((line) => (line.trim() ? state.rangeLeftSpace + line : line))
 			.join("\n");
 
-		// 创建替换范围：从当前行到结束标签的前一行
-		const startPos = new vscode.Position(lineIndex + 1, 0);
-		const lastContentLine = document.lineAt(i - 1);
-		const endPos = new vscode.Position(i - 1, lastContentLine.text.length);
-		const replaceRange = new vscode.Range(startPos, endPos);
-
-		// 添加编辑操作
-		//console.log("格式化 cfscript:", lineIndex, i);
-		edits.push(vscode.TextEdit.replace(replaceRange, indentedLines));
-
-		return true;
+		return indentedLines;
 	} catch (error) {
-		console.error("格式化 cfscript 时出错:", error);
-		writeLog("script_error:" + String(error));
-		return false;
+		console.error("格式化 formatRangeCss 时出错:", error);
+		writeLog("formatRangeCss_error:" + String(error));
+		return "";
 	}
 }

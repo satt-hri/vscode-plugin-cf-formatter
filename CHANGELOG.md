@@ -12,6 +12,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
+## [1.0.19] - 2025-10-01
+
+### Added
+-  Partial formatting (CFscript)
+
 ## [1.0.18] - 2025-10-01
 
 ### Added

@@ -1,12 +1,5 @@
 # 🐧🎈ᓚᘏᗢ    CFML Auto Formatter 
 
-<!-- ## 🌐 Languages
-- [English](#-english)&nbsp;&nbsp;&nbsp;&nbsp;[日本語](#-日本語) &nbsp;&nbsp;[中文](#-中文)
----
- -->
-
-
-
 ## 🏈 English
 
 **CFML Code Auto-Formatting Extension** for VS Code.
@@ -24,14 +17,22 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 ---
 
-### Usage
-
-1. Install the extension
-2. Open a CFML file (recommended: `.cfc`)
-3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) Format Document`**
+<h3>Usage</h3>
+<ol>
+  <li>Install the extension.</li>
+  <li>Open a CFML file (<code>.cfm</code> or <code>.cfc</code>).</li>
+  <li>Right-click and select <strong>Format CFML (satt)</strong>.</li>
+  <li>Choose from the available formatting options:
+    <ul>
+      <li><strong>CFTag Syntax</strong>: Formats CFML tags (e.g., <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>). If no content is selected, formats the entire CFC file.</li>
+      <li><strong>Script Syntax</strong>: Formats content within <code>&lt;cfscript&gt;</code> blocks. Can also format embedded JavaScript.</li>
+      <li><strong>HTML Syntax</strong>: Formats HTML tag content within <code>.cfm</code> files.</li>
+      <li><strong>CSS Syntax</strong>: Formats CSS content within <code>.cfm</code> files.</li>
+    </ul>
+  </li>
+</ol>
 
 ---
-
 ### Notes
 
 * `.cfc` file formatting operates stably
@@ -44,23 +45,25 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 * The formatting of `cfscript` is very similar to JavaScript.
   If the string contains SQL statements, XML, or HTML tags, tags may break, so it’s better not to use it.
 * Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
+* I have already tried using Lucee’s AST methods `astFromString()` and `astFromPath()`, but I couldn’t get detailed information from them. Below is the execution result I obtained, and I’m still experimenting with this. [See issue #20](https://github.com/satt-hri/vscode-plugin-cf-formatter/issues/20)
 
 ---
 
-### Before/After Formatting Example
+#### 1. Tag wrapping
+<div align="center">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="Tag wrapping demo" width="400">
+</div>
 
-<h4>1. Tag wrapping</h4>
+#### 2. Partial formatting
+| 2.1 CFTag Syntax | 2.2 Script Syntax |
+| ---------------- | ---------------- |
+| <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400"> | <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400"> |
+
+#### 3. Indent formatting
 <div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="Indent formatting demo" width="400">
 </div>
-<h4>2. Partial formatting</h4>
-<div align="center">
-  <img src="./images/2025-10-01_12h04_46.gif" alt="Demo">
-</div>
-<h4>3. Indent formatting</h4>
-<div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo">
-</div>
+
 
 ---
 
@@ -104,10 +107,22 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ---
 
-### 使い方
-1. 拡張機能をインストール
-2. CFML ファイルを開く（推奨: `.cfc`）
-3. ショートカット **`Shift + Alt + M`** または右クリック → **`Format CFML (satt)` ドキュメントのフォーマット**
+<h3>使い方</h3>
+<ol>
+  <li>拡張機能をインストール</li>
+  <li>CFML ファイルを開く（<code>.cfm</code> または <code>.cfc</code>）</li>
+  <li>ショートカット <strong>Shift + Alt + M</strong> または右クリックで <strong>Format CFML (satt)</strong> を選択</li>
+  <li>利用可能なフォーマットオプションから選択:
+    <ul>
+      <li><strong>CFTag 構文</strong>: CFML タグをフォーマットします（例: <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>）。選択がない場合は CFC ファイル全体をフォーマットします。</li>
+      <li><strong>Script 構文</strong>: <code>&lt;cfscript&gt;</code> ブロック内のコンテンツをフォーマットします。埋め込まれた JavaScript もフォーマット可能です。</li>
+      <li><strong>HTML 構文</strong>: <code>.cfm</code> ファイル内の HTML タグコンテンツをフォーマットします。</li>
+      <li><strong>CSS 構文</strong>: <code>.cfm</code> ファイル内の CSS コンテンツをフォーマットします。</li>
+    </ul>
+  </li>
+</ol>
+
+
 
 ---
 
@@ -126,6 +141,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 ### CFML フォーマッタ デフォルト設定
 
 <details>
+
 | 設定項目                                                   | デフォルト値                | 型                     | 説明                                                                                         |
 | ---------------------------------------------------------- | --------------------------- | ---------------------- | -------------------------------------------------------------------------------------------- |
 | <small>`hri.cfml.formatter.indentWithTabs`</small>         | <small>`true`</small>       | <small>boolean</small> | <small>インデントにスペースではなくタブを使用する。</small>                                  |
@@ -139,10 +155,11 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 | <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>メソッドチェーンを複数行に分割するかどうか。</small>                                  |
 | <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>条件文（if, while, for）の前にスペースを入れるか。</small>                            |
 | <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>ファイル末尾に改行を追加するかどうか。</small>                                        |
-| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                
-| <small>`hri.cfml.formatter.sqlLanguage`</small>        | <small>`"mysql"`</small>         | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                  |
+| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                                               |
+| <small>`hri.cfml.formatter.sqlLanguage`</small>            | <small>`"mysql"`</small>    | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                                         |
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
+
 </details>
----
+

@@ -40,14 +40,85 @@ EXAMINATION_MASTER AS em
         <cfargument name="examination_department_id" type="numeric" required="no" hint="" />
 
         <cfscript>
-                            var qCheckExmination = "";
-     var qExaminationDetailDepartmentInfo = "";
 
-            var result = {result: true,
-                errorMessage: "",
-                deleteFlagAbacus: false,
-                deleteFlagCalculator: false
-            };
+            if (qCheckExmination.recordCount GT 0 AND qCheckExmination.examination_item_origin_id eq 1) {
+
+    
+                qExaminationDetailDepartmentInfo = Variables.examinationMasterGateway.getExaminationDetailDepartmentInfo(
+                        fiscal_year_id = arguments.fiscal_year_id,examination_id = examinationID,
+                        examination_level_id 
+                        = arguments.examination_level_id
+                    );
+
+                if (qCheckExmination.recordCount GT 0 AND qCheckExmination.examination_item_origin_id eq 1
+                ) {
+                    result.result = false;result.errorMessage = "XXXX";
+                    return result;
+                }
+
+
+                for (row in qExaminationDetailDepartmentInfo) {
+switch (row.examination_department_origin_id) {
+case examination_department_origin_id_1:
+departmentValue = Trim(infoData[9]); 
+if (len(trim(departmentValue)) eq 0) {
+
+result.deleteFlagAbacus = true;
+}
+break;
+
+case examination_department_origin_id_2:
+departmentValue = Trim(infoData[10]); 
+if (len(trim(departmentValue)) eq 0) {
+
+result.deleteFlagCalculator = true;
+}
+break;
+
+default:
+departmentValue = "";
+break;
+}
+}
+
+                if (!result.deleteFlagAbacus) {
+                    checkDepartmentResult = checkDepartment(
+                        fiscal_year_id = arguments.fiscal_year_id,
+
+                        examination_format_id = arguments.examination_format_id
+                    );
+
+                    if (!checkDepartmentResult.result) {
+                        result.result = false;
+                        result.errorMessage = checkDepartmentResult.message;
+                        return result;
+                    }
+
+                }
+
+                if (!result.deleteFlagCalculator) {
+
+                    checkDepartmentResult = checkDepartment(
+                        fiscal_year_id = arguments.fiscal_year_id,
+                        examination_id = examinationID,
+                        examination_level_id = examinationLevelID,
+                        user_id = userId,
+                        school_id = shoolID,
+                        examination_department_origin_id = examination_department_origin_id_2, // 電卓
+                        number_of_applications = arguments.number_of_applications,
+                        examination_format_id = arguments.examination_format_id
+                    );
+
+                    if (!checkDepartmentResult.result) {
+                        result.result = false;
+                        result.errorMessage = checkDepartmentResult.message;
+                        return result;
+                    }
+
+                }
+
+            }
+            return result;
         </cfscript>
 
         <!--- ビジネス計算試験かどうかを判定 --->

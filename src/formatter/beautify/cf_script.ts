@@ -138,3 +138,22 @@ export function formatCfscript(
 		return false;
 	}
 }
+
+export function formatRangeScript(state: FormatState, scriptContent: string): string {
+	try {
+		let formattedCode = js_beautify(scriptContent, jsOptions);
+		writeLog("formatRangeScript_script_formattedCode:" + formattedCode);
+
+		// 为格式化后的每行添加适当的缩进
+		const indentedLines = formattedCode
+			.split("\n")
+			.map((line) => (line.trim() ? state.rangeLeftSpace + line : line))
+			.join("\n");
+
+		return indentedLines;
+	} catch (error) {
+		console.error("格式化 script 时出错:", error);
+		writeLog("formatRangeScript__script_error:" + String(error));
+		return "";
+	}
+}
