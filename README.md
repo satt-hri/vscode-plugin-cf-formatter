@@ -17,26 +17,20 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 ---
 
-## Usage
-
-1. Install the extension.
-2. Open a CFML file (`.cfm` or `.cfc`).
-3. Right-click and select **Format CFML (satt)**.
-4. Choose from the available formatting options:
-
-   - **CFTag Syntax**
-     - Formats CFML tags (e.g., `<cfquery xxx>XXX</cfquery>`).
-     - If no specific content is selected, formats the entire CFC file.
-
-   - **Script Syntax**
-     - Formats content within `<cfscript>` blocks.
-     - Can also format embedded JavaScript.
-
-   - **HTML Syntax**
-     - Formats HTML tag content within `.cfm` files.
-
-   - **CSS Syntax**
-     - Formats CSS content within `.cfm` files.
+<h3>Usage</h3>
+<ol>
+  <li>Install the extension.</li>
+  <li>Open a CFML file (<code>.cfm</code> or <code>.cfc</code>).</li>
+  <li>Right-click and select <strong>Format CFML (satt)</strong>.</li>
+  <li>Choose from the available formatting options:
+    <ul>
+      <li><strong>CFTag Syntax</strong>: Formats CFML tags (e.g., <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>). If no content is selected, formats the entire CFC file.</li>
+      <li><strong>Script Syntax</strong>: Formats content within <code>&lt;cfscript&gt;</code> blocks. Can also format embedded JavaScript.</li>
+      <li><strong>HTML Syntax</strong>: Formats HTML tag content within <code>.cfm</code> files.</li>
+      <li><strong>CSS Syntax</strong>: Formats CSS content within <code>.cfm</code> files.</li>
+    </ul>
+  </li>
+</ol>
 
 ---
 ### Notes
@@ -57,21 +51,24 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 #### 1. Tag wrapping
 <div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo" width="500">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="Tag wrapping demo" width="500">
 </div>
 
 #### 2. Partial formatting
-<div align="center">
-
-| 2.1 CFTag Syntax | 2.2 Script Syntax |
-| ---------------- | ----------------- |
-| <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400"> | <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400"> |
-
+<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+  <div style="text-align: center;">
+    <p>2.1 CFTag Syntax</p>
+    <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400">
+  </div>
+  <div style="text-align: center;">
+    <p>2.2 Script Syntax</p>
+    <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400">
+  </div>
 </div>
 
 #### 3. Indent formatting
 <div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo" width="500">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="Indent formatting demo" width="500">
 </div>
 
 
