@@ -57,7 +57,8 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 #### 2. Partial formatting
 | 2.1 CFTag Syntax | 2.2 Script Syntax |
 | ---------------- | ---------------- |
-| ![CFTag demo](./images/2025-10-01_12h04_46.gif) | ![Script demo](./images/2025-10-03_11h35_23.gif) |
+| <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400"> | <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400"> |
+
 #### 3. Indent formatting
 <div align="center">
   <img src="./images/2025-08-22_17h57_00.gif" alt="Indent formatting demo" width="400">
@@ -106,25 +107,22 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ---
 
-### 使い方
-1. 拡張機能をインストール
-2. CFML ファイルを開く（`.cfm` または `.cfc`）
-3. ショートカット **`Shift + Alt + M`** または右クリック → **`Format CFML (satt)` ドキュメントのフォーマット**
-4. 利用可能なフォーマットオプションから選択:
+<h3>使い方</h3>
+<ol>
+  <li>拡張機能をインストール</li>
+  <li>CFML ファイルを開く（<code>.cfm</code> または <code>.cfc</code>）</li>
+  <li>ショートカット <strong>Shift + Alt + M</strong> または右クリックで <strong>Format CFML (satt)</strong> を選択</li>
+  <li>利用可能なフォーマットオプションから選択:
+    <ul>
+      <li><strong>CFTag 構文</strong>: CFML タグをフォーマットします（例: <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>）。選択がない場合は CFC ファイル全体をフォーマットします。</li>
+      <li><strong>Script 構文</strong>: <code>&lt;cfscript&gt;</code> ブロック内のコンテンツをフォーマットします。埋め込まれた JavaScript もフォーマット可能です。</li>
+      <li><strong>HTML 構文</strong>: <code>.cfm</code> ファイル内の HTML タグコンテンツをフォーマットします。</li>
+      <li><strong>CSS 構文</strong>: <code>.cfm</code> ファイル内の CSS コンテンツをフォーマットします。</li>
+    </ul>
+  </li>
+</ol>
 
-   - **CFTag 構文**
-     - CFML タグをフォーマットします（例: `<cfquery xxx>XXX</cfquery>`）。
-     - コンテンツを選択していない場合、CFC ファイル全体をフォーマットします。
 
-   - **Script 構文**
-     - `<cfscript>` ブロック内のコンテンツをフォーマットします。
-     - 埋め込まれた JavaScript もフォーマット可能です。
-
-   - **HTML 構文**
-     - `.cfm` ファイル内の HTML タグコンテンツをフォーマットします。
-
-   - **CSS 構文**
-     - `.cfm` ファイル内の CSS コンテンツをフォーマットします。
 
 ---
 
