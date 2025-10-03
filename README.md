@@ -45,7 +45,7 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 * The formatting of `cfscript` is very similar to JavaScript.
   If the string contains SQL statements, XML, or HTML tags, tags may break, so it’s better not to use it.
 * Automatic tag wrapping is useful when a tag has many attributes, but short inline tags may also get wrapped.
-* I have already tried using Lucee’s AST methods `astFromString()` and `astFromPath()`, but I couldn’t get detailed information from them. Below is the execution result I obtained, and I’m still experimenting with this. [See issue #20](https://github.com/satt-hri/vscode-plugin-cf-formatter/issues/20)
+* I have already tried using Lucee’s AST methods `astFromString()` and `astFromPath()`, but I couldn’t get detailed information from them. Below is the execution result I obtained, and I’m still experimenting with this.[See issue](https://github.com/satt-hri/vscode-plugin-cf-formatter/issues/20)
 
 ---
 
