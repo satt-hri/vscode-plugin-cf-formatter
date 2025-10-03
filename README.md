@@ -17,14 +17,28 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 ---
 
-### Usage
+## Usage
 
-1. Install the extension
-2. Open a CFML file (recommended: `.cfc`)
-3. Use shortcut **`Shift + Alt + M`** or right-click → **`Format CFML (satt) `**
+1. Install the extension.
+2. Open a CFML file (`.cfm` or `.cfc`).
+3. Right-click and select **Format CFML (satt)**.
+4. Choose from the available formatting options:
+
+   - **CFTag Syntax**
+     - Formats CFML tags (e.g., `<cfquery xxx>XXX</cfquery>`).
+     - If no specific content is selected, formats the entire CFC file.
+
+   - **Script Syntax**
+     - Formats content within `<cfscript>` blocks.
+     - Can also format embedded JavaScript.
+
+   - **HTML Syntax**
+     - Formats HTML tag content within `.cfm` files.
+
+   - **CSS Syntax**
+     - Formats CSS content within `.cfm` files.
 
 ---
-
 ### Notes
 
 * `.cfc` file formatting operates stably
@@ -42,17 +56,22 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 
 ### Before/After Formatting Example
 
-<h4>1. Tag wrapping</h4>
+#### 1. Tag wrapping
 <div align="center">
-  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo">
+  <img src="./images/2025-09-23_17h57_00.gif" alt="Demo" width="600">
 </div>
-<h4>2. Partial formatting</h4>
-<div align="center">
-  <img src="./images/2025-10-01_12h04_46.gif" alt="Demo">
+
+#### 2. Partial formatting
+- <div align="left">
+  <p>2.1 CFTag Syntax</p>
+  <img src="./images/2025-10-01_12h04_46.gif" alt="Demo" width="600">
+  - <p>2.2 Script Syntax</p>
+  <img src="./images/2025-10-03_11h35_23.gif" alt="Demo" width="600">
 </div>
-<h4>3. Indent formatting</h4>
+
+#### 3. Indent formatting
 <div align="center">
-  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo">
+  <img src="./images/2025-08-22_17h57_00.gif" alt="Demo" width="600">
 </div>
 
 ---
@@ -99,8 +118,23 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 
 ### 使い方
 1. 拡張機能をインストール
-2. CFML ファイルを開く（推奨: `.cfc`）
+2. CFML ファイルを開く（`.cfm` または `.cfc`）
 3. ショートカット **`Shift + Alt + M`** または右クリック → **`Format CFML (satt)` ドキュメントのフォーマット**
+4. 利用可能なフォーマットオプションから選択:
+
+   - **CFTag 構文**
+     - CFML タグをフォーマットします（例: `<cfquery xxx>XXX</cfquery>`）。
+     - コンテンツを選択していない場合、CFC ファイル全体をフォーマットします。
+
+   - **Script 構文**
+     - `<cfscript>` ブロック内のコンテンツをフォーマットします。
+     - 埋め込まれた JavaScript もフォーマット可能です。
+
+   - **HTML 構文**
+     - `.cfm` ファイル内の HTML タグコンテンツをフォーマットします。
+
+   - **CSS 構文**
+     - `.cfm` ファイル内の CSS コンテンツをフォーマットします。
 
 ---
 
@@ -133,8 +167,8 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 | <small>`hri.cfml.formatter.breakChainedMethods`</small>    | <small>`false`</small>      | <small>boolean</small> | <small>メソッドチェーンを複数行に分割するかどうか。</small>                                  |
 | <small>`hri.cfml.formatter.spaceBeforeConditional`</small> | <small>`true`</small>       | <small>boolean</small> | <small>条件文（if, while, for）の前にスペースを入れるか。</small>                            |
 | <small>`hri.cfml.formatter.endWithNewline`</small>         | <small>`false`</small>      | <small>boolean</small> | <small>ファイル末尾に改行を追加するかどうか。</small>                                        |
-| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                
-| <small>`hri.cfml.formatter.sqlLanguage`</small>        | <small>`"mysql"`</small>         | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                  |
+| <small>`hri.cfml.formatter.expressionWidth`</small>        | <small>`30`</small>         | <small>number</small>  | <small>sql指定文字列長さを超えると改行</small>                                               |
+| <small>`hri.cfml.formatter.sqlLanguage`</small>            | <small>`"mysql"`</small>    | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                                         |
 
 💡 **設定変更方法**  
 VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
