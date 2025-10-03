@@ -55,17 +55,9 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 </div>
 
 #### 2. Partial formatting
-<div style="display: flex; justify-content: center; gap: 20px; flex-wrap: nowrap;">
-  <div style="text-align: left;">
-    <p>2.1 CFTag Syntax</p>
-    <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo">
-  </div>
-  <div style="text-align: left;">
-    <p>2.2 Script Syntax</p>
-    <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo">
-  </div>
-</div>
-
+| 2.1 CFTag Syntax | 2.2 Script Syntax |
+| ---------------- | ---------------- |
+| ![CFTag demo](./images/2025-10-01_12h04_46.gif) | ![Script demo](./images/2025-10-03_11h35_23.gif) |
 #### 3. Indent formatting
 <div align="center">
   <img src="./images/2025-08-22_17h57_00.gif" alt="Indent formatting demo" width="400">
