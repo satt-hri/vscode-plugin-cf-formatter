@@ -17,11 +17,14 @@
     "CFML",
     "CFScript",
     "ColdFusion",
-    "Lucee"
+    "Lucee",
+    "Formatter"
   ],
   "activationEvents": [
     "onLanguage:cfml",
-    "onLanguage:cfc"
+    "onLanguage:html",
+    "onLanguage:css",
+    "onLanguage:javascript"
   ],
   "repository": {
     "type": "git",
@@ -60,7 +63,7 @@
     ],
     "submenus": [
       {
-        "label": "Format CFML (satt)",
+        "label": "Format Code (satt)",
         "id": "hri.cfml.formatMenu"
       }
     ],
@@ -68,26 +71,30 @@
       "editor/context": [
         {
           "submenu": "hri.cfml.formatMenu",
-          "when": "editorLangId == cfml",
+          "when": "editorLangId == cfml || editorLangId == html || editorLangId == css || editorLangId == javascript",
           "group": "1_modification"
         }
       ],
       "hri.cfml.formatMenu": [
         {
           "command": "hri.cfml.formatTagSyntax",
-          "group": "format@1"
+          "group": "format@1",
+          "when": "editorLangId == cfml"
         },
         {
           "command": "hri.cfml.formatScriptSyntax",
-          "group": "format@2"
+          "group": "format@2",
+          "when": "editorLangId == cfml || editorLangId == javascript"
         },
         {
           "command": "hri.cfml.formatHtmlSyntax",
-          "group": "format@3"
+          "group": "format@3",
+          "when": "editorLangId == cfml || editorLangId == html"
         },
         {
           "command": "hri.cfml.formatCssSyntax",
-          "group": "format@4"
+          "group": "format@4",
+          "when": "editorLangId == cfml || editorLangId == css"
         }
       ],
       "commandPalette": [
@@ -97,15 +104,15 @@
         },
         {
           "command": "hri.cfml.formatScriptSyntax",
-          "when": "editorLangId == cfml"
+          "when": "editorLangId == cfml || editorLangId == javascript"
         },
         {
           "command": "hri.cfml.formatHtmlSyntax",
-          "when": "editorLangId == cfml"
+          "when": "editorLangId == cfml || editorLangId == html"
         },
         {
           "command": "hri.cfml.formatCssSyntax",
-          "when": "editorLangId == cfml"
+          "when": "editorLangId == cfml || editorLangId == css"
         }
       ]
     },
@@ -118,7 +125,7 @@
       {
         "command": "hri.cfml.formatScriptSyntax",
         "key": "shift+alt+n",
-        "when": "editorLangId == cfml && editorTextFocus"
+        "when": "(editorLangId == cfml || editorLangId == javascript ) && editorTextFocus"
       }
     ],
     "configuration": {

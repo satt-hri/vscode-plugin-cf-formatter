@@ -25,7 +25,11 @@ export function activate(context: vscode.ExtensionContext) {
 		): Promise<vscode.TextEdit[]> {
 			const ext = path.extname(document.fileName).toLowerCase();
 			if (ext === ".cfm") {
-				const result = await vscode.window.showWarningMessage(messages.warnMsg[lang] as string,{modal:true}, "Yes");
+				const result = await vscode.window.showWarningMessage(
+					messages.warnMsg[lang] as string,
+					{ modal: true },
+					"Yes"
+				);
 				if (result !== "Yes") {
 					return [];
 				}
@@ -128,14 +132,18 @@ export function activate(context: vscode.ExtensionContext) {
 			rangeFormattingPrvider
 		);
 		context.subscriptions.push(rangeRegistration);
-
+		console.log(`已为语言ID "${langId}" 注册格式化器`);
+	});
+	
+	const beautifyLanguageIds = [...languageIds, "html", "css", "javascript"];
+	beautifyLanguageIds.forEach((langId) => {
 		const rangeBeautifyRegistration = vscode.languages.registerDocumentRangeFormattingEditProvider(
 			langId,
 			rangeBeautifyPrvider
 		);
 		context.subscriptions.push(rangeBeautifyRegistration);
 
-		console.log(`已为语言ID "${langId}" 注册格式化器`);
+		console.log(`已为语言ID "${langId}" 注册美化器`);
 	});
 
 	const formatTagSyntaxCommand = vscode.commands.registerCommand("hri.cfml.formatTagSyntax", async () => {

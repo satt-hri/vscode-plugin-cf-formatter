@@ -21,7 +21,7 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 <ol>
   <li>Install the extension.</li>
   <li>Open a CFML file (<code>.cfm</code> or <code>.cfc</code>).</li>
-  <li>Right-click and select <strong>Format CFML (satt)</strong>.</li>
+  <li>Right-click and select <strong>Format Code (satt)</strong>.</li>
   <li>Choose from the available formatting options:
     <ul>
       <li><strong>CFTag Syntax</strong>: Formats CFML tags (e.g., <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>). If no content is selected, formats the entire CFC file.</li>
@@ -86,7 +86,7 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 | <small>`hri.cfml.formatter.sqlLanguage`</small>            | <small>`"mysql"`</small>    | <small>string</small>  | <small>Select SQL dialect for formatting.</small>                                     |
 
 💡 **How to Change Settings**
-Press **`Ctrl + ,`** in VSCode and enter **"Format CFML (satt)"** in the search box to make changes.
+Press **`Ctrl + ,`** in VSCode and enter **"Format Code (satt)"** in the search box to make changes.
 After modifying, don’t forget to reload the window!
 
 ---
@@ -111,7 +111,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 <ol>
   <li>拡張機能をインストール</li>
   <li>CFML ファイルを開く（<code>.cfm</code> または <code>.cfc</code>）</li>
-  <li>ショートカット <strong>Shift + Alt + M</strong> または右クリックで <strong>Format CFML (satt)</strong> を選択</li>
+  <li>ショートカット <strong>Shift + Alt + M</strong> または右クリックで <strong>Format Code (satt)</strong> を選択</li>
   <li>利用可能なフォーマットオプションから選択:
     <ul>
       <li><strong>CFTag 構文</strong>: CFML タグをフォーマットします（例: <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>）。選択がない場合は CFC ファイル全体をフォーマットします。</li>
@@ -159,7 +159,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 | <small>`hri.cfml.formatter.sqlLanguage`</small>            | <small>`"mysql"`</small>    | <small>string</small>  | <small>フォーマットSQLを選ぶ</small>                                                         |
 
 💡 **設定変更方法**  
-VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format CFML (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
+VSCode で **`Ctrl + ,`** を押し、検索欄に **「Format Code (satt)」** と入力すると変更可能。変更があったら、再起動みたいな操作でウィンドウをリロードするのを忘れないでね  
 
 </details>
 
