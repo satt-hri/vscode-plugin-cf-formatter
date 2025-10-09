@@ -84,7 +84,7 @@
         {
           "command": "hri.cfml.formatScriptSyntax",
           "group": "format@2",
-          "when": "editorLangId == cfml || editorLangId == javascript"
+          "when": "editorLangId == cfml || editorLangId == javascript || editorLangId == html"
         },
         {
           "command": "hri.cfml.formatHtmlSyntax",
@@ -94,7 +94,7 @@
         {
           "command": "hri.cfml.formatCssSyntax",
           "group": "format@4",
-          "when": "editorLangId == cfml || editorLangId == css"
+          "when": "editorLangId == cfml || editorLangId == css|| editorLangId == html"
         }
       ],
       "commandPalette": [
