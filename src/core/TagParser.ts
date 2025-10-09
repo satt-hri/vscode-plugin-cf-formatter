@@ -175,64 +175,66 @@ export function findBlockTag(
 	document: vscode.TextDocument,
 	range: vscode.Range
 ): { tag: string; leadingSpaces: string } {
-	const startLine = range.start.line;
-	const endLine = range.end.line;
+	let i = range.start.line;
+	let j = range.end.line;
 	let startTag = "";
 	let endTag = "";
 	let leadingSpaces = "";
-
-	for (let i = startLine, j = endLine; i < j; i++, j--) {
+	// 从范围的开始和结束同时向内搜索 不处理同一行。
+	while (i < j) {
 		const startline = document.lineAt(i);
 		const startText = startline.text.trim();
 
 		const endline = document.lineAt(j);
 		const endText = endline.text.trim();
-
-		// 跳过空行
-		if (startText.length == 0 && endText.length == 0) {
+		if (startText.length == 0) {
+			i++;
 			continue;
 		}
-		if (startText.length > 0) {
+		if (endText.length == 0) {
+			j--;
+			continue;
+		}
+		// 处理开始标签
+		if (!startTag) {
 			const startTags = parseCFMLTags(startText);
-			// 没有找到标签，返回空
 			if (startTags.length === 0) {
 				return { tag: "", leadingSpaces: "" };
 			}
-
 			const { tagName, isClosing, isSelfClosing } = startTags[0];
-
 			// 只处理开始标签（非闭合标签且非自闭合标签）
 			if (!isClosing && !isSelfClosing) {
 				leadingSpaces = startline.text.match(/^(\s*)/)?.[1] || "";
 				startTag = tagName;
+				i++;	
 			} else {
 				return { tag: "", leadingSpaces: "" };
 			}
 		}
-		if (endText.length > 0) {
+		// 处理结束标签
+		if (!endTag) {
 			const endTags = parseCFMLTags(endText);
-			// 没有找到标签，返回空
 			if (endTags.length === 0) {
 				return { tag: "", leadingSpaces: "" };
 			}
-
 			const { tagName, isClosing } = endTags[0];
-
-			// 只处理开始标签（非闭合标签且非自闭合标签）
 			if (isClosing) {
 				endTag = tagName;
+				j--;
 			} else {
 				return { tag: "", leadingSpaces: "" };
 			}
 		}
 
-		if (startTag != endTag) {
-			return { tag: "", leadingSpaces: "" };
-		} else {
-			return { tag: startTag, leadingSpaces: leadingSpaces };
+		// 如果两个标签都找到了，检查是否匹配
+		if (startTag && endTag) {
+			if (startTag === endTag) {
+				return { tag: startTag, leadingSpaces: leadingSpaces };
+			} else {
+				return { tag: "", leadingSpaces: "" };
+			}
 		}
 	}
-
 	return { tag: "", leadingSpaces: "" };
 }
 

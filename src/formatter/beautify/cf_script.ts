@@ -141,8 +141,16 @@ export function formatCfscript(
 
 export function formatRangeScript(state: FormatState, scriptContent: string): string {
 	try {
-		let formattedCode = js_beautify(scriptContent, jsOptions);
+		//例外処理
+		const temText = scriptContent
+			.split("\n")
+			.map((line) => wrapIgnoreCode(line))
+			.join("\n");
+
+		let formattedCode = js_beautify(temText, jsOptions);
 		writeLog("formatRangeScript_script_formattedCode:" + formattedCode);
+
+		formattedCode = removeIgnoreCode(formattedCode);
 
 		// 为格式化后的每行添加适当的缩进
 		const indentedLines = formattedCode
