@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ---
 
+## [1.0.20] - 2025-10-09
+
+### Fixed
+-  logic for block tags
+-  Excluded replace processing from script
+
+---
 ## [1.0.19] - 2025-10-01
 
 ### Added
