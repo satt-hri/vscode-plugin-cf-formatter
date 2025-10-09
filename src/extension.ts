@@ -224,7 +224,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const selection = editor.selection;
 				let editsResult;
 				if (selection.isEmpty) {
-					vscode.window.showInformationMessage("请选中要格式化的代码范围", { modal: true });
+					vscode.window.showInformationMessage(messages.selectRange[lang] as string, { modal: true });
 					return;
 				} else {
 					editsResult = rangeBeautifyPrvider.provideDocumentRangeFormattingEdits(
