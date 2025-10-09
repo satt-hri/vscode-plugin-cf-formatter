@@ -127,14 +127,14 @@
         "hri.cfml.formatter.indentWithTabs": {
           "type": "boolean",
           "default": true,
-          "description": "Use tabs for indentation instead of spaces.(js-beautify)"
+          "markdownDescription": "Use tabs for indentation instead of spaces (js-beautify)."
         },
         "hri.cfml.formatter.indentSize": {
           "type": "number",
           "default": 4,
           "minimum": 1,
           "maximum": 10,
-          "description": "Number of spaces to use for indentation when using spaces.(js-beautify)"
+          "markdownDescription": "Number of spaces to use for indentation when using spaces (js-beautify)."
         },
         "hri.cfml.formatter.indentChar": {
           "type": "string",
@@ -143,13 +143,13 @@
             " ",
             "\t"
           ],
-          "description": "Character to use for indentation. ' ' (space) or '\\t' (tab). Note: This setting is overridden by indentWithTabs.(js-beautify)"
+          "markdownDescription": "Character to use for indentation: `' '` (space) or `'\\t'` (tab).\n\n**Note:** This setting is overridden by `indentWithTabs` (js-beautify)."
         },
         "hri.cfml.formatter.wrapLineLength": {
           "type": "number",
           "default": 0,
           "minimum": 0,
-          "description": "Maximum line length before wrapping. Set to 0 for no limit.(js-beautify)"
+          "markdownDescription": "Maximum line length before wrapping. Set to `0` for no limit (js-beautify)."
         },
         "hri.cfml.formatter.maxPreserveNewlines": {
           "type": "number",
@@ -162,17 +162,17 @@
             5,
             10
           ],
-          "description": "Maximum number of consecutive newlines to preserve in the output.   -1:remove all extral newlies,1: allow 1newline between tokens,0:unlimited newlines between tokens  (js-beautify) "
+          "markdownDescription": "Maximum number of consecutive newlines to preserve in the output (js-beautify):\n\n- `-1`: Remove all extra newlines\n- `1`: Allow 1 newline between tokens\n- `0`: Unlimited newlines between tokens"
         },
         "hri.cfml.formatter.preserveNewlines": {
           "type": "boolean",
           "default": true,
-          "description": "Preserve existing line breaks in the output."
+          "markdownDescription": "Preserve existing line breaks in the output (js-beautify)."
         },
         "hri.cfml.formatter.keepArrayIndentation": {
           "type": "boolean",
           "default": false,
-          "description": "Preserve the original indentation of arrays instead of re-indenting them.(js-beautify)"
+          "markdownDescription": "Preserve the original indentation of arrays instead of re-indenting them (js-beautify)."
         },
         "hri.cfml.formatter.braceStyle": {
           "type": "string",
@@ -183,28 +183,34 @@
             "end-expand",
             "none"
           ],
-          "description": "Brace style to use. 'collapse': opening brace on same line, 'expand': opening brace on new line, 'end-expand': new line for functions/blocks only, 'none': keep original position.(js-beautify)"
+          "enumDescriptions": [
+            "Opening brace on same line",
+            "Opening brace on new line",
+            "New line for functions/blocks only",
+            "Keep original position"
+          ],
+          "markdownDescription": "Brace style to use (js-beautify):\n\n- `collapse`: Opening brace on same line\n- `expand`: Opening brace on new line\n- `end-expand`: New line for functions/blocks only\n- `none`: Keep original position"
         },
         "hri.cfml.formatter.breakChainedMethods": {
           "type": "boolean",
           "default": false,
-          "description": "Break chained method calls across multiple lines.(js-beautify)"
+          "markdownDescription": "Break chained method calls across multiple lines (js-beautify)."
         },
         "hri.cfml.formatter.spaceBeforeConditional": {
           "type": "boolean",
           "default": true,
-          "description": "Add space before conditional statements (if, while, for).(js-beautify)"
+          "markdownDescription": "Add space before conditional statements (`if`, `while`, `for`) (js-beautify)."
         },
         "hri.cfml.formatter.endWithNewline": {
           "type": "boolean",
           "default": false,
-          "description": "End files with a newline character.(js-beautify)"
+          "markdownDescription": "End files with a newline character (js-beautify)."
         },
         "hri.cfml.formatter.expressionWidth": {
           "type": "number",
           "default": 30,
           "minimum": 0,
-          "description": "Wrap lines when sql specified string length is exceeded (sql-formatter)"
+          "markdownDescription": "Wrap lines when SQL specified string length is exceeded (sql-formatter)."
         },
         "hri.cfml.formatter.sqlLanguage": {
           "type": "string",
@@ -253,7 +259,7 @@
             "SingleStore DB"
           ],
           "default": "mysql",
-          "description": "Select SQL dialect for formatting(sql-formatter)"
+          "markdownDescription": "Select SQL dialect for formatting (sql-formatter)."
         }
       }
     }
