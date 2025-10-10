@@ -2,9 +2,9 @@
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
   "publisher": "hri",
-  "description": "CFML Indent Formatter / CFML インデント整形",
+  "description": "Code formatter and beautifier for CFML, ColdFusion, and Lucee (supports CFScript, SQL, JavaScript, CSS and HTML, ).",
   "icon": "images/icon.png",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
@@ -13,12 +13,12 @@
   "categories": [
     "Formatters"
   ],
-  "tags": [
+  "keywords": [
     "CFML",
-    "CFScript",
     "ColdFusion",
     "Lucee",
-    "Formatter"
+    "Formatter",
+    "Beautifier"
   ],
   "activationEvents": [
     "onLanguage:cfml",

@@ -41,4 +41,10 @@ export const messages: MessageMap = {
 		"zh-cn": "由于是按块标签进行格式化的，请选择块级 CF 标签范围。",
 		ja: "ブロックタグ単位でフォーマットしているため、ブロックCFタグの範囲を選択してください。",
 	},
+	selectRange: {
+		en: "Please select the code range to format.",
+		"zh-cn": "请选中要格式化的代码范围。",
+		ja: "範囲を選択してください。",
+	},
+	
 };
