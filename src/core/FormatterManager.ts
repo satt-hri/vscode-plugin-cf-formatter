@@ -283,7 +283,7 @@ export default class FormatterManager {
 		this.resetState();
 
 		const startLine = range.start.line;
-		const endLine = Math.min(range.end.line, document.lineCount);
+		const endLine = Math.min(range.end.line, document.lineCount - 1);
 
 		this.state.rangeLeftSpace = document.lineAt(startLine).text.match(/^(\s*)/)?.[1] || "";
 
@@ -305,7 +305,10 @@ export default class FormatterManager {
 			content = formatRangeHtml(this.state, content);
 		}
 
-		edits.push(vscode.TextEdit.replace(range, content));
+		// 创建一个新的 range，从第一行行首到最后一行行尾
+		const fullRange = new vscode.Range(startLine, 0, endLine, document.lineAt(endLine).text.length);
+
+		edits.push(vscode.TextEdit.replace(fullRange, content));
 
 		return edits;
 	}
