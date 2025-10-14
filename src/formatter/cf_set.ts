@@ -1,7 +1,7 @@
 import { FormatState } from "@/core/FormatState";
 import { parseTagName } from "@/utils/common";
 import * as vscode from "vscode";
-import { coreOptions } from "./beautify/base_opitons";
+import { coreOptions } from "./beautify/base_options";
 
 export function formatCfset(
 	line: vscode.TextLine,

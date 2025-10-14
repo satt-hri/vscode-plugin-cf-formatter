@@ -1,7 +1,7 @@
 import { FormatState } from "@/core/FormatState";
 import { CSSBeautifyOptions, css_beautify } from "js-beautify";
 import { writeLog } from "@/utils/log";
-import { coreOptions } from "./base_opitons";
+import { coreOptions } from "./base_options";
 
 const cssOptions: CSSBeautifyOptions = {
 	...coreOptions,

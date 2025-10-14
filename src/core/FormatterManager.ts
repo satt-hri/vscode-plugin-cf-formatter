@@ -4,7 +4,7 @@ import { getSqlIndent } from "@/formatter/cf_query";
 import { formatComment } from "@/formatter/cf_comment";
 import { formatCfset } from "@/formatter/cf_set";
 import { formatCfscript, formatRangeScript } from "@/formatter/beautify/cf_script";
-import { coreOptions } from "@/formatter/beautify/base_opitons";
+import { coreOptions } from "@/formatter/beautify/base_options";
 
 import { blockTags, parseTagName } from "@/utils/common";
 import { formatSql } from "@/formatter/cf_sql_formatter";

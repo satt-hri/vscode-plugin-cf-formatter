@@ -1,7 +1,7 @@
 import { FormatState } from "@/core/FormatState";
 import { HTMLBeautifyOptions, html_beautify } from "js-beautify";
 import { writeLog } from "@/utils/log";
-import { coreOptions } from "./base_opitons";
+import { coreOptions } from "./base_options";
 
 export const htmlOptions: HTMLBeautifyOptions = {
 	...coreOptions,

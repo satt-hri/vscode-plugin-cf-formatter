@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { format, FormatOptionsWithLanguage } from "sql-formatter";
 import { FormatState } from "@/core/FormatState";
 import { blockTags, parseTagName } from "@/utils/common";
-import { coreOptions } from "./beautify/base_opitons";
+import { coreOptions } from "./beautify/base_options";
 import { writeLog } from "@/utils/log";
 
 const config = vscode.workspace.getConfiguration("hri.cfml.formatter");

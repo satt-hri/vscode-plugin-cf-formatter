@@ -3,7 +3,7 @@ import { CoreBeautifyOptions, JSBeautifyOptions, js_beautify } from "js-beautify
 import * as vscode from "vscode";
 import { parseTagName } from "@/utils/common";
 import { writeLog } from "@/utils/log";
-import { coreOptions } from "./base_opitons";
+import { coreOptions } from "./base_options";
 
 const config = vscode.workspace.getConfiguration("hri.cfml.formatter");
 //console.log("config", config);
