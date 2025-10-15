@@ -163,19 +163,20 @@
 
     <div class="note">
         <strong>💡 改进说明：</strong><br>
-        CFScript 现采用宽松模式解析，直接返回脚本内容而不进行详细句法分析。这样可以处理更复杂的嵌套结构。
+        CFScript 采用宽松模式解析，支持复杂字符串和特殊字符。
     </div>
 
     <div id="status" class="loading">正在初始化解析器...</div>
 
     <div class="examples">
         <strong>示例代码：</strong><br>
-        <button class="example-btn" onclick="loadExample(1)">示例 1: cfset & cfoutput</button>
+        <button class="example-btn" onclick="loadExample(1)">示例 1: 特殊字符测试</button>
         <button class="example-btn" onclick="loadExample(2)">示例 2: cfif 条件</button>
         <button class="example-btn" onclick="loadExample(3)">示例 3: cfloop 循环</button>
         <button class="example-btn" onclick="loadExample(4)">示例 4: cfscript</button>
         <button class="example-btn" onclick="loadExample(5)">示例 5: 复杂嵌套</button>
         <button class="example-btn" onclick="loadExample(6)">示例 6: CFC组件完整示例</button>
+        <button class="example-btn" onclick="loadExample(7)">示例 7: 嵌套注释测试</button>
     </div>
 
     <div class="container">
@@ -219,6 +220,7 @@ Statement
   / CFProcessingDirectiveStatement
   / CFFunctionStatement
   / CFQueryStatement
+  / CFPropertyStatement
   / CFArgumentStatement
   / CFSetStatement
   / CFIfStatement
@@ -228,21 +230,29 @@ Statement
   / CommentBlock
 
 CommentBlock
-  = "<!---" content:CommentContent* "--->" _ {
+  = "<!---" _ content:CommentContent _ "--->" _ {
       return {
         type: 'CommentBlock',
-        children: content
+        content: content
       };
     }
 
 CommentContent
-  = nested:CommentBlock   { return nested; }
-  / !"--->" char:.        { return { type: 'Text', value: char }; }
+  = parts:(CommentBlock / CommentText)* {
+      return parts;
+    }
 
+CommentText
+  = chars:(!("<!---" / "--->") .)+ {
+      return {
+        type: 'CommentText',
+        value: chars.map(c => c[1]).join('')
+      };
+    }
 
 CFComponentStatement
   = "<cfcomponent"i attrs:TagAttributes? ">" _
-    body:Statement* _   
+    body:Statement* _
     "</cfcomponent"i _ ">" _ {
       return {
         type: 'CFComponentStatement',
@@ -280,6 +290,15 @@ CFArgumentStatement
       return {
         type: 'CFArgumentStatement',
         attributes: attrs
+      };
+    }
+
+CFPropertyStatement
+  = "<cfproperty"i _ attrs:TagAttributes _ closing:("/>" / ">") _ {
+      return {
+        type: 'CFPropertyStatement',
+        attributes: attrs,
+        selfClosing: closing === "/>"
       };
     }
 
@@ -321,11 +340,13 @@ CFQueryParamTag
     }
 
 CFSetStatement
-  = "<cfset"i _ name:Identifier _ "=" _ value:Expression _ ">"? _ {
+  = "<cfset"i _ varDecl:("var"i _)? name:Identifier _ "=" _ value:Expression _ closing:("/>" / ">") _ {
       return {
         type: 'CFSetStatement',
         variable: name,
-        value: value
+        value: value,
+        hasVar: !!varDecl,
+        selfClosing: closing === "/>"
       };
     }
 
@@ -578,31 +599,23 @@ StringLiteral
   = '"' chars:DoubleStringCharacter* '"' {
       return {
         type: 'StringLiteral',
-        value: chars.join('')
+        value: text().slice(1, -1)
       };
     }
   / "'" chars:SingleStringCharacter* "'" {
       return {
         type: 'StringLiteral',
-        value: chars.join('')
+        value: text().slice(1, -1)
       };
     }
 
 DoubleStringCharacter
-  = !('"' / "\\\\") char:. { return char; }
-  / "\\\\" sequence:EscapeSequence { return sequence; }
+  = [^"\\\\]
+  / "\\\\" .
 
 SingleStringCharacter
-  = !("'" / "\\\\") char:. { return char; }
-  / "\\\\" sequence:EscapeSequence { return sequence; }
-
-EscapeSequence
-  = "'"
-  / '"'
-  / "\\\\"
-  / "n" { return "\\n"; }
-  / "r" { return "\\r"; }
-  / "t" { return "\\t"; }
+  = [^'\\\\]
+  / "\\\\" .
 
 NumberLiteral
   = [0-9]+ ("." [0-9]+)? {
@@ -692,11 +705,13 @@ _
         }
 
         const examples = {
-            1: `<cfset userName = "张三">
-<cfset userAge = 25>
-<cfoutput>
-  用户名：#userName#，年龄：#userAge#
-</cfoutput>`,
+            1: `<cfcomponent>
+    <cfproperty name="test" default='[<>]' />
+    <cfproperty name="test2" default="value" >
+    <cfset var pattern = '[\\\\/:*?\\"<>|]' />
+    <cfset var pattern2 = "A \\B > A" >
+    <cfset var pattern3 = 'He said > \\"hi\\"' />
+</cfcomponent>`,
             2: `<cfset score = 85>
 <cfif score GT 90>
   <cfset grade = "优秀">
@@ -788,7 +803,18 @@ _
         AND em.exam_id = <cfqueryparam value="#examId#" cfsqltype="cf_sql_integer" />
     </cfquery>
   </cffunction>
-</cfcomponent>`
+</cfcomponent>`,
+            7: `<!--- 外层注释开始
+这是一些文字
+<!--- 嵌套的内层注释
+    可以包含任何内容: <cfset>, #variables#, 等等
+    <!--- 更深层的注释 --->
+--->
+外层注释继续
+--->
+<cfset x = 1>
+<!--- 另一个独立注释 --->
+<cfset y = 2>`
         };
 
         function loadExample(num) {
