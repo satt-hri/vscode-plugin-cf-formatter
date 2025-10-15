@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { parseCFMLTags } from "./TagParser";
+import { parseCFMLTags } from "../core/TagParser";
 class ASTNode {
 	private children: ASTNode[] = [];
 
