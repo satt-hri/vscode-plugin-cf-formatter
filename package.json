@@ -35,7 +35,8 @@
     "watch": "webpack --mode development --watch",
     "prepackage": "npm run build",
     "package": "vsce package",
-    "debug": "node --inspect src/test/sql_format/format.js"
+    "debug": "node --inspect src/test/sql_format/format.js",
+    "ast" : "ts-node src/ast/parser/index.ts"
   },
   "main": "./dist/extension.js",
   "contributes": {
@@ -284,6 +285,7 @@
   },
   "dependencies": {
     "js-beautify": "^1.15.4",
+    "peggy": "^5.0.6",
     "sql-formatter": "^15.6.6"
   }
 }
