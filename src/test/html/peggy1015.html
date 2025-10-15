@@ -44,6 +44,7 @@
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-top: 20px;
+            height: 600px;
         }
 
         .panel {
@@ -51,33 +52,37 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         .panel h2 {
             margin-top: 0;
             color: #007bff;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         textarea {
             width: 100%;
-            height: 400px;
+            flex: 1;
             font-family: 'Courier New', monospace;
             font-size: 14px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            resize: vertical;
+            resize: none;
             box-sizing: border-box;
+            overflow: auto;
         }
 
         pre {
             background: #f8f9fa;
             padding: 15px;
             border-radius: 4px;
-            overflow-x: auto;
-            max-height: 400px;
-            overflow-y: auto;
+            overflow: auto;
+            flex: 1;
             font-size: 13px;
             line-height: 1.5;
             margin: 0;
@@ -177,6 +182,8 @@
         <button class="example-btn" onclick="loadExample(5)">示例 5: 复杂嵌套</button>
         <button class="example-btn" onclick="loadExample(6)">示例 6: CFC组件完整示例</button>
         <button class="example-btn" onclick="loadExample(7)">示例 7: 嵌套注释测试</button>
+        <button class="example-btn" onclick="loadExample(8)">示例 8: 通用CF标签</button>
+        <button class="example-btn" onclick="loadExample(9)">示例 9: CFQuery复杂查询</button>
     </div>
 
     <div class="container">
@@ -222,12 +229,35 @@ Statement
   / CFQueryStatement
   / CFPropertyStatement
   / CFArgumentStatement
+  / CFReturnStatement
   / CFSetStatement
   / CFIfStatement
   / CFLoopStatement
   / CFOutputStatement
   / CFScriptBlock
   / CommentBlock
+  / GenericCFTag
+
+CFReturnStatement
+  = "<cfreturn"i _ expr:ReturnExpression? _ "/" _ ">" _ {
+      return {
+        type: 'CFReturnStatement',
+        expression: expr,
+        selfClosing: true
+      };
+    }
+  / "<cfreturn"i _ expr:ReturnExpression? _ ">" _ {
+      return {
+        type: 'CFReturnStatement',
+        expression: expr,
+        selfClosing: false
+      };
+    }
+
+ReturnExpression
+  = chars:(!("/" / ">") .)+ {
+      return chars.map(function(c) { return c[1]; }).join('').trim();
+    }
 
 CommentBlock
   = "<!---" _ content:CommentContent _ "--->" _ {
@@ -286,30 +316,34 @@ CFFunctionStatement
     }
 
 CFArgumentStatement
-  = "<cfargument"i _ attrs:TagAttributes _ "/>" _ {
+  = "<cfargument"i _ attrs:TagAttributes _ "/" _ ">" _ {
       return {
         type: 'CFArgumentStatement',
-        attributes: attrs
+        attributes: attrs,
+        selfClosing: true
+      };
+    }
+  / "<cfargument"i _ attrs:TagAttributes _ ">" _ {
+      return {
+        type: 'CFArgumentStatement',
+        attributes: attrs,
+        selfClosing: false
       };
     }
 
 CFPropertyStatement
-  = "<cfproperty"i _ attrs:TagAttributes _ closing:("/>" / ">") _ {
+  = "<cfproperty"i _ attrs:TagAttributes _ "/" _ ">" _ {
       return {
         type: 'CFPropertyStatement',
         attributes: attrs,
-        selfClosing: closing === "/>"
+        selfClosing: true
       };
     }
-
-CFQueryStatement
-  = "<cfquery"i _ attrs:TagAttributes _ ">" _
-    sql:SQLContent _
-    "</cfquery"i _ ">" _ {
+  / "<cfproperty"i _ attrs:TagAttributes _ ">" _ {
       return {
-        type: 'CFQueryStatement',
+        type: 'CFPropertyStatement',
         attributes: attrs,
-        sql: sql.trim()
+        selfClosing: false
       };
     }
 
@@ -323,30 +357,39 @@ TagAttribute
       return { name: name.name, value: value };
     }
 
-SQLContent
-  = content:SQLPart* {
-      return content.join('');
+CFQueryStatement
+  = "<cfquery"i _ attrs:TagAttributes _ ">" _
+    content:QueryRawContent _
+    "</cfquery"i _ ">" _ {
+      return {
+        type: 'CFQueryStatement',
+        attributes: attrs,
+        content: content
+      };
     }
 
-SQLPart
-  = CFQueryParamTag
-  / chars:(!("</" / "<cfqueryparam") .)+ {
-      return chars.map(c => c[1]).join('');
-    }
-
-CFQueryParamTag
-  = "<cfqueryparam"i _ attrs:TagAttributes _ "/>" {
-      return '<cfqueryparam ' + attrs.map(a => a.name + '="' + JSON.stringify(a.value) + '"').join(' ') + ' />';
+QueryRawContent
+  = content:(!"</cfquery"i .)* {
+      return content.map(function(c) { return c[1]; }).join('');
     }
 
 CFSetStatement
-  = "<cfset"i _ varDecl:("var"i _)? name:Identifier _ "=" _ value:Expression _ closing:("/>" / ">") _ {
+  = "<cfset"i _ varDecl:("var"i _)? name:Identifier _ "=" _ value:Expression _ "/" _ ">" _ {
       return {
         type: 'CFSetStatement',
         variable: name,
         value: value,
         hasVar: !!varDecl,
-        selfClosing: closing === "/>"
+        selfClosing: true
+      };
+    }
+  / "<cfset"i _ varDecl:("var"i _)? name:Identifier _ "=" _ value:Expression _ ">" _ {
+      return {
+        type: 'CFSetStatement',
+        variable: name,
+        value: value,
+        hasVar: !!varDecl,
+        selfClosing: false
       };
     }
 
@@ -682,6 +725,57 @@ HashExpression
 ReservedWord
   = ("var"i / "function"i / "return"i / "if"i / "else"i) ![a-zA-Z0-9_]
 
+GenericCFTag
+  = "<cf" tagName:GenericTagName _ attrs:TagAttributes? _ "/" _ ">" _ {
+      return {
+        type: 'GenericCFTag',
+        tagName: tagName,
+        attributes: attrs || [],
+        selfClosing: true,
+        body: null,
+        hasEndTag: false
+      };
+    }
+  / "<cf" tagName:GenericTagName _ attrs:TagAttributes? _ ">" _ 
+    body:GenericTagBody 
+    "</cf" endTagName:GenericTagName _ ">" _ {
+      return {
+        type: 'GenericCFTag',
+        tagName: tagName,
+        attributes: attrs || [],
+        selfClosing: false,
+        body: body,
+        hasEndTag: true,
+        endTagName: endTagName
+      };
+    }
+  / "<cf" tagName:GenericTagName _ attrs:TagAttributes? _ ">" _ {
+      return {
+        type: 'GenericCFTag',
+        tagName: tagName,
+        attributes: attrs || [],
+        selfClosing: false,
+        body: null,
+        hasEndTag: false
+      };
+    }
+
+GenericTagName
+  = !("component"i / "processingdirective"i / "function"i / "query"i / "property"i / "argument"i / "set"i / "if"i / "else"i / "elseif"i / "loop"i / "output"i / "script"i) 
+    [a-zA-Z][a-zA-Z0-9_]* {
+      return text();
+    }
+
+GenericTagBody
+  = body:(!"</cf" Statement / !"</cf" .)* {
+      return body.map(function(item) {
+        if (item[1] && item[1].type) {
+          return item[1];
+        }
+        return item[1];
+      });
+    }
+
 _
   = [ \\t\\n\\r]*
 `;
@@ -706,9 +800,9 @@ _
 
         const examples = {
             1: `<cfcomponent>
-    <cfproperty name="test" default='[<>]' />
+    <cfproperty name="test" default='[<>]' / >
     <cfproperty name="test2" default="value" >
-    <cfset var pattern = '[\\\\/:*?\\"<>|]' />
+    <cfset var pattern = '[\\\\/:*?\\"<>|]' /  >
     <cfset var pattern2 = "A \\B > A" >
     <cfset var pattern3 = 'He said > \\"hi\\"' />
 </cfcomponent>`,
@@ -814,7 +908,33 @@ _
 --->
 <cfset x = 1>
 <!--- 另一个独立注释 --->
-<cfset y = 2>`
+<cfset y = 2>`,
+            8: `<cfcomponent>
+    <!--- 情况1: 配对标签，有开始和结束 --->
+    <cftry timeout="30">
+        <cfthrow message="测试错误" type="custom" />
+    </cftry>
+    
+    <!--- 情况2: 自闭合标签 /> --->
+    <cfcookie name="userId" value="123" />
+    <cfheader name="Content-Type" value="text/html" />
+    
+    <!--- 情况3: 单标签结束 > --->
+    <cfcookie name="token" value="abc" >
+    <cfheader name="Cache-Control" value="no-cache" >
+    
+    <!--- 混合使用 --->
+    <cflock timeout="5" type="exclusive">
+        <cfparam name="session.counter" default="0" />
+    </cflock>
+</cfcomponent>`,
+            9: `<cfquery name="qTest" datasource="myDB">
+    SELECT * FROM users
+    WHERE user_id = <cfqueryparam value="#userId#" cfsqltype="cf_sql_integer" />
+    <cfif isDefined("status")>
+        AND status = <cfqueryparam value="#status#" cfsqltype="cf_sql_varchar" />
+    </cfif>
+</cfquery>`
         };
 
         function loadExample(num) {
