@@ -3,3 +3,16 @@ dist
 node_modules
 .vscode-test/
 *.vsix
+*.pegjs
+
+
+# 忽略 src/ast 下的所有內容
+src/ast/*
+
+# 但保留這些文件
+!src/ast/.gitkeep
+!src/ast/index.ts
+
+# 保留 parser 子文件夾
+!src/ast/parser/
+!src/ast/parser/.gitkeep

@@ -5,11 +5,8 @@
     "lib": [
       "ESNext"
     ],
-    "baseUrl": "./",
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["./src/*"]
     },
     "sourceMap": true,
     "outDir": "out",
@@ -17,7 +14,7 @@
     "skipLibCheck": true,
     "strict": true,
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "src/**/*"
