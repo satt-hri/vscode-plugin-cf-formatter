@@ -10,6 +10,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Enhanced indentation formatting support for `.cfm` files
 - Improved compatibility with complex CFML templates
 
+
+---
+
+## [1.0.23] - 2025-10-23
+
+### Added
+- sql format
+- common logic
+- sql bug fixed with cfscript
+
 ---
 
 ## [1.0.20] - 2025-10-09
@@ -34,7 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ## [1.0.17] - 2025-09-26
 
 ### Fixed
-- Fixed RegExp bus
+- Fixed RegExp bug
 
 ---
 

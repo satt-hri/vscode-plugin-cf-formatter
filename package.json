@@ -2,9 +2,9 @@
   "name": "cfml-auto-formatter",
   "displayName": "CFML Auto Formatter",
   "publisher": "hri",
-  "description": "Code formatter and beautifier for CFML, ColdFusion, and Lucee (supports CFScript, SQL, JavaScript, CSS and HTML, ).",
+  "description": "Code formatter and beautifier for CFML, ColdFusion, and Lucee (supports CFScript, SQL, JavaScript, CSS and HTML).",
   "icon": "images/icon.png",
-  "version": "1.0.21",
+  "version": "1.0.23",
   "author": "SATT李",
   "license": "MIT",
   "engines": {
@@ -24,7 +24,8 @@
     "onLanguage:cfml",
     "onLanguage:html",
     "onLanguage:css",
-    "onLanguage:javascript"
+    "onLanguage:javascript",
+    "onLanguage:sql"
   ],
   "repository": {
     "type": "git",
@@ -60,6 +61,11 @@
         "command": "hri.cfml.formatCssSyntax",
         "title": "CSS Syntax",
         "category": "CFML"
+      },
+      {
+        "command": "hri.cfml.formatSqlSyntax",
+        "title": "SQL Syntax",
+        "category": "CFML"
       }
     ],
     "submenus": [
@@ -72,7 +78,7 @@
       "editor/context": [
         {
           "submenu": "hri.cfml.formatMenu",
-          "when": "editorLangId == cfml || editorLangId == html || editorLangId == css || editorLangId == javascript",
+          "when": "editorLangId == cfml || editorLangId == html || editorLangId == css || editorLangId == javascript || editorLangId == sql",
           "group": "1_modification"
         }
       ],
@@ -88,13 +94,18 @@
           "when": "editorLangId == cfml || editorLangId == javascript || editorLangId == html"
         },
         {
-          "command": "hri.cfml.formatHtmlSyntax",
+          "command": "hri.cfml.formatSqlSyntax",
           "group": "format@3",
+          "when": "editorLangId == cfml || editorLangId == sql"
+        },
+        {
+          "command": "hri.cfml.formatHtmlSyntax",
+          "group": "format@4",
           "when": "editorLangId == cfml || editorLangId == html"
         },
         {
           "command": "hri.cfml.formatCssSyntax",
-          "group": "format@4",
+          "group": "format@5",
           "when": "editorLangId == cfml || editorLangId == css|| editorLangId == html"
         }
       ],
@@ -114,19 +125,38 @@
         {
           "command": "hri.cfml.formatCssSyntax",
           "when": "editorLangId == cfml || editorLangId == css"
+        },
+        {
+          "command": "hri.cfml.formatSqlSyntax",
+          "when": "editorLangId == cfml || editorLangId == sql"
         }
       ]
     },
     "keybindings": [
       {
         "command": "hri.cfml.formatTagSyntax",
-        "key": "shift+alt+m",
+        "key": "shift+alt+t",
         "when": "editorLangId == cfml && editorTextFocus"
       },
       {
         "command": "hri.cfml.formatScriptSyntax",
-        "key": "shift+alt+n",
+        "key": "shift+alt+s",
         "when": "(editorLangId == cfml || editorLangId == javascript ) && editorTextFocus"
+      },
+      {
+        "command": "hri.cfml.formatHtmlSyntax",
+        "key": "shift+alt+h",
+        "when": "(editorLangId == cfml || editorLangId == html ) && editorTextFocus"
+      },
+      {
+        "command": "hri.cfml.formatCssSyntax",
+        "key": "shift+alt+c",
+        "when": "(editorLangId == cfml || editorLangId == css ) && editorTextFocus"
+      },
+      {
+        "command": "hri.cfml.formatSqlSyntax",
+        "key": "shift+alt+q",
+        "when": "(editorLangId == cfml || editorLangId == sql ) && editorTextFocus"
       }
     ],
     "configuration": {

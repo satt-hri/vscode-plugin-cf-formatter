@@ -14,7 +14,8 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 * Partial formatting by block tags
 * Preserves original code style
 * Supports manual execution & automatic formatting on save
-
+* Since it's implemented with JS and TS, you don't need to set up any Lucce or ColdFusion environment.
+* It supports block content and allows selecting the content to be formatted, making it easier to manage the scope.
 ---
 
 <h3>Usage</h3>
@@ -26,6 +27,7 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
     <ul>
       <li><strong>CFTag Syntax</strong>: Formats CFML tags (e.g., <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>). If no content is selected, formats the entire CFC file.</li>
       <li><strong>Script Syntax</strong>: Formats content within <code>&lt;cfscript&gt;</code> blocks. Can also format embedded JavaScript.</li>
+      <li><strong>SQL Syntax</strong>: Formats SQL content. </li>
       <li><strong>HTML Syntax</strong>: Formats HTML tag content within <code>.cfm</code> files.</li>
       <li><strong>CSS Syntax</strong>: Formats CSS content within <code>.cfm</code> files.</li>
     </ul>
@@ -55,8 +57,8 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 </div>
 
 #### 2. Partial formatting
-| 2.1 CFTag Syntax | 2.2 Script Syntax |
-| ---------------- | ---------------- |
+| 2.1 CFTag Syntax                                                          | 2.2 Script Syntax                                                          |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | <img src="./images/2025-10-01_12h04_46.gif" alt="CFTag demo" width="400"> | <img src="./images/2025-10-03_11h35_23.gif" alt="Script demo" width="400"> |
 
 #### 3. Indent formatting
@@ -104,6 +106,8 @@ VS Code 用 **CFML コード自動整形拡張機能**。
 - ブロックタグごとで部分的にフォーマット
 - 元のコードスタイルを保持
 - 手動実行 & 保存時自動整形に対応
+- JSとTSで実装されているため、LucceやColdFusion環境を構築する必要はありません。
+- ブロック単位での内容に対応し、整形対象を選択できるため、範囲を管理しやすくなります。
 
 ---
 
@@ -116,6 +120,7 @@ VS Code 用 **CFML コード自動整形拡張機能**。
     <ul>
       <li><strong>CFTag 構文</strong>: CFML タグをフォーマットします（例: <code>&lt;cfquery xxx&gt;XXX&lt;/cfquery&gt;</code>）。選択がない場合は CFC ファイル全体をフォーマットします。</li>
       <li><strong>Script 構文</strong>: <code>&lt;cfscript&gt;</code> ブロック内のコンテンツをフォーマットします。埋め込まれた JavaScript もフォーマット可能です。</li>
+      <li><strong>SQL 構文</strong>: Formats SQL content 。</li>
       <li><strong>HTML 構文</strong>: <code>.cfm</code> ファイル内の HTML タグコンテンツをフォーマットします。</li>
       <li><strong>CSS 構文</strong>: <code>.cfm</code> ファイル内の CSS コンテンツをフォーマットします。</li>
     </ul>
