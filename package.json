@@ -4,8 +4,11 @@
   "publisher": "hri",
   "description": "Code formatter and beautifier for CFML, ColdFusion, and Lucee (supports CFScript, SQL, JavaScript, CSS and HTML).",
   "icon": "images/icon.png",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "author": "SATT李",
+  "sponsor": {
+    "url": "https://buymeacoffee.com/h_ri"
+  },
   "license": "MIT",
   "engines": {
     "vscode": "^1.80.0"

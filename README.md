@@ -10,11 +10,11 @@ This extension is **specialized in automatic tag wrapping** and **indent formatt
 ### Features
 
 * **CFML (.cfc)** automatic indent formatting (stable operation)
+* Since it's implemented with JS and TS, you don't need to set up any Lucce or ColdFusion environment.
 * Automatic tag wrapping
 * Partial formatting by block tags
 * Preserves original code style
 * Supports manual execution & automatic formatting on save
-* Since it's implemented with JS and TS, you don't need to set up any Lucce or ColdFusion environment.
 * It supports block content and allows selecting the content to be formatted, making it easier to manage the scope.
 ---
 

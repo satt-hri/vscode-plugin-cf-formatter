@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - Enhanced indentation formatting support for `.cfm` files
 - Improved compatibility with complex CFML templates
 
+---
+
+## [1.0.24] - 2025-11-28
+
+### Fixed
+-  regex bug fixed
+
+
 
 ---
 
